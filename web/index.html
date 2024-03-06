@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--
+    If you are serving your web app in a path other than the root, change the
+    href value below to reflect the base path you are serving from.
+
+    The path provided below has to start and end with a slash "/" in order for
+    it to work correctly.
+
+    For more details:
+    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+
+    This is a placeholder for base href that will be replaced by the value of
+    the `--base-href` argument provided to `flutter build`.
+  -->
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="StormyMart an e-commerce marketplace platform.">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="StormyMart">
+  <meta name="google-signin-client_id" content="608528534677-lss1vqesvvhjos94ijukha2pnrj3e3ft.apps.googleusercontent.com">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
+  <link rel="icon" type="image/x-icon" href="favicon.ico"/>
+
+  <title>StormyMart</title>
+  <link rel="manifest" href="manifest.json">
+
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+      apiKey: "AIzaSyDep-c3PKJCs7HZqS-_Y9GlkfWbKV0ZdXQ",
+      authDomain: "stormymart-43ea8.firebaseapp.com",
+      projectId: "stormymart-43ea8",
+      storageBucket: "stormymart-43ea8.appspot.com",
+      messagingSenderId: "608528534677",
+      appId: "1:608528534677:web:c52bc67632d43a14535f9c",
+      measurementId: "G-85JDHG6C7C"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+  </script>
+
+  <script>
+    // The value below is injected by flutter build, do not touch.
+    var serviceWorkerVersion = null;
+  </script>
+  <!-- This script adds the flutter initialization JS code -->
+  <script src="flutter.js" defer></script>
+
+  <!-- Meta Pixel Code -->
+  <script>
+    !function(f, b, e, v, n, t, s) {
+      if (f.fbq) return;
+      n = f.fbq = function () {
+        n.callMethod ?
+          n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+      };
+      if (!f._fbq) f._fbq = n;
+      n.push = n;
+      n.loaded = !0;
+      n.version = '2.0';
+      n.queue = [];
+      t = b.createElement(e);
+      t.async = !0;
+      t.src = v;
+      s = b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t, s);
+    }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+  
+    fbq('init', '1078481140267250');
+    fbq('track', 'PageView');
+  </script>
+  <noscript>
+    <img height="1" width="1" style="display:none"
+         src="https://www.facebook.com/tr?id=1078481140267250&ev=PageView&noscript=1"  alt="Facebook Pixel Related"/>
+  </noscript>
+  <!-- End Meta Pixel Code -->
+
+</head>
+<body>
+<div class="loading" id="loading">
+  <style>
+    .loading {
+      position: absolute;
+      top: calc(50% - 150px);
+      left: calc(50% - 150px);
+      width: 300px;
+      height: 300px;
+      border: 10px solid #f3f3f3;
+      border-radius: 50%;
+      border-top: 10px solid #3498db;
+      animation: spin 0.5s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg);}
+      100% { transform: rotate(360deg);}
+    }
+  </style>
+</div>
+
+<!-- NEW -->
+<style>
+  body {
+    background-color: #0A0A0A;
+
+  }
+
+  .main-content {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: calc(50% - 15px);
+    left: calc(50% - 110px);
+    transition: opacity .4s ease-out;
+  }
+</style>
+
+<script>
+  window.flutterWebRenderer = "html";
+</script>
+<script>
+  function delay(time) {
+    return new Promise(resolve => setTimeout(resolve, time));
+  }
+
+  window.addEventListener('load', function(ev) {
+    //New
+    var loaderContent = document.querySelector('#loader-content');
+
+    // Download main.dart.js
+    let loading =document.querySelector('#loading');
+    _flutter.loader.loadEntrypoint({
+      serviceWorker: {
+        serviceWorkerVersion: serviceWorkerVersion,
+      },
+      onEntrypointLoaded: function(engineInitializer) {
+        engineInitializer.initializeEngine().then(function(appRunner) {
+
+        loading.remove();
+
+        //New
+        loaderContent.style.opacity = "0";
+        delay(400);
+
+          appRunner.runApp();
+        });
+      }
+    });
+  });
+</script>
+
+<!-- NEW -->
+<div class="main-content" id="loader-content">
+  <b style="color: white; font-size:40px;">StormyMart</b>
+</div>
+
+</body>
+</html>
