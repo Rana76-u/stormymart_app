@@ -1,157 +1,145 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:stormymart_v2/utility/globalvariable.dart';
 import 'cart_events.dart';
 import 'cart_states.dart';
 
 class CartBloc extends Bloc<CartEvents, CartState> {
   CartBloc() : super(CartState(
-      checkList: [],
-      priceList: [],
-      idList: [],
-      total: 0
-  )) { //, isAllSelected: false
+    idList: [],
+    priceList: [],
+    sizeList: [],
+    variantList: [],
+    quantityList: [],
+    checkList: [],
+    total: 0,
+    isAllSelected: false,
+  )) {
 
     on<CartEvents>((event, emit) {
+      CartState newState = state; // Initialize newState with current state
 
-      /*if(event is AddCheckList){
-        final List<bool> updatedCheckList = List.from(state.checkList)..add(event.isChecked);
-        final List<double> updatedPriceList = List.from(state.priceList)..add(event.price);
-        final List<String> updatedCartItemDocIdList = List.from(state.cartItemDocIdList)..add(event.cartItemDocId);
-        emit(CartState(
-            checkList: updatedCheckList,
-            priceList: updatedPriceList,
-            cartItemDocIdList: updatedCartItemDocIdList,
-            isAllSelected: state.isAllSelected
-        )); //, isAllSelected: state.isAllSelected
+      if(event is AddItemEvent){
+        newState = _addItem(newState, event);
       }
-
       else if(event is UpdateCheckList){
-        final List<bool> updatedCheckList = List.from(state.checkList);
-        updatedCheckList[event.index] = event.isChecked;
-
-        final List<double> updatedPriceList = List.from(state.priceList);
-        updatedPriceList[event.index] = event.price;
-
-        final List<String> updatedCartItemDocIdList = List.from(state.cartItemDocIdList);
-        updatedCartItemDocIdList[event.index] = event.cartItemDocId;
-
-        emit(CartState(
-            checkList: updatedCheckList,
-            priceList: updatedPriceList,
-            cartItemDocIdList: updatedCartItemDocIdList,
-            isAllSelected: state.isAllSelected
-        )); // ,isAllSelected: state.isAllSelected
+        newState = _updateCheckList(newState, event);
       }
-
-      */
-      /*else if(event is SelectAllCheckList){
-        final List<bool> updatedCheckList = List.from(state.checkList);
-        for(int i=0; i<updatedCheckList.length; i++){
-          updatedCheckList[i] = event.isSelectAll;
-        }
-        emit(CartState(checkList: updatedCheckList, isAllSelected: event.isSelectAll));
-      }
-
-      else if(event is UpdateIsSelected){
-        emit(CartState(checkList: List.from(state.checkList), isAllSelected: event.isSelectAll)); // ,isAllSelected: state.isAllSelected
-      }*/
-
-      if(event is InitCheckListEvent){
-        for(int i=0; i<event.numberOfItem; i++){
-          state.checkList.add(false);
-        }
-      }
-
-      else if(event is AddSelectedItemEvent){
-        double total = 0;
-        List<double> updatedPriceList = List.from(state.priceList);
-        List<String> updatedIdList = List.from(state.idList);
-
-        updatedPriceList.add(event.itemPrice);
-        updatedIdList.add(event.itemId);
-
-        for(int i=0; i<updatedPriceList.length; i++){
-            total += updatedPriceList[i];
-        }
-
-        emit(CartState(
-            checkList: state.checkList,
-            priceList: updatedPriceList,
-            idList: updatedIdList,
-            total: total
-        ));
-      }
-      else if(event is RemoveSelectedItemEvent){
-        double total = 0;
-        List<double> updatedPriceList = List.from(state.priceList);
-        List<String> updatedIdList = List.from(state.idList);
-
-        updatedPriceList.remove(event.itemPrice);
-        updatedIdList.remove(event.itemId);
-
-        for(int i=0; i<updatedPriceList.length; i++){
-          total += updatedPriceList[i];
-        }
-
-        emit(CartState(
-            checkList: state.checkList,
-            priceList: updatedPriceList,
-            idList: updatedIdList,
-            total: total
-        ));
-      }
-
       else if(event is DeleteItemEvent){
-        //remove from price, id and checklist list
-        double total = 0;
-        List<double> updatedPriceList = List.from(state.priceList);
-        List<String> updatedIdList = List.from(state.idList);
-        List<bool> updatedCheckList = List.from(state.checkList);
-
-        if(event.price != null){
-          updatedPriceList.removeAt(event.index);
-        }
-        updatedIdList.remove(event.id);
-        updatedCheckList.removeAt(event.index);
-
-        //re-calculate total
-        for(int i=0; i<updatedPriceList.length; i++){
-          total += updatedPriceList[i];
-        }
-
-        emit(CartState(
-            checkList: updatedCheckList,
-            priceList: updatedPriceList,
-            idList: updatedIdList,
-            total: total
-        ));
+        newState = _deleteItem(newState, event.index);
       }
-      else if(event is DeleteFromTempList){
-        double total = 0;
-        List<double> updatedPriceList = List.from(state.priceList);
-        List<bool> updatedCheckList = List.from(state.checkList);
-
-        //remove from price, id and checklist list
-        tempProductIds.removeAt(event.index);
-        tempQuantities.removeAt(event.index);
-        tempVariants.removeAt(event.index);
-        tempSizes.removeAt(event.index);
-        updatedCheckList.removeAt(event.index);
-
-        updatedPriceList.removeAt(event.index);
-
-        //re-calculate total
-        for(int i=0; i<updatedPriceList.length; i++){
-          total += updatedPriceList[i];
-        }
-
-        emit(CartState(
-            checkList: updatedCheckList,
-            priceList: updatedPriceList,
-            idList: tempProductIds,
-            total: total
-        ));
+      else if(event is SelectAllCheckList){
+        newState = _selectAllCheckList(newState, event);
       }
+
+      emit(newState); // Emit the new state after handling the event
     });
   }
+
+  CartState _addItem(CartState currentState, AddItemEvent event) {
+
+    // Update lists with new item details
+    List<String> updatedIdList = List.from(currentState.idList)..add(event.id);
+    List<double> updatedPriceList = List.from(currentState.priceList)..add(event.price);
+    List<String> updatedSizeList = List.from(currentState.sizeList)..add(event.size);
+    List<String> updatedVariantList = List.from(currentState.variantList)..add(event.variant);
+    List<int> updatedQuantityList = List.from(currentState.quantityList)..add(event.quantity);
+    List<bool> updatedCheckList = List.from(currentState.checkList)..add(false);
+
+    // Return the updated state
+    return currentState.copyWith(
+      idList: updatedIdList,
+      priceList: updatedPriceList,
+      sizeList: updatedSizeList,
+      variantList: updatedVariantList,
+      quantityList: updatedQuantityList,
+      checkList: updatedCheckList
+    );
+  }
+
+  CartState _updateCheckList(CartState currentState, UpdateCheckList event) {
+    // Check if index is valid
+    if (event.index < 0 || event.index >= currentState.idList.length) {
+      throw ArgumentError('Index out of range');
+    }
+
+    // Update lists by removing item at the given index
+    List<double> priceList = List.from(currentState.priceList);
+    List<bool> updatedCheckList = List.from(currentState.checkList);
+    updatedCheckList[event.index] = event.isChecked;
+
+    //update total amount
+    double updatedTotal = 0;
+    for(int i=0; i<priceList.length; i++){
+      if(updatedCheckList[i] == true){
+        updatedTotal = updatedTotal + priceList[i];
+      }
+    }
+
+    // Check if all items in updatedCheckList are true
+    bool isAllSelected = updatedCheckList.every((element) => element);
+
+    // Return the updated state
+    return currentState.copyWith(
+        checkList: updatedCheckList,
+        isAllSelected: isAllSelected,
+        total: updatedTotal
+    );
+  }
+
+  CartState _selectAllCheckList(CartState state, SelectAllCheckList event) {
+
+    List<double> priceList = List.from(state.priceList);
+    List<bool> updatedCheckList = List<bool>.filled(state.checkList.length, event.isSelectAll);
+
+    double updatedTotal = 0;
+    if(event.isSelectAll){
+      for(int i=0; i<priceList.length; i++){
+        if(updatedCheckList[i] == true){
+          updatedTotal += priceList[i];
+        }
+      }
+    }
+
+    return state.copyWith(
+        checkList: updatedCheckList,
+        total: updatedTotal,
+        isAllSelected: event.isSelectAll
+    );
+  }
+
+  CartState _deleteItem(CartState currentState, int index) {
+    // Check if index is valid
+    if (index < 0 || index >= currentState.idList.length) {
+      throw ArgumentError('Index out of range');
+    }
+
+    // Update lists by removing item at the given index
+    List<String> updatedIdList = List.from(currentState.idList)..removeAt(index);
+    List<double> updatedPriceList = List.from(currentState.priceList)..removeAt(index);
+    List<String> updatedSizeList = List.from(currentState.sizeList)..removeAt(index);
+    List<String> updatedVariantList = List.from(currentState.variantList)..removeAt(index);
+    List<int> updatedQuantityList = List.from(currentState.quantityList)..removeAt(index);
+    List<bool> updatedCheckList = List.from(currentState.checkList)..removeAt(index);
+
+    //update total amount
+    double updatedTotal = 0;
+    for(int i=0; i<updatedPriceList.length; i++){
+      if(updatedCheckList[i] == true){
+        updatedTotal += updatedPriceList[i];
+      }
+    }
+
+    // Return the updated state
+    return currentState.copyWith(
+      idList: updatedIdList,
+      priceList: updatedPriceList,
+      sizeList: updatedSizeList,
+      variantList: updatedVariantList,
+      quantityList: updatedQuantityList,
+      checkList: updatedCheckList,
+      total: updatedTotal
+    );
+  }
+
 }
+
+

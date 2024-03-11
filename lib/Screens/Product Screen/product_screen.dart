@@ -1,12 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
+import 'package:stormymart_v2/Blocks/Cart%20Bloc/cart_bloc.dart';
 import 'package:stormymart_v2/Screens/Cart/cart.dart';
 import 'package:stormymart_v2/theme/color.dart';
 import 'package:get/get.dart';
-import 'package:stormymart_v2/utility/globalvariable.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../Blocks/Cart Bloc/cart_events.dart';
 import '../../Components/image_viewer.dart';
 
 class ProductScreen extends StatefulWidget {
@@ -25,6 +27,7 @@ class _ProductScreenState extends State<ProductScreen> {
   int variationCount = 0;
   int clickedIndex = 0;
   List<dynamic> sizes = [];
+  double discountCal = 0;
 
   int sizeSelected = -1;
   int variationSelected = -1;
@@ -112,7 +115,7 @@ class _ProductScreenState extends State<ProductScreen> {
               if (snapshot.hasData) {
                 var price = snapshot.data!.get('price');
                 var discount = snapshot.data!.get('discount');
-                double discountCal = (price / 100) * (100 - discount);
+                discountCal = (price / 100) * (100 - discount);
                 //var rating = snapshot.data!.get('rating');
                 //var sold = snapshot.data!.get('sold');
                 var quantityAvailable = snapshot.data!.get('quantityAvailable');
@@ -192,7 +195,6 @@ class _ProductScreenState extends State<ProductScreen> {
                               ImageViewerScreen(
                                 imageUrl: images[index],
                               ),
-                              transition: Transition.size,
                             );
                           },
                           child: Image.network(
@@ -771,16 +773,18 @@ class _ProductScreenState extends State<ProductScreen> {
                 ? 'not applicable'
                 : sizes[sizeSelected].toString(),
             'variant': imageSliderDocID,
-            'quantity': quantity
+            'quantity': quantity,
           });
         }
         //user Not logged in
         else {
-          //add item to temporary cart
-          tempProductIds.add(id);
-          tempSizes.add(sizeSelected == -1 ? 'not applicable' : sizes[sizeSelected].toString());
-          tempVariants.add(imageSliderDocID);
-          tempQuantities.add(quantity);
+
+          BlocProvider.of<CartBloc>(context).add(AddItemEvent(
+              id: id, price: discountCal,
+              size: sizeSelected == -1
+              ? 'not applicable'
+              : sizes[sizeSelected].toString(),
+              variant: imageSliderDocID, quantity: quantity));
         }
 
         //notify

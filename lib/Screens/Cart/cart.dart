@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:stormymart_v2/Blocks/Cart%20Bloc/cart_events.dart';
-import 'package:stormymart_v2/utility/globalvariable.dart';
 import 'package:transparent_image/transparent_image.dart';
 import '../../Blocks/Cart Bloc/cart_bloc.dart';
 import '../../Blocks/Cart Bloc/cart_states.dart';
@@ -34,7 +33,7 @@ class Cart extends StatelessWidget {
               centerTitle: true,
               automaticallyImplyLeading: false,
             ),
-            floatingActionButton: floatingButtonWidget(state),
+            floatingActionButton: floatingButtonWidget(state, context),
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerFloat,
             body: SingleChildScrollView(
@@ -55,23 +54,49 @@ class Cart extends StatelessWidget {
     );
   }
 
-  Widget floatingButtonWidget(CartState state) {
+  Widget floatingButtonWidget(CartState state, BuildContext context) {
+    final provider = BlocProvider.of<CartBloc>(context);
+
     return Padding(
       padding: const EdgeInsets.only(right: 5),
       child: SizedBox(
         height: 50,
         width: double.infinity,
         child: FittedBox(
-          child: FloatingActionButton.extended(
-            onPressed: () {},
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(100.0),
-            ),
-            label: Text(
-              'Total: ${state.total}/-, Proceed to Checkout',
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-            ),
-            icon: const Icon(Icons.sell_rounded),
+          child: Row(
+            children: [
+              FloatingActionButton.extended(
+                onPressed: () async {
+                  provider.add(SelectAllCheckList(isSelectAll: !state.isAllSelected));
+                },
+                heroTag: "selectAllBtn",
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(100.0),
+                ),
+                label: const Text(
+                  'Select All',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                ),
+                icon: state.isAllSelected ? const Icon(Icons.check_circle) : const Icon(Icons.radio_button_unchecked_rounded),
+              ),
+
+              const SizedBox(width: 10,),
+
+              FloatingActionButton.extended(
+                onPressed: () {
+                  GoRouter.of(context).go('/checkout');
+                },
+                heroTag: "checkoutBtn",
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(100.0),
+                ),
+                label: Text(
+                  'Total: ${state.total}/-, Proceed to Checkout',
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                ),
+                icon: const Icon(Icons.sell_rounded),
+              ),
+            ],
           ),
         ),
       ),
@@ -86,6 +111,7 @@ class Cart extends StatelessWidget {
             .collection('userData')
             .doc(FirebaseAuth.instance.currentUser!.uid)
             .collection('Cart')
+            .orderBy('id')
             .get(),
         builder: (context, cartSnapshot) {
           if (cartSnapshot.hasData) {
@@ -110,8 +136,6 @@ class Cart extends StatelessWidget {
                   ),
 
                   numberOfItemsWidget(numberOfItem),
-
-                  //selectAllWidget(context, state, numberOfItem, productIDs),
 
                   //Cart items
                   Padding(
@@ -144,7 +168,8 @@ class Cart extends StatelessWidget {
           }
           else if (cartSnapshot.connectionState == ConnectionState.waiting) {
             return loadingWidget(context, 0.4);
-          } else {
+          }
+          else {
             return errorWidget(context, 'Error Loading Data');
           }
         },
@@ -152,7 +177,7 @@ class Cart extends StatelessWidget {
     }
     //if not logged in
     else{
-      int numberOfItem = tempProductIds.length;
+      int numberOfItem = state.idList.length;
       return Card(
         shape:
         RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -179,15 +204,16 @@ class Cart extends StatelessWidget {
                   itemCount: numberOfItem,
                   itemBuilder: (context, index) {
 
-                    return notLoggedInCartItemWidget(
+                    return cartItemWidget(
                         context,
+                        'cartItemDocID',
+                        state.idList[index],
+                        state.sizeList[index],
+                        state.variantList[index],
+                        state.quantityList[index],
+                        index,
                         state,
                         numberOfItem,
-                        index,
-                        tempProductIds[index],
-                        tempVariants[index],
-                        tempSizes[index],
-                        tempQuantities[index]
                     );
                   },
                 ),
@@ -199,216 +225,6 @@ class Cart extends StatelessWidget {
     }
   }
 
-  Widget notLoggedInCartItemWidget(BuildContext context, CartState state, int numberOfItem, int index,
-      String productId, String variant, String size, int quantity) {
-    final provider = BlocProvider.of<CartBloc>(context);
-
-    return FutureBuilder(
-      future: FirebaseFirestore.instance
-          .collection('/Products')
-          .doc(productId)
-          .get(),
-      builder: (context, productSnapshot) {
-        if (productSnapshot.hasData) {
-          double priceAfterDiscount =
-              (productSnapshot.data!.get('price') / 100) * (100 - productSnapshot.data!.get('discount'));
-
-          if(state.checkList.isEmpty){
-            provider.add(InitCheckListEvent(numberOfItem: numberOfItem));
-          }
-
-          return Card(
-            elevation: 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                //Checkbox
-                Checkbox(
-                  value: state.checkList.isNotEmpty
-                      ? state.checkList[index]
-                      : false,
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15)),
-                  onChanged: (value) {
-                    //if item is already checked then onChange will toggle into unchecked
-                    //so isAllSelected is not true anymore
-                    if(state.checkList[index] == true){
-                      //state.isAllSelected = false;
-                      state.checkList[index] = !state.checkList[index];
-                      //remove item from list
-                      provider.add(RemoveSelectedItemEvent(itemPrice: priceAfterDiscount, itemId: productId.trim()));
-                    }
-                    else{
-                      state.checkList[index] = !state.checkList[index];
-                      //add item into list
-                      provider.add(AddSelectedItemEvent(itemPrice: priceAfterDiscount, itemId: productId.trim()));
-                    }
-
-                  },
-                ),
-
-                //Image
-                FutureBuilder(
-                  future: FirebaseFirestore.instance
-                      .collection('/Products/$productId/Variations')
-                      .doc(variant)
-                      .get(),
-                  builder: (context, imageSnapshot) {
-                    if (imageSnapshot.hasData) {
-                      return GestureDetector(
-                        onTap: () {
-                          GoRouter.of(context).go('/product/$productId');
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 8, top: 5, bottom: 5),
-                          child: Container(
-                            width: 95,
-                            height: 95, //137 127 120 124
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20)),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: FadeInImage.memoryNetwork(
-                                image: imageSnapshot.data!.get('images')[0],
-                                placeholder: kTransparentImage,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    } else if (productSnapshot.connectionState ==
-                        ConnectionState.waiting) {
-                      return loadingWidget(context, 0.4);
-                    } else {
-                      return errorWidget(context, 'Error Loading Data');
-                    }
-                  },
-                ),
-
-                //Texts
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 5, bottom: 5),
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.55 -
-                          20, //200, 0.45
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          //Title
-                          Text(
-                            productSnapshot.data!.get('title'),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-
-                          //Price
-                          Text(
-                            '৳ $priceAfterDiscount',
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                                fontSize: 12,
-                                color: Colors.purple,
-                                fontWeight: FontWeight.bold),
-                          ),
-
-                          //Size
-                          Text(
-                            'Size: $size',
-                            style: const TextStyle(
-                                fontSize: 11,
-                                color: Colors.black54,
-                                overflow: TextOverflow.ellipsis),
-                          ),
-
-                          //Variant
-                          Text(
-                            'Variant: $variant',
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                                fontSize: 11, color: Colors.black54),
-                          ),
-
-                          //Quantity
-                          Text(
-                            'Quantity: $quantity',
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 11,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-
-                //Delete
-                Padding(
-                  padding: const EdgeInsets.only(right: 10),
-                  child: GestureDetector(
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Text('Please Confirm'),
-                            content: const Text(
-                                'Are you sure you want to delete this item?'),
-                            actions: [
-                              // The "Yes" button
-                              TextButton(
-                                  onPressed: () {
-                                    //delete from tempList
-                                    provider.add(DeleteFromTempList(index: index));
-                                    Navigator.of(context)
-                                        .push(MaterialPageRoute(
-                                      builder: (context) =>
-                                          const Cart(),
-                                    ));
-                                  },
-                                  child: const Text('Yes')),
-                              TextButton(
-                                  onPressed: () {
-                                    // Close the dialog
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('No'))
-                            ],
-                          );
-                        },
-                      );
-                    },
-                    child: const SizedBox(
-                      child: Icon(
-                        Icons.delete_forever,
-                        color: Colors.red,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        }
-        else if (productSnapshot.connectionState == ConnectionState.waiting) {
-          //return loadingWidget(context, 0.4);
-          return shimmerLoading(context);
-        }
-        else {
-          return errorWidget(context, 'Error Loading Data');
-        }
-      },
-    );
-  }
-
   Widget checkIfProductExistsWidget(String cartDocID, String productId,
       String size, String variant, int quantity, int index, CartState state, int numberOfItem) {
     return FutureBuilder<bool>(
@@ -416,16 +232,18 @@ class Cart extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return loadingWidget(context, 0.4); // or any loading indicator
-        } else if (snapshot.hasError) {
+        }
+        else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
-        } else {
+        }
+        else {
           bool productExists = snapshot.data ?? false;
           if (productExists) {
             //delete the item
 
             return cartItemNotAvailableWidget(context, cartDocID, null, index);
           } else {
-            //below line was swaped
+            //below line was swapped
             return cartItemWidget(context, cartDocID, productId, size, variant,
                 quantity, index, state, numberOfItem);
           }
@@ -446,11 +264,18 @@ class Cart extends StatelessWidget {
           .get(),
       builder: (context, productSnapshot) {
         if (productSnapshot.hasData) {
+
+          final user = FirebaseAuth.instance.currentUser;
+
           double priceAfterDiscount =
               (productSnapshot.data!.get('price') / 100) * (100 - productSnapshot.data!.get('discount'));
 
-          if(state.checkList.isEmpty){
-            provider.add(InitCheckListEvent(numberOfItem: numberOfItem));
+          if(user != null){
+            if(index >= state.idList.length){
+              provider.add(AddItemEvent(
+                  id: cartItemDocID, price: priceAfterDiscount, size: size,
+                  variant: variant, quantity: quantity));
+            }
           }
 
           return Card(
@@ -467,20 +292,7 @@ class Cart extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15)),
                   onChanged: (value) {
-
-                    //if item is already checked then onChange will toggle into unchecked
-                    //so isAllSelected is not true anymore
-                    if(state.checkList[index] == true){
-                      //state.isAllSelected = false;
-                      state.checkList[index] = !state.checkList[index];
-                      //remove item from list
-                      provider.add(RemoveSelectedItemEvent(itemPrice: priceAfterDiscount, itemId: productId.trim()));
-                    }else{
-                      state.checkList[index] = !state.checkList[index];
-                      //add item into list
-                      provider.add(AddSelectedItemEvent(itemPrice: priceAfterDiscount, itemId: productId.trim()));
-                    }
-
+                    provider.add(UpdateCheckList(index: index, isChecked: !state.checkList[index]));
                   },
                 ),
 
@@ -591,50 +403,7 @@ class Cart extends StatelessWidget {
                 ),
 
                 //Delete
-                Padding(
-                  padding: const EdgeInsets.only(right: 10),
-                  child: GestureDetector(
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Text('Please Confirm'),
-                            content: const Text(
-                                'Are you sure you want to delete this item?'),
-                            actions: [
-                              // The "Yes" button
-                              TextButton(
-                                  onPressed: () {
-                                    CartViewModel().deleteDocument(
-                                        context, cartItemDocID, priceAfterDiscount, index
-                                    );
-                                    Navigator.of(context)
-                                        .push(MaterialPageRoute(
-                                      builder: (context) =>
-                                          const Cart(),
-                                    ));
-                                  },
-                                  child: const Text('Yes')),
-                              TextButton(
-                                  onPressed: () {
-                                    // Close the dialog
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('No'))
-                            ],
-                          );
-                        },
-                      );
-                    },
-                    child: const SizedBox(
-                      child: Icon(
-                        Icons.delete_forever,
-                        color: Colors.red,
-                      ),
-                    ),
-                  ),
-                ),
+                deleteItemButton(context, user, cartItemDocID, priceAfterDiscount, index)
               ],
             ),
           );
@@ -650,7 +419,59 @@ class Cart extends StatelessWidget {
     );
   }
 
+  Widget deleteItemButton(BuildContext context, final user, String? cartItemDocID,
+      double? priceAfterDiscount, int? index) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 10),
+      child: GestureDetector(
+        onTap: () {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text('Please Confirm'),
+                content: const Text(
+                    'Are you sure you want to delete this item?'),
+                actions: [
+                  // The "Yes" button
+                  TextButton(
+                      onPressed: () {
+                        if(user != null){
+                          CartViewModel().deleteDocument(
+                              context, cartItemDocID!, priceAfterDiscount, index!
+                          );
+                        }
+
+                        BlocProvider.of<CartBloc>(context).add(DeleteItemEvent(index: index!));
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Yes')),
+                  TextButton(
+                      onPressed: () {
+                        // Close the dialog
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('No'))
+                ],
+              );
+            },
+          );
+        },
+        child: const SizedBox(
+          child: Icon(
+            Icons.delete_forever,
+            color: Colors.red,
+          ),
+        ),
+      ),
+    );
+  }
+
+
   Widget cartItemNotAvailableWidget(BuildContext context, String cartItemDocID, double? price, int index) {
+
+    final user = FirebaseAuth.instance.currentUser;
+
     return Card(
       elevation: 0,
       child: Row(
@@ -669,68 +490,9 @@ class Cart extends StatelessWidget {
           errorWidget(context, "Item Is Not Listed Anymore"),
 
           //Delete
-          Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: GestureDetector(
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: const Text('Please Confirm'),
-                      content: const Text(
-                          'Are you sure you want to delete this item?'),
-                      actions: [
-                        // The "Yes" button
-                        TextButton(
-                            onPressed: () {
-                              CartViewModel().deleteDocument(
-                                  context, cartItemDocID, null, index
-                              );
-                              Navigator.of(context)
-                                  .push(MaterialPageRoute(
-                                builder: (context) =>
-                                    const Cart(),
-                              ));
-                            },
-                            child: const Text('Yes')),
-                        TextButton(
-                            onPressed: () {
-                              // Close the dialog
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text('No'))
-                      ],
-                    );
-                  },
-                );
-              },
-              child: const SizedBox(
-                child: Icon(
-                  Icons.delete_forever,
-                  color: Colors.red,
-                ),
-              ),
-            ),
-          ),
+          deleteItemButton(context, user, cartItemDocID, price, index)
         ],
       ),
-    );
-  }
-
-  Widget loadingWidget(BuildContext context, double size) {
-    return Center(
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width * size,
-        height: 1,
-        child: const LinearProgressIndicator(),
-      ),
-    );
-  }
-
-  Widget errorWidget(BuildContext context, String text) {
-    return Center(
-      child: Text(text),
     );
   }
 
@@ -747,12 +509,27 @@ class Cart extends StatelessWidget {
     );
   }
 
+  Widget containerWidget(double? width) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 5),
+      child: Container(
+        height: 10,
+        width: width,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Colors.grey.shade200
+        ),
+      ),
+    );
+  }
+
+
   Widget shimmerLoading(BuildContext context) {
     return Card(
       elevation: 0,
       child: Shimmer.fromColors(
-          baseColor: Colors.grey.shade200,
-          highlightColor: Colors.white,
+        baseColor: Colors.grey.shade200,
+        highlightColor: Colors.white,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -826,56 +603,19 @@ class Cart extends StatelessWidget {
     );
   }
 
-  Widget containerWidget(double? width) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 5),
-      child: Container(
-        height: 10,
-        width: width,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: Colors.grey.shade200
-        ),
+  Widget loadingWidget(BuildContext context, double size) {
+    return Center(
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width * size,
+        height: 1,
+        child: const LinearProgressIndicator(),
       ),
     );
   }
 
-  /*Widget selectAllWidget(BuildContext context, CartState state, int numberOfItem, List<String> productIDs) {
-    final provider = BlocProvider.of<CartBloc>(context);
-
-    return Row(
-      children: [
-        Checkbox(
-          value: state.isAllSelected,
-          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-          onChanged: (value) async {
-            state.priceList = [];
-            state.idList = [];
-
-            if(value == true) {
-              for(int i=0; i<numberOfItem; i++){
-
-                DocumentSnapshot snapshot = await FirebaseFirestore.instance
-                    .collection('/Products')
-                    .doc(productIDs[i]).get();
-
-                state.priceList.add(snapshot.get('field'));
-              }
-            }
-
-            provider.add(SelectAllCheckList(isSelectAll: !state.isAllSelected, numberOfItems: numberOfItem));
-          },
-        ),
-
-        const Text(
-          'Select All',
-          style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 13
-          ),
-        )
-      ],
+  Widget errorWidget(BuildContext context, String text) {
+    return Center(
+      child: Text(text),
     );
-  }*/
+  }
 }

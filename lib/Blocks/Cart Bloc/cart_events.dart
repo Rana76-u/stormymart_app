@@ -1,40 +1,41 @@
 abstract class CartEvents {}
 
-//---------------------------STARTS FROM HERE-----------------------------------
-class InitCheckListEvent extends CartEvents{
-  final int numberOfItem;
+class AddItemEvent extends CartEvents {
+  String id;
+  double price;
+  String size;
+  String variant;
+  int quantity;
 
-  InitCheckListEvent({required this.numberOfItem});
+  AddItemEvent({
+    required this.id,
+    required this.price,
+    required this.size,
+    required this.variant,
+    required this.quantity
+  });
 }
 
-class AddSelectedItemEvent extends CartEvents{
-  final double itemPrice;
-  final String itemId;
+class UpdateCheckList extends CartEvents {
+  final int index;
+  final bool isChecked;
 
-  AddSelectedItemEvent({required this.itemPrice, required this.itemId});
-}
-
-class RemoveSelectedItemEvent extends CartEvents{
-  final double itemPrice;
-  final String itemId;
-
-  RemoveSelectedItemEvent({required this.itemPrice, required this.itemId});
+  UpdateCheckList({
+    required this.index,
+    required this.isChecked,
+  });
 }
 
 class DeleteItemEvent extends CartEvents {
-  final double? price;
-  final String id;
   final int index;
 
   DeleteItemEvent({
     required this.index,
-    required this.price,
-    required this.id,
 });
 }
 
-class DeleteFromTempList extends CartEvents {
-  final int index;
+class SelectAllCheckList extends CartEvents {
+  final bool isSelectAll;
 
-  DeleteFromTempList({required this.index});
+  SelectAllCheckList({required this.isSelectAll});
 }

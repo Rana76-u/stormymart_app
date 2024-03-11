@@ -1,16 +1,15 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:stormymart_v2/Blocks/Cart%20Bloc/cart_bloc.dart';
 import 'package:stormymart_v2/Screens/Cart/cart.dart';
+import 'package:stormymart_v2/Screens/CheckOut/checkout.dart';
 import 'package:stormymart_v2/Screens/Home/home.dart';
 import 'package:stormymart_v2/Screens/Product%20Screen/product_screen.dart';
 import 'package:stormymart_v2/Screens/Profile/profile.dart';
 import 'package:stormymart_v2/Screens/Search/search.dart';
 import 'package:stormymart_v2/firebase_options.dart';
-import 'Screens/Cart/cart_loginpage.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -75,7 +74,23 @@ final GoRouter _router = GoRouter(
       pageBuilder: (context, state) {
         return CustomTransitionPage(
           key: state.pageKey,
-          child: Cart(),//FirebaseAuth.instance.currentUser != null ? Cart() : const CartLoginPage(),
+          child: const Cart(),//FirebaseAuth.instance.currentUser != null ? Cart() : const CartLoginPage(),
+          transitionsBuilder: _customTransitionBuilder,
+        );
+      },
+    ),
+    //cart
+    GoRoute(
+      path: '/checkout',
+      pageBuilder: (context, state) {
+        return CustomTransitionPage(
+          key: state.pageKey,
+          child: CheckOut(
+            productIds: const [],
+            quantities: const [],
+            sizes: const [],
+            variants: const [],
+          ),//FirebaseAuth.instance.currentUser != null ? Cart() : const CartLoginPage(),
           transitionsBuilder: _customTransitionBuilder,
         );
       },
