@@ -26,6 +26,16 @@ class UpdateCheckList extends CartEvents {
   });
 }
 
+class UpdateQuantityList extends CartEvents {
+  final int index;
+  final int quantity;
+
+  UpdateQuantityList({
+    required this.index,
+    required this.quantity,
+  });
+}
+
 class DeleteItemEvent extends CartEvents {
   final int index;
 

@@ -23,6 +23,9 @@ class CartBloc extends Bloc<CartEvents, CartState> {
       else if(event is UpdateCheckList){
         newState = _updateCheckList(newState, event);
       }
+      else if(event is UpdateQuantityList){
+        newState = _updateQuantityList(newState, event);
+      }
       else if(event is DeleteItemEvent){
         newState = _deleteItem(newState, event.index);
       }
@@ -64,13 +67,14 @@ class CartBloc extends Bloc<CartEvents, CartState> {
     // Update lists by removing item at the given index
     List<double> priceList = List.from(currentState.priceList);
     List<bool> updatedCheckList = List.from(currentState.checkList);
+    List<int> quantityList = List.from(currentState.quantityList);
     updatedCheckList[event.index] = event.isChecked;
 
     //update total amount
     double updatedTotal = 0;
     for(int i=0; i<priceList.length; i++){
       if(updatedCheckList[i] == true){
-        updatedTotal = updatedTotal + priceList[i];
+        updatedTotal = updatedTotal + (priceList[i] * quantityList[i]);
       }
     }
 
@@ -85,16 +89,44 @@ class CartBloc extends Bloc<CartEvents, CartState> {
     );
   }
 
+  CartState _updateQuantityList(CartState currentState, UpdateQuantityList event) {
+    // Check if index is valid
+    if (event.index < 0 || event.index >= currentState.idList.length) {
+      throw ArgumentError('Index out of range');
+    }
+
+    // Update lists by removing item at the given index
+    List<double> priceList = List.from(currentState.priceList);
+    List<bool> checkList = List.from(currentState.checkList);
+    List<int> updatedQuantityList = List.from(currentState.quantityList);
+    updatedQuantityList[event.index] = event.quantity;
+
+    //update total amount
+    double updatedTotal = 0;
+    for(int i=0; i<priceList.length; i++){
+      if(checkList[i] == true){
+        updatedTotal = updatedTotal + (priceList[i] * updatedQuantityList[i]);
+      }
+    }
+
+    // Return the updated state
+    return currentState.copyWith(
+        quantityList: updatedQuantityList,
+        total: updatedTotal
+    );
+  }
+
   CartState _selectAllCheckList(CartState state, SelectAllCheckList event) {
 
     List<double> priceList = List.from(state.priceList);
     List<bool> updatedCheckList = List<bool>.filled(state.checkList.length, event.isSelectAll);
+    List<int> quantityList = List.from(state.quantityList);
 
     double updatedTotal = 0;
     if(event.isSelectAll){
       for(int i=0; i<priceList.length; i++){
         if(updatedCheckList[i] == true){
-          updatedTotal += priceList[i];
+          updatedTotal += (priceList[i] * quantityList[i]);
         }
       }
     }
@@ -124,7 +156,7 @@ class CartBloc extends Bloc<CartEvents, CartState> {
     double updatedTotal = 0;
     for(int i=0; i<updatedPriceList.length; i++){
       if(updatedCheckList[i] == true){
-        updatedTotal += updatedPriceList[i];
+        updatedTotal += (updatedPriceList[i] * updatedQuantityList[i]);
       }
     }
 
@@ -139,7 +171,6 @@ class CartBloc extends Bloc<CartEvents, CartState> {
       total: updatedTotal
     );
   }
-
 }
 
 

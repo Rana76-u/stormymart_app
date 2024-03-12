@@ -84,7 +84,7 @@ class Cart extends StatelessWidget {
 
               FloatingActionButton.extended(
                 onPressed: () {
-                  GoRouter.of(context).go('/checkout');
+                  //GoRouter.of(context).go('/checkout');
                 },
                 heroTag: "checkoutBtn",
                 shape: RoundedRectangleBorder(
@@ -371,30 +371,37 @@ class Cart extends StatelessWidget {
                                 fontWeight: FontWeight.bold),
                           ),
 
-                          //Size
-                          Text(
-                            'Size: $size',
-                            style: const TextStyle(
-                                fontSize: 11,
-                                color: Colors.black54,
-                                overflow: TextOverflow.ellipsis),
-                          ),
-
-                          //Variant
-                          Text(
-                            'Variant: $variant',
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                                fontSize: 11, color: Colors.black54),
-                          ),
-
                           //Quantity
-                          Text(
-                            'Quantity: $quantity',
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 11,
-                            ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  //Size
+                                  Text(
+                                    'Size: $size',
+                                    style: const TextStyle(
+                                        fontSize: 11,
+                                        color: Colors.black54,
+                                        overflow: TextOverflow.ellipsis),
+                                  ),
+
+                                  //Variant
+                                  Text(
+                                    'Variant: $variant',
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                        fontSize: 11, color: Colors.black54),
+                                  ),
+                                ],
+                              ),
+                              const Expanded(child: SizedBox()),
+                              Padding(
+                                  padding: const EdgeInsets.only(right: 20),
+                                  child: quantitySelector(context, state, index))
+                            ],
                           ),
                         ],
                       ),
@@ -518,6 +525,49 @@ class Cart extends StatelessWidget {
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             color: Colors.grey.shade200
+        ),
+      ),
+    );
+  }
+
+  Widget quantitySelector(BuildContext context, CartState state, int index) {
+    final provider = BlocProvider.of<CartBloc>(context);
+    int quantity = state.quantityList[index];
+
+    return SizedBox(
+      height: 30,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.grey.shade300,
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Row(
+          mainAxisAlignment:
+          MainAxisAlignment.spaceBetween,
+          children: [
+            IconButton(
+              icon: const Icon(
+                  Icons.remove,
+                size: 15,
+              ),
+              onPressed: () {
+                // Decrement quantity
+                if (quantity != 1) {
+                  quantity--;
+                }
+                provider.add(UpdateQuantityList(index: index, quantity: quantity));
+              },
+            ),
+            Text('${state.quantityList[index]}'),
+            IconButton(
+              icon: const Icon(Icons.add, size: 15,),
+              onPressed: () {
+                // Increment quantity
+                quantity++;
+                provider.add(UpdateQuantityList(index: index, quantity: quantity));
+              },
+            ),
+          ],
         ),
       ),
     );
