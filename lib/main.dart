@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:stormymart_v2/Blocks/Cart%20Bloc/cart_bloc.dart';
+import 'package:stormymart_v2/Blocks/CheckOut%20Bloc/checkout_bloc.dart';
 import 'package:stormymart_v2/Screens/Cart/cart.dart';
 import 'package:stormymart_v2/Screens/CheckOut/checkout.dart';
 import 'package:stormymart_v2/Screens/Home/home.dart';
@@ -85,12 +86,7 @@ final GoRouter _router = GoRouter(
       pageBuilder: (context, state) {
         return CustomTransitionPage(
           key: state.pageKey,
-          child: CheckOut(
-            productIds: const [],
-            quantities: const [],
-            sizes: const [],
-            variants: const [],
-          ),//FirebaseAuth.instance.currentUser != null ? Cart() : const CartLoginPage(),
+          child: const CheckOut(),
           transitionsBuilder: _customTransitionBuilder,
         );
       },
@@ -117,6 +113,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => CartBloc()),
+        BlocProvider(create: (context) => CheckoutBloc()),
       ],
       child: MaterialApp.router(
         title: 'StormyMart',

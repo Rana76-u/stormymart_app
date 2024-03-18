@@ -3,11 +3,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:stormymart_v2/Blocks/Cart%20Bloc/cart_events.dart';
+import 'package:stormymart_v2/Screens/Cart/item_util.dart';
 import 'package:transparent_image/transparent_image.dart';
 import '../../Blocks/Cart Bloc/cart_bloc.dart';
 import '../../Blocks/Cart Bloc/cart_states.dart';
+import '../../Blocks/CheckOut Bloc/checkout_bloc.dart';
+import '../../Blocks/CheckOut Bloc/checkout_events.dart';
 import '../../ViewModels/cart_viewmodel.dart';
 import 'delivery_container.dart';
 
@@ -84,7 +86,8 @@ class Cart extends StatelessWidget {
 
               FloatingActionButton.extended(
                 onPressed: () {
-                  //GoRouter.of(context).go('/checkout');
+                  BlocProvider.of<CheckoutBloc>(context).add(TransferDataEvent(state));
+                  GoRouter.of(context).go('/checkout');
                 },
                 heroTag: "checkoutBtn",
                 shape: RoundedRectangleBorder(
@@ -167,10 +170,10 @@ class Cart extends StatelessWidget {
             );
           }
           else if (cartSnapshot.connectionState == ConnectionState.waiting) {
-            return loadingWidget(context, 0.4);
+            return ItemUtil().loadingWidget(context, 0.4);
           }
           else {
-            return errorWidget(context, 'Error Loading Data');
+            return ItemUtil().errorWidget(context, 'Error Loading Data');
           }
         },
       );
@@ -231,7 +234,7 @@ class Cart extends StatelessWidget {
       future: CartViewModel().checkIfCartItemExists(productId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return loadingWidget(context, 0.4); // or any loading indicator
+          return ItemUtil().loadingWidget(context, 0.4); // or any loading indicator
         }
         else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
@@ -241,7 +244,7 @@ class Cart extends StatelessWidget {
           if (productExists) {
             //delete the item
 
-            return cartItemNotAvailableWidget(context, cartDocID, null, index);
+            return ItemUtil().cartItemNotAvailableWidget(context, cartDocID, null, index);
           } else {
             //below line was swapped
             return cartItemWidget(context, cartDocID, productId, size, variant,
@@ -273,7 +276,7 @@ class Cart extends StatelessWidget {
           if(user != null){
             if(index >= state.idList.length){
               provider.add(AddItemEvent(
-                  id: cartItemDocID, price: priceAfterDiscount, size: size,
+                  id: productId, price: priceAfterDiscount, size: size,
                   variant: variant, quantity: quantity));
             }
           }
@@ -330,11 +333,12 @@ class Cart extends StatelessWidget {
                           ),
                         ),
                       );
-                    } else if (productSnapshot.connectionState ==
-                        ConnectionState.waiting) {
-                      return loadingWidget(context, 0.4);
-                    } else {
-                      return errorWidget(context, 'Error Loading Data');
+                    }
+                    else if (imageSnapshot.connectionState == ConnectionState.waiting) {
+                      return ItemUtil().loadingWidget(context, 0.4);
+                    }
+                    else {
+                      return ItemUtil().errorWidget(context, 'Error Loading Data');
                     }
                   },
                 ),
@@ -410,98 +414,22 @@ class Cart extends StatelessWidget {
                 ),
 
                 //Delete
-                deleteItemButton(context, user, cartItemDocID, priceAfterDiscount, index)
+                ItemUtil().deleteItemButton(context, user, cartItemDocID, priceAfterDiscount, index)
               ],
             ),
           );
         }
         else if (productSnapshot.connectionState == ConnectionState.waiting) {
           //return loadingWidget(context, 0.4);
-          return shimmerLoading(context);
+          return ItemUtil().shimmerLoading(context);
         }
         else {
-          return errorWidget(context, 'Error Loading Data');
+          return ItemUtil().errorWidget(context, 'Error Loading Data');
         }
       },
     );
   }
 
-  Widget deleteItemButton(BuildContext context, final user, String? cartItemDocID,
-      double? priceAfterDiscount, int? index) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 10),
-      child: GestureDetector(
-        onTap: () {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                title: const Text('Please Confirm'),
-                content: const Text(
-                    'Are you sure you want to delete this item?'),
-                actions: [
-                  // The "Yes" button
-                  TextButton(
-                      onPressed: () {
-                        if(user != null){
-                          CartViewModel().deleteDocument(
-                              context, cartItemDocID!, priceAfterDiscount, index!
-                          );
-                        }
-
-                        BlocProvider.of<CartBloc>(context).add(DeleteItemEvent(index: index!));
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text('Yes')),
-                  TextButton(
-                      onPressed: () {
-                        // Close the dialog
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text('No'))
-                ],
-              );
-            },
-          );
-        },
-        child: const SizedBox(
-          child: Icon(
-            Icons.delete_forever,
-            color: Colors.red,
-          ),
-        ),
-      ),
-    );
-  }
-
-
-  Widget cartItemNotAvailableWidget(BuildContext context, String cartItemDocID, double? price, int index) {
-
-    final user = FirebaseAuth.instance.currentUser;
-
-    return Card(
-      elevation: 0,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          //Checkbox
-          Checkbox(
-            value: false,
-            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15)),
-            onChanged: (value) {},
-          ),
-
-          //Error Text
-          errorWidget(context, "Item Is Not Listed Anymore"),
-
-          //Delete
-          deleteItemButton(context, user, cartItemDocID, price, index)
-        ],
-      ),
-    );
-  }
 
   Widget numberOfItemsWidget(int number) {
     return Padding(
@@ -512,20 +440,6 @@ class Cart extends StatelessWidget {
             fontSize: 12,
             color: Colors.grey.shade700,
             fontWeight: FontWeight.w400),
-      ),
-    );
-  }
-
-  Widget containerWidget(double? width) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 5),
-      child: Container(
-        height: 10,
-        width: width,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: Colors.grey.shade200
-        ),
       ),
     );
   }
@@ -570,102 +484,6 @@ class Cart extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-
-
-  Widget shimmerLoading(BuildContext context) {
-    return Card(
-      elevation: 0,
-      child: Shimmer.fromColors(
-        baseColor: Colors.grey.shade200,
-        highlightColor: Colors.white,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            //Checkbox
-            Checkbox(
-              value: false,
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15)),
-              onChanged: (value) {},
-            ),
-
-            //Image
-            Padding(
-              padding: const EdgeInsets.only(right: 8, top: 5, bottom: 5),
-              child: Container(
-                width: 95,
-                height: 95, //137 127 120 124
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Colors.grey.shade200
-                ),
-              ),
-            ),
-
-            //Texts
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 5, bottom: 5),
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.55 -
-                      20, //200, 0.45
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      //Title
-                      containerWidget(null),
-
-                      //Price
-                      containerWidget(50),
-
-                      //Size
-                      containerWidget(90),
-
-                      //Variant
-                      containerWidget(100),
-
-                      //Quantity
-                      containerWidget(80),
-
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
-            //Delete
-            const Padding(
-              padding: EdgeInsets.only(right: 10),
-              child: SizedBox(
-                child: Icon(
-                  Icons.delete_forever,
-                  color: Colors.grey,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget loadingWidget(BuildContext context, double size) {
-    return Center(
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width * size,
-        height: 1,
-        child: const LinearProgressIndicator(),
-      ),
-    );
-  }
-
-  Widget errorWidget(BuildContext context, String text) {
-    return Center(
-      child: Text(text),
     );
   }
 }

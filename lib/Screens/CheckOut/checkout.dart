@@ -1,431 +1,346 @@
-import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:stormymart_v2/Screens/Profile/profile_accountinfo.dart';
-import 'package:get/get.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:stormymart_v2/Blocks/CheckOut%20Bloc/checkout_bloc.dart';
+import 'package:stormymart_v2/Blocks/CheckOut%20Bloc/checkout_events.dart';
+import 'package:stormymart_v2/Blocks/CheckOut%20Bloc/checkout_state.dart';
+import 'package:transparent_image/transparent_image.dart';
 
-// ignore: must_be_immutable
-class CheckOut extends StatefulWidget {
+import '../Cart/item_util.dart';
 
-  /*double usedCoins = 0.0;
-  double coinDiscount = 0.0;
-  String usedPromoCode = '';
-  double itemsTotal = 0.0;
-  double promoDiscount = 0.0;*/
-  List<String> productIds = [];
-  List<String> sizes = [];
-  List<String> variants = [];
-  List<int> quantities = [];
-
-  CheckOut({
-    super.key,
-    required this.productIds,
-    required this.sizes,
-    required this.variants,
-    required this.quantities
-  });
-
-  @override
-  State<CheckOut> createState() => _CheckOutState();
-}
-
-class _CheckOutState extends State<CheckOut> {
-
-  String randomID = '';
-  String randomOrderListDocID = '';
-  String? selectedAddress = '';
-  String selectedDivision = '';
-  bool isLoading = false;
-  Random random = Random();
-  int randomNumber = 0;
-  double total = 0.0;
-  double deliveryCharge = 0.0;
-  String phoneNumber = '';
-  double rewardCoin = 0.0;
-  double newTotalCoins = 0.0;
-
-  @override
-  void initState() {
-    fetchUserData();
-    super.initState();
-  }
-
-  void fetchUserData() async {
-    final userDataSnapshot = await FirebaseFirestore.instance
-        .collection('userData')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get();
-
-    if( userDataSnapshot.get('Address1')[1] == 'Dhaka' ||
-        userDataSnapshot.get('Address2')[1] == 'Dhaka'){
-      deliveryCharge = 50;
-    }else{
-      deliveryCharge = 100;
-    }
-  }
+class CheckOut extends StatelessWidget {
+  const CheckOut({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text(
-            'Checkout',
-          style: TextStyle(
+    final provider = BlocProvider.of<CheckoutBloc>(context);
+    final user = FirebaseAuth.instance.currentUser;
+
+    TextEditingController nameController = TextEditingController();
+    TextEditingController phnNumberController = TextEditingController();
+    TextEditingController addressController = TextEditingController();
+    TextEditingController divisionController = TextEditingController();
+
+    if(user != null) {
+      provider.add(LoadUserDataEvent(uid: user.uid));
+    }
+
+    return BlocConsumer<CheckoutBloc, CheckOutState>(
+      listener: (context, state) {},
+      builder: (context, state) {
+        nameController.text = state.userName;
+        phnNumberController.text = state.phoneNumber;
+        addressController.text = state.selectedAddress;
+        divisionController.text = state.selectedDivision;
+
+        return Scaffold(
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            centerTitle: true,
+            title: const Text(
+              'Checkout',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold
+              ),
+            ),
+          ),
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  titlesWidget('Contact Info'),
+
+                  textBox(nameController, "Full Name", const Icon(Icons.abc)),
+
+                  textBox(phnNumberController, "Phone Number", const Icon(Icons.onetwothree)),
+
+                  titlesWidget('Shipping Info'),
+
+                  textBox(addressController, "Address", const Icon(Icons.location_on_rounded)),
+
+                  divisionPicker(context, divisionController),
+
+                  estimatedDelivery(),
+
+                  itemsWidget(state),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget titlesWidget(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20),
+      child: Text(
+        text,
+        style: const TextStyle(
+            fontSize: 17,
             fontWeight: FontWeight.bold
-          ),
         ),
-        leading: GestureDetector(
-          onTap: (){
-            /*Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const Cart(),)
-            );*/
-            Navigator.of(context).pop();
-          },
-          child: const Icon(
-              Icons.arrow_back_ios_new_rounded
-          ),
-        ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
       ),
-      body: SingleChildScrollView(
+    );
+  }
+
+  Widget textBox(TextEditingController controller, String hintText, Icon prefixIcon) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 15),
+      child: SizedBox(
+        height: 37,
+        child: TextField(
+          controller: controller,
+          style: const TextStyle(
+            fontSize: 16,
+          ),
+          cursorColor: Colors.green,
+          decoration: InputDecoration(
+            isDense: true,
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(5),
+              borderSide: const BorderSide(color: Colors.grey),
+            ),
+            focusedBorder: const OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.green),
+            ),
+            hintText: hintText,
+            hintStyle: const TextStyle(
+                fontSize: 13,
+                color: Colors.grey
+            ),
+            prefixIcon: prefixIcon,
+            //labelText: "Semester",
+          ),
+        ),
+      ),
+    );
+  }
+  
+  Widget divisionPicker(BuildContext context, TextEditingController divisionController) {
+    final provider = BlocProvider.of<CheckoutBloc>(context);
+    
+    return Padding(
+      padding: const EdgeInsets.only(top: 15),
+      child: Container(
+        decoration: BoxDecoration(
+            border: Border.all(
+                color: Colors.grey,
+                width: 1
+            ),
+            borderRadius: BorderRadius.circular(5)
+        ),
         child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: FutureBuilder(
-            future: FirebaseFirestore
-                .instance
-                .collection('userData')
-                .doc(FirebaseAuth.instance.currentUser!.uid)
+          padding: const EdgeInsets.all(5),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              value: divisionController.text != "" ? divisionController.text : "Dhaka",
+              hint: const Text('Select City'),
+              isDense: true,
+              iconSize: 0,
+              focusColor: Colors.white,
+              onChanged: (String? newValue) {
+                provider.add(ChangeDivisionEvent(selectedDivision: newValue!));
+              },
+              items: <String>[
+                'Dhaka', 'Barisal', 'Chittagong', 'Khulna',
+                'Mymensingh', 'Rajshahi', 'Rangpur', 'Sylhet']
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              })
+                  .toList(),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget estimatedDelivery() {
+    return const Padding(
+      padding: EdgeInsets.only(top: 15),
+      child: Text.rich(
+          TextSpan(
+              text: 'You will get the delivery ',
+              children: <InlineSpan>[
+                TextSpan(
+                  text: 'within 2-3 Days ',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                TextSpan(
+                  text: 'after confirmation.',
+                ),
+              ]
+          )
+      ),
+    );
+  }
+
+  Widget itemsWidget(CheckOutState state) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 10),
+      child: ListView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: state.idList.length,
+        itemBuilder: (context, index) {
+          final String productId = state.idList[index];
+
+          return FutureBuilder(
+            future: FirebaseFirestore.instance
+                .collection('/Products')
+                .doc(productId.trim())
                 .get(),
-            builder: (context, snapshot) {
-              if(snapshot.hasData){
-                if(selectedAddress == ''){
-                  selectedAddress = snapshot.data!.get('Address1')[0];
-                  selectedDivision = snapshot.data!.get('Address1')[1];
-                }
-                phoneNumber = snapshot.data!.get('Phone Number');
-                return Column(
-                  children: [
-                    //Card 1
-                    SizedBox(
-                      width: double.infinity,
-                      child: Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(15),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              //Deliver to
-                              const Text(
-                                'Deliver to: ',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Urbanist'
-                                ),
-                              ),
-                              const SizedBox(height: 10,),
+            builder: (context, productSnapshot) {
+              if (productSnapshot.hasData) {
 
-                              //name
-                              Text(
-                                'Name : ${snapshot.data!.get('name')}',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontFamily: 'Urbanist',
-                                    overflow: TextOverflow.ellipsis
-                                ),
-                              ),
-                              const SizedBox(height: 5,),
-                              //phone
-                              Text(
-                                'Phone Number : ${snapshot.data!.get('Phone Number')}',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontFamily: 'Urbanist',
-                                    overflow: TextOverflow.ellipsis
-                                ),
-                              ),
-                              const SizedBox(height: 5,),
-                              //email
-                              Text(
-                                'E-mail : ${snapshot.data!.get('Email')}',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontFamily: 'Urbanist',
-                                    overflow: TextOverflow.ellipsis
-                                ),
-                              ),
-                              const SizedBox(height: 5,),
-                              //address
-                              const Text(
-                                'Select Address',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontFamily: 'Urbanist',
-                                    overflow: TextOverflow.ellipsis
-                                ),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 15),
-                                child: DropdownButton<String>(
-                                  value: selectedAddress ?? 'no address found',
-                                  icon: const Icon(Icons.arrow_drop_down),
-                                  iconSize: 25,
-                                  elevation: 16,
-                                  isExpanded: true,
-                                  autofocus: true,
-                                  style: TextStyle(
-                                    color: selectedAddress == 'Address1 Not Found' || selectedAddress == 'Address2 Not Found'
-                                        ? Colors.red
-                                        : Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  underline: const SizedBox(),
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      selectedAddress = newValue!;
-                                    });
-                                  },
-                                  items: <String>[
-                                    snapshot.data!.get('Address1')[0] ?? 'Address1 Not Found',
-                                    snapshot.data!.get('Address2')[0] ?? 'Address2 Not Found',
-                                  ].map<DropdownMenuItem<String>>((String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(value),
-                                    );
-                                  }).toList(),
-                                ),
-                              ),
-                              const SizedBox(height: 10,),
+                double priceAfterDiscount =
+                    (productSnapshot.data!.get('price') / 100) * (100 - productSnapshot.data!.get('discount'));
 
-                              GestureDetector(
-                                onTap: () {
-                                  /*Navigator.of(context).push(
-                                    MaterialPageRoute(builder: (context) => const AccountInfo(),)
-                                  );*/
-                                  Get.to(
-                                    const AccountInfo(),
-                                    transition: Transition.fade,
-                                  );
-                                },
+                return Card(
+                  elevation: 0,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      //Image
+                      FutureBuilder(
+                        future: FirebaseFirestore.instance
+                            .collection('/Products/$productId/Variations')
+                            .doc(state.variantList[index])
+                            .get(),
+                        builder: (context, imageSnapshot) {
+                          if (imageSnapshot.hasData) {
+                            return GestureDetector(
+                              onTap: () {
+                                GoRouter.of(context).go('/product/${state.idList[index]}');
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 8, top: 5, bottom: 5),
                                 child: Container(
+                                  width: 65,
+                                  height: 65, //137 127 120 124
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8),
-                                    color: phoneNumber == '' || selectedAddress == '' ?
-                                    Colors.red.withOpacity(0.15)
-                                        :
-                                    Colors.greenAccent.withOpacity(0.15)
+                                      borderRadius: BorderRadius.circular(20)),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: FadeInImage.memoryNetwork(
+                                      image: imageSnapshot.data!.get('images')[0],
+                                      placeholder: kTransparentImage,
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
-                                  width: double.infinity,
-                                  child: const Padding(
-                                    padding: EdgeInsets.all(10),
-                                    child: Text(
-                                      'Click Here To Edit Details',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontFamily: 'Urbanist',
+                                ),
+                              ),
+                            );
+                          }
+                          else if (imageSnapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return ItemUtil().loadingWidget(context, 0.4);
+                          }
+                          else {
+                            return ItemUtil().errorWidget(context, 'Error Loading Data');
+                          }
+                        },
+                      ),
+
+                      //Texts
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 5, bottom: 5),
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.55 -
+                                20, //200, 0.45
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                //Title
+                                Text(
+                                  productSnapshot.data!.get('title'),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+
+                                //Quantity
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        //Size
+                                        Text(
+                                          'Size: ${state.sizeList[index]}',
+                                          style: const TextStyle(
+                                              fontSize: 11,
+                                              color: Colors.black54,
+                                              overflow: TextOverflow.ellipsis),
+                                        ),
+
+                                        //Variant
+                                        Text(
+                                          'Variant: ${state.variantList[index]}',
                                           overflow: TextOverflow.ellipsis,
-                                        color: Colors.blueGrey,
+                                          style: const TextStyle(
+                                              fontSize: 11, color: Colors.black54),
+                                        ),
+
+                                        //Quantity
+                                        Text(
+                                          'Quantity: ${state.quantityList[index]}',
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                              fontSize: 11, color: Colors.black54),
+                                        ),
+                                      ],
+                                    ),
+
+                                    //Price
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 20),
+                                      child: Text(
+                                        '৳ ${priceAfterDiscount * state.quantityList[index]}',
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontSize: 17,
+                                            color: Colors.purple,
+                                            fontWeight: FontWeight.bold),
                                       ),
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              )
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    //Card 2
-                    SizedBox(
-                      width: double.infinity,
-                      child: Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(15),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              //order summary
-                              const Text(
-                                'Order Summary ',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Urbanist'
-                                ),
-                              ),
-                              const SizedBox(height: 10,),
-
-                              //used coins
-                              const Text(
-                                "Coin",//'Coin Discount (${widget.usedCoins}) : ${widget.coinDiscount}',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontFamily: 'Urbanist',
-                                    overflow: TextOverflow.ellipsis
-                                ),
-                              ),
-                              const SizedBox(height: 5,),
-
-                              //promo
-                              const Text(
-                                "Promo",//'Promo Discount ( ${widget.usedPromoCode} ) : ${widget.promoDiscount}',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontFamily: 'Urbanist',
-                                    overflow: TextOverflow.ellipsis
-                                ),
-                              ),
-                              const SizedBox(height: 5,),
-
-                              //Delivery Charge
-                              Text(
-                                'Delivery Charge ( $selectedDivision ) : $deliveryCharge',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontFamily: 'Urbanist',
-                                    overflow: TextOverflow.ellipsis
-                                ),
-                              ),
-                              const SizedBox(height: 5,),
-
-                              //total
-                              Text(
-                                'Total Payable Amount : $total',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w800,
-                                    fontFamily: 'Urbanist',
-                                    color: Colors.green,
-                                    overflow: TextOverflow.ellipsis
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    //Place Order Button
-                    AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 300),
-                      child: isLoading ?
-                      Center(
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width*0.4,
-                          child: const Column(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.all(13.5),
-                                child: Text(
-                                  'Placing Order',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: 'Urbanist',
-                                      fontSize: 17
-                                  ),
-                                ),
-                              ),
-                              LinearProgressIndicator()
-                            ],
-                          ),
-                        ),
-                      ) :
-                      Padding(
-                        padding: const EdgeInsets.only(top: 15),
-                        child: SizedBox(
-                            width: double.infinity,
-                            child: Center(
-                              child: SizedBox(
-                                height: 50,
-                                width: double.infinity,
-                                child: ElevatedButton(
-                                  onPressed: (){
-
-                                    setState(() {
-                                      isLoading = true;
-                                    });
-
-                                    if(selectedAddress == 'Address1 Not Found' || selectedAddress == 'Address2 Not Found'){
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                          const SnackBar(
-                                              content: Text('Please add at least 1 address')
-                                          )
-                                      );
-                                      setState(() {
-                                        isLoading = false;
-                                      });
-                                    }
-                                    else if(phoneNumber ==  ''){
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                          const SnackBar(
-                                              content: Text('Please add a Phone Number')
-                                          )
-                                      );
-                                      setState(() {
-                                        isLoading = false;
-                                      });
-                                    }
-                                    else{
-                                      //fetchCartItemsAndPlaceOrder();
-
-                                      /*sendNotification();
-
-                                      setState(() {
-                                        isLoading = false;
-
-                                        if(isLoading == false){
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                              const SnackBar(
-                                                  content: Text('Congratulations 🎉, Your Order has been Placed.')
-                                              )
-                                          );
-
-                                          Get.to(
-                                            ShowRewardCoinScreen(
-                                                rewardCoins: rewardCoin,
-                                              newCoinBalance: newTotalCoins,
-                                            ),
-                                            transition: Transition.fade
-                                          );
-                                        }
-                                      });*/
-                                    }
-                                  },
-                                  style: const ButtonStyle(
-                                      backgroundColor: MaterialStatePropertyAll(Colors.green)
-                                  ),
-                                  child: const Text(
-                                    'Place Order',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            )
-                        ),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 );
               }
-              else if(snapshot.connectionState == ConnectionState.waiting){
-                return const Center(child: LinearProgressIndicator(),);
+              else if (productSnapshot.connectionState == ConnectionState.waiting) {
+                //return loadingWidget(context, 0.4);
+                return ItemUtil().shimmerLoading(context);
               }
               else {
-                return const Center(child: Text(
-                  'Error Loading Data: ',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Urbanist'
-                  ),
-                ),);
+                return ItemUtil().errorWidget(context, 'Error Loading Data');
               }
             },
-          ),
-        ),
+          );
+        },
       ),
     );
   }
