@@ -34,14 +34,33 @@ class CheckoutBloc extends Bloc<CheckOutEvents, CheckOutState> {
   }
 
   CheckOutState _transferData(CheckOutState currentState, TransferDataEvent event) {
-    // Assuming CartState and CheckOutState have similar structure
-    // Modify this according to your actual implementation
+    // Extracting the checklist from the event
+    List<bool> checkList = event.cartState.checkList;
+
+    // Filtering data based on the checklist
+    List<String> filteredIdList = [];
+    List<double> filteredPriceList = [];
+    List<String> filteredSizeList = [];
+    List<String> filteredVariantList = [];
+    List<int> filteredQuantityList = [];
+
+    for (int i = 0; i < checkList.length; i++) {
+      if (checkList[i]) {
+        filteredIdList.add(event.cartState.idList[i]);
+        filteredPriceList.add(event.cartState.priceList[i]);
+        filteredSizeList.add(event.cartState.sizeList[i]);
+        filteredVariantList.add(event.cartState.variantList[i]);
+        filteredQuantityList.add(event.cartState.quantityList[i]);
+      }
+    }
+
+    // Creating a new state with the filtered lists
     return currentState.copyWith(
-      idList: event.cartState.idList,
-      priceList: event.cartState.priceList,
-      sizeList: event.cartState.sizeList,
-      variantList: event.cartState.variantList,
-      quantityList: event.cartState.quantityList,
+      idList: filteredIdList,
+      priceList: filteredPriceList,
+      sizeList: filteredSizeList,
+      variantList: filteredVariantList,
+      quantityList: filteredQuantityList,
     );
   }
 
