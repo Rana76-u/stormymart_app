@@ -215,7 +215,7 @@ class HomePage extends StatelessWidget {
 
             //update code
             const Text(
-              '   update 5',
+              '   update 6',
               style: TextStyle(
                   fontSize: 14,
                 color: Colors.grey
@@ -224,17 +224,6 @@ class HomePage extends StatelessWidget {
             ),
 
             const Expanded(child: SizedBox()),
-
-            //Checkout icon
-            GestureDetector(
-              onTap: () {
-                GoRouter.of(context).go('/checkout');
-              },
-              child: const Icon(
-                Icons.check_outlined,
-                size: 20,
-              ),
-            ),
 
             //Search icon
             GestureDetector(

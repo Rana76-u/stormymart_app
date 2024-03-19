@@ -11,10 +11,22 @@ class CheckoutBloc extends Bloc<CheckOutEvents, CheckOutState> {
     sizeList: [],
     variantList: [],
     quantityList: [],
+
     userName: '',
     phoneNumber: '',
     selectedAddress: '',
     selectedDivision: '',
+
+    isPromoCodeFound: true,
+    promoDiscountAmount: 0,
+    
+    isUsingCoin: false,
+    coinAmount: 0,
+
+    itemTotal: 0,
+    total: 0,
+
+    isLoading: true
   )) {
     on<CheckOutEvents>((event, emit) async {
       CheckOutState newState = state;
@@ -27,6 +39,38 @@ class CheckoutBloc extends Bloc<CheckOutEvents, CheckOutState> {
       }
       else if(event is ChangeDivisionEvent){
         newState = _changeDivision(newState, event);
+      }
+      else if (event is IsPromoCodeFound) {
+        newState = _changeIsPromoCodeFound(state, event);
+      }
+      else if (event is UpdateIsUsingCoinEvent) {
+        newState = _updateIsUsingCoinEvent(state, event);
+      }
+      else if (event is UpdateIsLoading) {
+        newState = _updateIsLoading(state, event);
+      }
+      else if(event is UpdateTotal){
+        newState = _changeTotal(state, event);
+      }
+      else if (event is ResetCheckoutEvent) {
+        newState = CheckOutState(
+          idList: [],
+          priceList: [],
+          sizeList: [],
+          variantList: [],
+          quantityList: [],
+          userName: '',
+          phoneNumber: '',
+          selectedAddress: '',
+          selectedDivision: '',
+          isPromoCodeFound: true,
+          promoDiscountAmount: 0,
+          isUsingCoin: false,
+          coinAmount: 0,
+          itemTotal: 0,
+          total: 0,
+          isLoading: true
+        );
       }
 
       emit(newState);
@@ -44,6 +88,7 @@ class CheckoutBloc extends Bloc<CheckOutEvents, CheckOutState> {
     List<String> filteredVariantList = [];
     List<int> filteredQuantityList = [];
 
+    double total = 0;
     for (int i = 0; i < checkList.length; i++) {
       if (checkList[i]) {
         filteredIdList.add(event.cartState.idList[i]);
@@ -51,6 +96,8 @@ class CheckoutBloc extends Bloc<CheckOutEvents, CheckOutState> {
         filteredSizeList.add(event.cartState.sizeList[i]);
         filteredVariantList.add(event.cartState.variantList[i]);
         filteredQuantityList.add(event.cartState.quantityList[i]);
+
+        total = total + (event.cartState.priceList[i] * event.cartState.quantityList[i]);
       }
     }
 
@@ -61,9 +108,10 @@ class CheckoutBloc extends Bloc<CheckOutEvents, CheckOutState> {
       sizeList: filteredSizeList,
       variantList: filteredVariantList,
       quantityList: filteredQuantityList,
+      itemTotal: total,
+      total: total + 70
     );
   }
-
 
   Future<CheckOutState> _loadUserData(CheckOutState state, LoadUserDataEvent event) async {
     DocumentSnapshot snapshot = await FirebaseFirestore.instance
@@ -75,13 +123,41 @@ class CheckoutBloc extends Bloc<CheckOutEvents, CheckOutState> {
       userName: snapshot.get('name'),
       phoneNumber: snapshot.get('Phone Number'),
       selectedAddress: snapshot.get('Address1')[0],
-      selectedDivision: snapshot.get('Address1')[1]
+      selectedDivision: snapshot.get('Address1')[1],
+      coinAmount: snapshot.get('coins'),
+      isLoading: false
     );
   }
 
   CheckOutState _changeDivision(CheckOutState state, ChangeDivisionEvent event) {
     return state.copyWith(
       selectedDivision: event.selectedDivision
+    );
+  }
+
+  CheckOutState _changeIsPromoCodeFound(CheckOutState state, IsPromoCodeFound event) {
+    return state.copyWith(
+        isPromoCodeFound: event.isPromoCodeFound,
+      promoDiscountAmount: event.promoDiscountAmount
+    );
+  }
+
+  CheckOutState _updateIsUsingCoinEvent(CheckOutState state, UpdateIsUsingCoinEvent event) {
+    return state.copyWith(
+        isUsingCoin: event.isUsingCoin
+    );
+  }
+
+  CheckOutState _updateIsLoading(CheckOutState state, UpdateIsLoading event) {
+    return state.copyWith(
+        isLoading: event.isLoading
+    );
+  }
+
+
+  CheckOutState _changeTotal(CheckOutState state, UpdateTotal event) {
+    return state.copyWith(
+        total: event.total
     );
   }
 }

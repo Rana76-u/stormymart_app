@@ -14,8 +14,38 @@ class LoadUserDataEvent extends CheckOutEvents {
   LoadUserDataEvent({required this.uid});
 }
 
+
 class ChangeDivisionEvent extends CheckOutEvents {
   final String selectedDivision;
 
   ChangeDivisionEvent({required this.selectedDivision});
 }
+
+class IsPromoCodeFound extends CheckOutEvents {
+  final bool isPromoCodeFound;
+  final double promoDiscountAmount;
+
+  IsPromoCodeFound({required this.isPromoCodeFound, required this.promoDiscountAmount});
+}
+
+
+class UpdateIsUsingCoinEvent extends CheckOutEvents {
+  final bool isUsingCoin;
+
+  UpdateIsUsingCoinEvent({required this.isUsingCoin});
+}
+
+class UpdateIsLoading extends CheckOutEvents {
+  final bool isLoading;
+
+  UpdateIsLoading({required this.isLoading});
+}
+
+
+class UpdateTotal extends CheckOutEvents {
+  final double total;
+
+  UpdateTotal({required this.total});
+}
+
+class ResetCheckoutEvent extends CheckOutEvents {}

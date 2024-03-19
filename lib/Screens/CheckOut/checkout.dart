@@ -6,8 +6,8 @@ import 'package:go_router/go_router.dart';
 import 'package:stormymart_v2/Blocks/CheckOut%20Bloc/checkout_bloc.dart';
 import 'package:stormymart_v2/Blocks/CheckOut%20Bloc/checkout_events.dart';
 import 'package:stormymart_v2/Blocks/CheckOut%20Bloc/checkout_state.dart';
+import 'package:stormymart_v2/ViewModels/checkout_viewmodel.dart';
 import 'package:transparent_image/transparent_image.dart';
-
 import '../Cart/item_util.dart';
 
 class CheckOut extends StatelessWidget {
@@ -22,6 +22,7 @@ class CheckOut extends StatelessWidget {
     TextEditingController phnNumberController = TextEditingController();
     TextEditingController addressController = TextEditingController();
     TextEditingController divisionController = TextEditingController();
+    TextEditingController promoCodeController = TextEditingController();
 
     if(user != null) {
       provider.add(LoadUserDataEvent(uid: user.uid));
@@ -46,7 +47,14 @@ class CheckOut extends StatelessWidget {
               ),
             ),
           ),
-          body: SingleChildScrollView(
+          body: state.isLoading ?
+          Center(
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width*0.45,
+              child: const LinearProgressIndicator(),
+            ),
+          ) :
+          SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Column(
@@ -54,19 +62,43 @@ class CheckOut extends StatelessWidget {
                 children: [
                   titlesWidget('Contact Info'),
 
-                  textBox(nameController, "Full Name", const Icon(Icons.abc)),
+                  textBox(37, double.infinity, nameController, "Full Name", const Icon(Icons.abc)),
 
-                  textBox(phnNumberController, "Phone Number", const Icon(Icons.onetwothree)),
+                  textBox(37, double.infinity, phnNumberController, "Phone Number", const Icon(Icons.onetwothree)),
 
                   titlesWidget('Shipping Info'),
 
-                  textBox(addressController, "Address", const Icon(Icons.location_on_rounded)),
+                  textBox(37, double.infinity, addressController, "Address", const Icon(Icons.location_on_rounded)),
 
                   divisionPicker(context, divisionController),
 
                   estimatedDelivery(),
 
                   itemsWidget(state),
+
+                  Divider(color: Colors.grey.shade300,),
+
+                  promoWidget(context, state, promoCodeController),
+
+                  coinWidget(context, state),
+
+                  Divider(color: Colors.grey.shade300,),
+
+                  titlesWidget('Order Summary'),
+                  orderSummaryText('Items Total', '৳ ${state.itemTotal}'),
+                  orderSummaryText('Delivery Fee', '৳ 70/-'),
+                  orderSummaryText('Promo Discount', '-৳ ${state.promoDiscountAmount}'),
+                  Visibility(
+                    visible: state.isUsingCoin ? true : false,
+                    child: orderSummaryText('Coin Discount', '-৳ ${state.coinAmount / 1000}'),
+                  ),
+
+                  titlesWidget('Total : ৳ ${state.total}'),
+
+                  const SizedBox(height: 30,),
+
+                  buttonWidget(48, double.infinity, Colors.green, 'Place Order',
+                          () => CheckOutViewModel().placeOrder(context, promoCodeController.text))
                 ],
               ),
             ),
@@ -89,11 +121,12 @@ class CheckOut extends StatelessWidget {
     );
   }
 
-  Widget textBox(TextEditingController controller, String hintText, Icon prefixIcon) {
+  Widget textBox(double height, double width, TextEditingController controller, String hintText, Icon prefixIcon) {
     return Padding(
       padding: const EdgeInsets.only(top: 15),
       child: SizedBox(
-        height: 37,
+        height: height,
+        width: width,
         child: TextField(
           controller: controller,
           style: const TextStyle(
@@ -117,6 +150,36 @@ class CheckOut extends StatelessWidget {
             prefixIcon: prefixIcon,
             //labelText: "Semester",
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget buttonWidget(double height, double width, Color bgColor, String text, VoidCallback voidCallback) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 5),
+      child: SizedBox(
+        height: height,
+        width: width,
+        child: ElevatedButton(
+            onPressed: () {
+              voidCallback();
+            },
+            style: ButtonStyle(
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    )
+                ),
+                backgroundColor: MaterialStateColor.resolveWith((states) => bgColor)
+            ),
+            child: Text(
+              text,
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold
+              ),
+            )
         ),
       ),
     );
@@ -342,6 +405,84 @@ class CheckOut extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+
+  Widget promoWidget(BuildContext context, CheckOutState state, TextEditingController promoCodeController) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            textBox(
+                60, MediaQuery.of(context).size.width*0.7,
+                promoCodeController, 'Enter Promo Code',
+                const Icon(Icons.sell_rounded)
+            ),
+            buttonWidget(
+                48, MediaQuery.of(context).size.width*0.3 - 25, Colors.green, 'Apply',
+                    () => CheckOutViewModel().promoCodeOnTapFunctions(context, promoCodeController.text)),
+          ],
+        ),
+
+        Visibility(
+          visible: state.isPromoCodeFound ? false : true,
+          child: const Text(
+            'Sorry, this promo code is not valid.',
+            style: TextStyle(
+              color: Colors.red
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget coinWidget(BuildContext context, CheckOutState state) {
+    final provider = BlocProvider.of<CheckoutBloc>(context);
+    double coinDiscountAmount = state.coinAmount / 1000;
+
+    return Row(
+      children: [
+        const Text(
+          '🪙 Use Coins',
+          style: TextStyle(
+              fontWeight: FontWeight.bold
+          ),
+        ),
+        const Expanded(child: SizedBox()),
+        Text(
+          '-৳ $coinDiscountAmount',
+        ),
+        Checkbox(
+          value: state.isUsingCoin,
+          onChanged: (value) {
+            //means already using coins, now it's going to changed to no using. So, we have to increase the total
+            if(state.isUsingCoin){
+              provider.add(UpdateTotal(total: state.total + coinDiscountAmount));
+            }
+            //means not using coins, now it's going to changed to using. So, we have to decrease the total
+            else {
+              provider.add(UpdateTotal(total: state.total - coinDiscountAmount));
+            }
+            provider.add(UpdateIsUsingCoinEvent(isUsingCoin: !state.isUsingCoin));
+          },
+        )
+      ],
+    );
+  }
+
+  Widget orderSummaryText(String text1, String text2) {
+    return Row(
+      children: [
+        Text(
+          text1,
+        ),
+        const Expanded(child: SizedBox()),
+        Text(
+          text2,
+        ),
+      ],
     );
   }
 }

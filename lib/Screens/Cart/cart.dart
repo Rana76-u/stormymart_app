@@ -86,6 +86,7 @@ class Cart extends StatelessWidget {
 
               FloatingActionButton.extended(
                 onPressed: () {
+                  BlocProvider.of<CheckoutBloc>(context).add(ResetCheckoutEvent());
                   BlocProvider.of<CheckoutBloc>(context).add(TransferDataEvent(state));
                   GoRouter.of(context).go('/checkout');
                 },

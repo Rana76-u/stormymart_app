@@ -1,7 +1,14 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:stormymart_v2/Blocks/CheckOut%20Bloc/checkout_bloc.dart';
+import 'package:stormymart_v2/Blocks/CheckOut%20Bloc/checkout_state.dart';
 
+import '../Blocks/CheckOut Bloc/checkout_events.dart';
 import '../Components/notification_sender.dart';
 
 class CheckOutViewModel {
@@ -18,137 +25,37 @@ class CheckOutViewModel {
     return randomID;
   }
 
-  /*Future<void> fetchCartItemsAndPlaceOrder(
-      String usedPromoCode, double usedCoins, double total,
-      String selectedAddress, String selectedDivision) async {
-
-    String randomID = await generateRandomID();
-
-    final cartSnapshot = await FirebaseFirestore.instance
-        .collection('userData')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .collection('Cart')
-        .get();
-
-    //Enable Order Collection
-    await FirebaseFirestore
+  void getPromoDiscountMoney(BuildContext context, String promoCode) async {
+    final provider = BlocProvider.of<CheckoutBloc>(context);
+    final checkoutState = provider.state;
+    final promoSnapshot = await FirebaseFirestore
         .instance
-        .collection('Orders')
-        .doc(FirebaseAuth.instance.currentUser!.uid).set({
-      'enable': true
-    });
+        .collection('Promo Codes')
+        .doc(promoCode).get();
 
-    //Order necessary details
-    await FirebaseFirestore
-        .instance
-        .collection('Orders')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .collection('Pending Orders').doc(randomID).set({
-      'usedPromoCode': usedPromoCode,
-      'usedCoin': usedCoins,
-      'total' : total,
-      'deliveryLocation': '$selectedAddress, $selectedDivision',
-      'time' : FieldValue.serverTimestamp(),
-    });
+    double promoDiscount = promoSnapshot['discount'].toDouble();
+    double promoDiscountAmount = ( checkoutState.total / 100) * promoDiscount;
 
-    //Each Order Details
-    for (var doc in cartSnapshot.docs) {
-      //For every Cart item
-      String randomOrderListDocID = await generateRandomID();
-      // add them into Order list
-      await FirebaseFirestore
-          .instance
-          .collection('Orders')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .collection('Pending Orders').doc(randomID).collection('orderLists').doc(randomOrderListDocID).set({
-        'productId' : doc['id'],
-        'quantity' : doc['quantity'],
-        'selectedSize' : doc['selectedSize'],
-        'variant' : doc['variant'],
-      });
+    double total = checkoutState.total - promoDiscountAmount;
+    provider.add(IsPromoCodeFound(isPromoCodeFound: true, promoDiscountAmount: promoDiscountAmount));
+    provider.add(UpdateTotal(total: total));
+  }
 
-      //For MultiVendor
-      //At shop location save the reference
-      // Reference to the orderLists document
-      *//*DocumentReference orderListsReference = FirebaseFirestore.instance
-          .collection('Orders')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .collection('Pending Orders')
-          .doc(randomID)
-          .collection('orderLists')
-          .doc(randomOrderListDocID);
+  void promoCodeOnTapFunctions(BuildContext context, String promoCode) async {
+    final provider = BlocProvider.of<CheckoutBloc>(context);
 
-      // Update the '/Admin Panel' document with the reference value
-      await FirebaseFirestore.instance
-          .collection('/Admin Panel')
-          .doc(doc['Shop ID'])
-          .set({
-        'Pending Orders': FieldValue.arrayUnion([orderListsReference])
-      }, SetOptions(merge: true));*//*
-
-      //Then Delete added item from cart
-      await FirebaseFirestore.instance
-          .collection('userData')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .collection('Cart')
-          .doc(doc.id).delete();
-    }
-
-    double previousCoins = 0.0;
-    double remainingCoins = 0.0;
-
-    if(usedCoins != 0){
-      //Decrease Coin Value
-      DocumentSnapshot snapshot = await FirebaseFirestore.instance
-          .collection('userData')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .get();
-      previousCoins = snapshot.get('coins').toDouble();
-
-      setState(() {
-        remainingCoins = previousCoins - usedCoins;
-
-        rewardCoin =  (total / 100) * 1000;
-
-        //newTotalCoins = remainingCoins + rewardCoin;
-      });
-
-      //update new Coin Value
-      await FirebaseFirestore.instance
-          .collection('userData')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .update({
-        'coins' : remainingCoins
-      });
-    }
-
-    await sendNotification();
-
-    setState(() {
-      isLoading = false;
-
-      if(isLoading == false){
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-                content: Text('Congratulations 🎉, Your Order has been Placed.')
-            )
-        );
-
-        if(widget.usedCoins != 0){
-          Get.to(
-              ShowRewardCoinScreen(
-                rewardCoins: rewardCoin,
-                newCoinBalance: remainingCoins,//newTotalCoins
-              ),
-              transition: Transition.fade
-          );
-        }
-        else{
-          GoRouter.of(context).go('/');
-        }
+    await FirebaseFirestore.instance
+        .collection('Promo Codes')
+        .where(FieldPath.documentId, isEqualTo: promoCode)
+        .get()
+        .then((querySnapshot) async {
+      if (querySnapshot.size > 0) {
+        getPromoDiscountMoney(context, promoCode);
+      } else {
+        provider.add(IsPromoCodeFound(isPromoCodeFound: false, promoDiscountAmount: 0));
       }
     });
-  }*/
+  }
 
   Future<void> sendNotification() async {
 
@@ -173,6 +80,107 @@ class CheckOutViewModel {
         );
       }
     }
+  }
+
+  Future<void> placeOrder(BuildContext context, String usedPromoCode) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final router = GoRouter.of(context);
+    final provider = BlocProvider.of<CheckoutBloc>(context);
+
+    provider.add(UpdateIsLoading(isLoading: true));
+
+    String randomID = await generateRandomID();
+
+    await enableOrderCollection();
+
+    await orderDetails(usedPromoCode, randomID, provider);
+
+    await orderItems(provider.state, randomID);
+
+    await resetCoins(provider.state);
+
+    await sendNotification();
+
+    provider.add(UpdateIsLoading(isLoading: false));
+
+    showOrderConfirmationMessage(messenger);
+
+    navigateToHomePage(router);
+  }
+
+  Future<void> enableOrderCollection() async {
+    await FirebaseFirestore.instance
+        .collection('Orders')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .set({'enable': true});
+  }
+
+  Future<void> orderDetails(
+      String usedPromoCode, String randomID, CheckoutBloc provider) async {
+    var state = provider.state;
+    await FirebaseFirestore.instance
+        .collection('Orders')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection('Pending Orders')
+        .doc(randomID)
+        .set({
+      'usedPromoCode': usedPromoCode,
+      'usedCoin': state.coinAmount,
+      'total': state.total,
+      'deliveryLocation': '${state.selectedAddress}, ${state.selectedDivision}',
+      'time': FieldValue.serverTimestamp(),
+    });
+  }
+
+  Future<void> orderItems(CheckOutState state, String randomID) async {
+    for (int index = 0; index < state.idList.length; index++) {
+      String randomOrderListDocID = await generateRandomID();
+      await FirebaseFirestore.instance
+          .collection('Orders')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection('Pending Orders')
+          .doc(randomID)
+          .collection('orderLists')
+          .doc(randomOrderListDocID)
+          .set({
+        'productId': state.idList[index],
+        'quantity': state.quantityList[index],
+        'selectedSize': state.sizeList[index],
+        'variant': state.variantList[index],
+      });
+
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('userData')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection('Cart')
+          .where('id', isEqualTo: state.idList[index])
+          .where('quantity', isEqualTo: state.quantityList[index])
+          .where('variant', isEqualTo: state.variantList[index])
+          .get();
+
+      for (var doc in querySnapshot.docs) {
+        doc.reference.delete();
+      }
+    }
+  }
+
+  Future<void> resetCoins(CheckOutState state) async {
+    if (state.isUsingCoin) {
+      await FirebaseFirestore.instance
+          .collection('userData')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({'coins': 0});
+    }
+  }
+
+  void showOrderConfirmationMessage(ScaffoldMessengerState messenger) {
+    messenger.showSnackBar(const SnackBar(
+      content: Text('Congratulations 🎉, Your Order has been Placed.'),
+    ));
+  }
+
+  void navigateToHomePage(GoRouter router) {
+    router.go('/');
   }
 
 }
