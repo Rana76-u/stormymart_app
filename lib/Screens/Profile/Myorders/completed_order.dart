@@ -108,7 +108,7 @@ class _CompletedOrdersState extends State<CompletedOrders> {
                                     style: const TextStyle(
                                         fontSize: 12.5,
                                         fontWeight: FontWeight.bold,
-                                        fontFamily: 'Urbanist',
+                                        
                                         color: Colors.grey
                                     ),
                                   ),
@@ -131,7 +131,7 @@ class _CompletedOrdersState extends State<CompletedOrders> {
                                     style: const TextStyle(
                                         fontSize: 12.5,
                                         fontWeight: FontWeight.bold,
-                                        fontFamily: 'Urbanist',
+                                        
                                         color: Colors.grey
                                     ),
                                   ),

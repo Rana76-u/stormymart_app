@@ -41,7 +41,7 @@ class _AboutUsState extends State<AboutUs> {
                 'About this app',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontFamily: 'Urbanist',
+                  
                   fontSize: 25
                 ),
               ),
@@ -57,7 +57,7 @@ class _AboutUsState extends State<AboutUs> {
                     'Earn rewards with StormyPoints and track your orders with ease. Elevate your shopping journey with StormyMart, '
                     'your ultimate destination for all things shopping!',
                 style: TextStyle(
-                    fontFamily: 'Urbanist',
+                    
                 ),
               )
             ],

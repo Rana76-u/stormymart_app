@@ -99,7 +99,7 @@ class CheckOutViewModel {
 
     await resetCoins(provider.state);
 
-    await sendNotification();
+    //await sendNotification();
 
     provider.add(UpdateIsLoading(isLoading: false));
 
@@ -149,6 +149,14 @@ class CheckOutViewModel {
         'variant': state.variantList[index],
       });
 
+      //update quantity available
+      await FirebaseFirestore.instance
+          .collection('Products')
+          .doc(state.idList[index])
+          .update({
+        'quantityAvailable': FieldValue.increment(-state.quantityList[index]),
+      });
+
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection('userData')
           .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -169,7 +177,7 @@ class CheckOutViewModel {
       await FirebaseFirestore.instance
           .collection('userData')
           .doc(FirebaseAuth.instance.currentUser!.uid)
-          .update({'coins': 0});
+          .update({'coins': 0,});
     }
   }
 

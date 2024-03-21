@@ -310,10 +310,6 @@ class Cart extends StatelessWidget {
                     if (imageSnapshot.hasData) {
                       return GestureDetector(
                         onTap: () {
-                          /*Get.to(
-                            ProductScreen(productId: productId),
-                            //transition: Transition.fade
-                          );*/
                           GoRouter.of(context).go('/product/$productId');
                         },
                         child: Padding(

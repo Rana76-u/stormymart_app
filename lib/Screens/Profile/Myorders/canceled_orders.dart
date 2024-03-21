@@ -107,7 +107,7 @@ class _CanceledOrdersState extends State<CanceledOrders> {
                                     style: const TextStyle(
                                         fontSize: 12.5,
                                         fontWeight: FontWeight.bold,
-                                        fontFamily: 'Urbanist',
+                                        
                                         color: Colors.grey
                                     ),
                                   ),
@@ -130,7 +130,7 @@ class _CanceledOrdersState extends State<CanceledOrders> {
                                     style: const TextStyle(
                                         fontSize: 12.5,
                                         fontWeight: FontWeight.bold,
-                                        fontFamily: 'Urbanist',
+                                        
                                         color: Colors.grey
                                     ),
                                   ),

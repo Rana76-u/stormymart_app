@@ -206,9 +206,6 @@ class _WishListBodyState extends State<WishListBody> {
                     ),
                     child: GestureDetector(
                       onTap: () {
-                        /*Get.to(
-                            () => ProductScreen(productId: wishListItemIds[index])
-                        );*/
                         GoRouter.of(context).go('/product/${wishListItemIds[index]}');
                       },
                       child: SizedBox(

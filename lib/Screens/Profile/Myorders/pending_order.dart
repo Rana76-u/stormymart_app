@@ -158,7 +158,7 @@ class _PendingOrdersState extends State<PendingOrders> {
                                         style: const TextStyle(
                                             fontSize: 12.5,
                                             fontWeight: FontWeight.bold,
-                                            fontFamily: 'Urbanist',
+                                            
                                             color: Colors.grey
                                         ),
                                       ),
@@ -181,7 +181,7 @@ class _PendingOrdersState extends State<PendingOrders> {
                                         style: const TextStyle(
                                             fontSize: 12.5,
                                             fontWeight: FontWeight.bold,
-                                            fontFamily: 'Urbanist',
+                                            
                                             color: Colors.grey
                                         ),
                                       ),

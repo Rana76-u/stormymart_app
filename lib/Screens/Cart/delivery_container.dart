@@ -11,12 +11,7 @@ class DeliveryContainer extends StatelessWidget {
         ),
         height: 100 ,
         child: Row(
-          //crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            /*Image.asset(
-              'assets/images/delivery-man.png'
-            ),*/
-
             const Padding(
               padding: EdgeInsets.only(left: 20),
               child: Icon(

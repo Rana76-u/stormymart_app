@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,15 +9,19 @@ import 'package:stormymart_v2/Screens/Cart/cart.dart';
 import 'package:stormymart_v2/Screens/CheckOut/checkout.dart';
 import 'package:stormymart_v2/Screens/Home/home.dart';
 import 'package:stormymart_v2/Screens/Product%20Screen/product_screen.dart';
+import 'package:stormymart_v2/Screens/Profile/Coins/coins.dart';
 import 'package:stormymart_v2/Screens/Profile/profile.dart';
 import 'package:stormymart_v2/Screens/Search/search.dart';
 import 'package:stormymart_v2/firebase_options.dart';
+import 'Screens/Home/show_all_hotdeals.dart';
+import 'Screens/Profile/Wishlists/wishlist.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform
   );
+
   runApp(const MyApp());
 }
 
@@ -45,7 +50,7 @@ final GoRouter _router = GoRouter(
         GoRoute(
           path: 'product/:productId', //
           builder: (BuildContext context, GoRouterState state) {
-            return ProductScreen(productId: state.pathParameters['productId'] ?? ""); //"9wvb79aljlo43kjnwf3k"
+            return ProductScreen(productId: state.pathParameters['productId'] ?? "");
           },
         ),
       ],
@@ -62,7 +67,7 @@ final GoRouter _router = GoRouter(
       },
       routes: <RouteBase>[
         GoRoute(
-          path: 'searchTerm/:searchItem',
+          path: 'item/:searchItem',
           builder: (BuildContext context, GoRouterState state) {
             return SearchPage(keyword: state.pathParameters['searchItem'] ?? "");
           },
@@ -102,6 +107,36 @@ final GoRouter _router = GoRouter(
         );
       },
     ),
+    GoRoute(
+      path: '/hotdeals',
+      pageBuilder: (context, state) {
+        return CustomTransitionPage(
+          key: state.pageKey,
+          child: const ShowAllHotDeals(),
+          transitionsBuilder: _customTransitionBuilder,
+        );
+      },
+    ),
+    GoRoute(
+      path: '/wishlists',
+      pageBuilder: (context, state) {
+        return CustomTransitionPage(
+          key: state.pageKey,
+          child: const WishList(),
+          transitionsBuilder: _customTransitionBuilder,
+        );
+      },
+    ),
+    GoRoute(
+      path: '/coin',
+      pageBuilder: (context, state) {
+        return CustomTransitionPage(
+          key: state.pageKey,
+          child: const Coins(),
+          transitionsBuilder: _customTransitionBuilder,
+        );
+      },
+    ),
   ],
 );
 
@@ -117,7 +152,9 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp.router(
         title: 'StormyMart',
-        theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'Urbanist'),
+        theme: ThemeData(
+          primaryColor: MaterialStateColor.resolveWith((states) => const Color(0xFFFAB416))
+        ),
         routerConfig: _router,
         debugShowCheckedModeBanner: false,
       ),

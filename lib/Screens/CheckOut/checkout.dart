@@ -27,6 +27,9 @@ class CheckOut extends StatelessWidget {
     if(user != null) {
       provider.add(LoadUserDataEvent(uid: user.uid));
     }
+    else{
+      provider.add(UpdateIsLoading(isLoading: false));
+    }
 
     return BlocConsumer<CheckoutBloc, CheckOutState>(
       listener: (context, state) {},
@@ -62,13 +65,13 @@ class CheckOut extends StatelessWidget {
                 children: [
                   titlesWidget('Contact Info'),
 
-                  textBox(37, double.infinity, nameController, "Full Name", const Icon(Icons.abc)),
+                  textBox(37, double.infinity, nameController, "Full Name", const Icon(Icons.abc), TextInputType.text),
 
-                  textBox(37, double.infinity, phnNumberController, "Phone Number", const Icon(Icons.onetwothree)),
+                  textBox(37, double.infinity, phnNumberController, "Phone Number", const Icon(Icons.onetwothree), TextInputType.phone),
 
                   titlesWidget('Shipping Info'),
 
-                  textBox(37, double.infinity, addressController, "Address", const Icon(Icons.location_on_rounded)),
+                  textBox(37, double.infinity, addressController, "Address", const Icon(Icons.location_on_rounded), TextInputType.streetAddress),
 
                   divisionPicker(context, divisionController),
 
@@ -98,7 +101,13 @@ class CheckOut extends StatelessWidget {
                   const SizedBox(height: 30,),
 
                   buttonWidget(48, double.infinity, Colors.green, 'Place Order',
-                          () => CheckOutViewModel().placeOrder(context, promoCodeController.text))
+                          () {
+                    provider.add(ChangeUserInfoEvent(
+                        name: nameController.text,
+                        phoneNumber: phnNumberController.text,
+                        address: addressController.text));
+                    CheckOutViewModel().placeOrder(context, promoCodeController.text);
+                          })
                 ],
               ),
             ),
@@ -121,7 +130,8 @@ class CheckOut extends StatelessWidget {
     );
   }
 
-  Widget textBox(double height, double width, TextEditingController controller, String hintText, Icon prefixIcon) {
+  Widget textBox(double height, double width, TextEditingController controller,
+      String hintText, Icon prefixIcon, TextInputType textInputType) {
     return Padding(
       padding: const EdgeInsets.only(top: 15),
       child: SizedBox(
@@ -129,6 +139,7 @@ class CheckOut extends StatelessWidget {
         width: width,
         child: TextField(
           controller: controller,
+          keyboardType: textInputType,
           style: const TextStyle(
             fontSize: 16,
           ),
@@ -417,7 +428,8 @@ class CheckOut extends StatelessWidget {
             textBox(
                 60, MediaQuery.of(context).size.width*0.7,
                 promoCodeController, 'Enter Promo Code',
-                const Icon(Icons.sell_rounded)
+                const Icon(Icons.sell_rounded),
+              TextInputType.text
             ),
             buttonWidget(
                 48, MediaQuery.of(context).size.width*0.3 - 25, Colors.green, 'Apply',

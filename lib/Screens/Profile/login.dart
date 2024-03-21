@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:stormymart_v2/Screens/Profile/profile.dart';
 import '../../utility/auth_service.dart';
 
@@ -23,11 +24,6 @@ class _LoginPageState extends State<LoginPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Expanded(child: SizedBox()),
-
-          /*Lottie.asset(
-              'assets/lottie/google-logo.json',
-            height: MediaQuery.of(context).size.height*0.4
-          ),*/
 
           Row(
             children: [
@@ -58,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
                               'StormyMart',
                               style: TextStyle(
                                 fontSize: 25,
-                                fontFamily: 'Urbanist',
+                                
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
@@ -93,6 +89,7 @@ class _LoginPageState extends State<LoginPage> {
                         AuthService().signInWithGoogle().then((_) {
                           setState(() {
                             isLoading = false;
+                            GoRouter.of(context).go('/profile');
                             Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => const Profile(),
                             ));
@@ -116,7 +113,7 @@ class _LoginPageState extends State<LoginPage> {
                       child: const Text(
                         'Continue using Google',
                         style: TextStyle(
-                            fontFamily: 'Urbanist',
+                            
                             fontWeight: FontWeight.bold,
                             fontSize: 13
                         ),

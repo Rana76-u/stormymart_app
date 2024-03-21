@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 ThemeData appTheme() => ThemeData(
   scaffoldBackgroundColor: Colors.white,
-  fontFamily: 'Urbanist',
+  
   appBarTheme: const AppBarTheme(
     color: Colors.white,
     elevation: 0,

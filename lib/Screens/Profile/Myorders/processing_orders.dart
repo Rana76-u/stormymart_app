@@ -158,7 +158,7 @@ class _ProcessingOrdersState extends State<ProcessingOrders> {
                                         style: const TextStyle(
                                             fontSize: 12.5,
                                             fontWeight: FontWeight.bold,
-                                            fontFamily: 'Urbanist',
+                                            
                                             color: Colors.grey
                                         ),
                                       ),
@@ -181,7 +181,7 @@ class _ProcessingOrdersState extends State<ProcessingOrders> {
                                         style: const TextStyle(
                                             fontSize: 12.5,
                                             fontWeight: FontWeight.bold,
-                                            fontFamily: 'Urbanist',
+                                            
                                             color: Colors.grey
                                         ),
                                       ),

@@ -22,7 +22,6 @@ class _AccountInfoState extends State<AccountInfo> {
   String email = '';
   String phone = '';
   String address1 = '';
-  String address2 = '';
 
   TextEditingController nameController = TextEditingController();
   TextEditingController imageController = TextEditingController();
@@ -30,7 +29,6 @@ class _AccountInfoState extends State<AccountInfo> {
   TextEditingController emailController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();
   TextEditingController address1Controller = TextEditingController();
-  TextEditingController address2Controller = TextEditingController();
 
   final CollectionReference _collectionReference =
   FirebaseFirestore.instance.collection('userData');
@@ -58,7 +56,6 @@ class _AccountInfoState extends State<AccountInfo> {
         'Phone Number': '',
         'Gender': 'not selected',
         'Address1': ['Address1 Not Found', 'not selected'],
-        'Address2': ['Address2 Not Found', 'not selected'],
         'coins': 20000,
         //'coupons': 0,
         'wishlist': FieldValue.arrayUnion([]),
@@ -89,8 +86,6 @@ class _AccountInfoState extends State<AccountInfo> {
 
         address1 = snapshot['Address1'][0];
         division1 = snapshot['Address1'][1];
-        address2 = snapshot['Address2'][0];
-        division2 = snapshot['Address2'][1];
 
         nameController.text = name;
         imageController.text = image;
@@ -102,11 +97,6 @@ class _AccountInfoState extends State<AccountInfo> {
           address1Controller.text = '';
         }else{
           address1Controller.text = address1;
-        }
-        if(address2.contains('Address2 Not Found')){
-          address2Controller.text = '';
-        }else{
-          address2Controller.text = address2;
         }
 
         setState(() {
@@ -131,7 +121,6 @@ class _AccountInfoState extends State<AccountInfo> {
       'Gender' : gender,
       'Phone Number': phoneNumberController.text,
       'Address1': [address1Controller.text, division1],
-      'Address2': [address2Controller.text, division2],
     });
   }
 
@@ -385,74 +374,6 @@ class _AccountInfoState extends State<AccountInfo> {
                               ),
                             ),
                           ),
-
-                          const Text("Delivery Location 2 (Optional)"),
-                          SizedBox(
-                            height: 50,
-                            child: TextField(
-                              controller: address2Controller,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              cursorColor: Colors.white,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(5),
-                                  borderSide: BorderSide.none,
-                                ),
-                                hintText: "address2",
-                                hintStyle: const TextStyle(
-                                  fontSize: 13,
-                                ),
-                                prefixIcon: const Icon(Icons.abc),
-                                //labelText: "Semester",
-                              ),
-                            ),
-                          ),
-                          //Select Division2
-                          const Padding(padding: EdgeInsets.only(left: 15),child: Text("Select Division *")),
-                          SizedBox(
-                            height: 50,
-                            width: MediaQuery.of(context).size.width*0.7,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 15),
-                              child: DropdownButton<String>(
-                                value: division2 ?? 'not selected',
-                                icon: const Icon(Icons.arrow_drop_down),
-                                iconSize: 25,
-                                elevation: 16,
-                                isExpanded: true,
-                                autofocus: true,
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                underline: const SizedBox(),
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    division2 = newValue!;
-                                  });
-                                },
-                                items: <String>[
-                                  'Dhaka',
-                                  'Mymensingh',
-                                  'Chittagong',
-                                  'Khulna',
-                                  'Rajshahi',
-                                  'Rangpur',
-                                  'Sylhet',
-                                  'Barisal',
-                                  'not selected'
-                                ].map<DropdownMenuItem<String>>((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                          )
                         ],
                       ),
                     ),

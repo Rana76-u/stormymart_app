@@ -42,8 +42,7 @@ class _ProfileState extends State<Profile> {
         'Email': FirebaseAuth.instance.currentUser?.email,
         'Phone Number': '',
         'Gender': 'not selected',
-        'Address1': ['Address1 Not Found','not selected'],
-        'Address2': ['Address2 Not Found','not selected'],
+        'Address1': ['Address1 Not Found','Dhaka'],
         'coins': 20000,
         //'coupons': 0,
         'wishlist': FieldValue.arrayUnion([])

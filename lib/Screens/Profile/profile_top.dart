@@ -1,10 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:stormymart_v2/Screens/Profile/Coins/coins.dart';
-import 'package:stormymart_v2/Screens/Profile/Wishlists/wishlist.dart';
+import 'package:go_router/go_router.dart';
 import 'package:stormymart_v2/Screens/Profile/profile_accountinfo.dart';
-import 'package:get/get.dart';
 
 class ProfileTop extends StatefulWidget {
   const ProfileTop({super.key});
@@ -56,7 +54,7 @@ class _ProfileTopState extends State<ProfileTop> {
                     style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
-                        fontFamily: 'Urbanist',
+                        
                         fontSize: 18,
                         overflow: TextOverflow.ellipsis
                     ),
@@ -66,7 +64,7 @@ class _ProfileTopState extends State<ProfileTop> {
                     style: const TextStyle(
                         fontWeight: FontWeight.w500,
                         color: Colors.white,
-                        fontFamily: 'Urbanist',
+                        
                         fontSize: 14,
                         overflow: TextOverflow.ellipsis
                     ),
@@ -106,19 +104,13 @@ class _ProfileTopState extends State<ProfileTop> {
                 left: MediaQuery.of(context).size.height*0.07,
                 right: MediaQuery.of(context).size.height*0.07,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     //wishlist
                     GestureDetector(
                       onTap: () {
-                        // Navigator.of(context).push(
-                        //   MaterialPageRoute(builder: (context) => const WishList(),)
-                        // );
-                        Get.to(
-                          const WishList(),
-                          transition: Transition.fade,
-                        );
+                        GoRouter.of(context).go('/wishlists');
                       },
                       child: Column(
                         children: [
@@ -141,62 +133,11 @@ class _ProfileTopState extends State<ProfileTop> {
                         ],
                       ),
                     ),
-                    //Coupons
-                    /*Column(
-                      children: [
-                        Text(
-                          coupons.length.toString(),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        const Text(
-                          'Coupons',
-                          style: TextStyle(
-                              color: Colors.white,
-                              overflow: TextOverflow.ellipsis,
-                              fontFamily: 'Urbanist'
-                          ),
-                        )
-                      ],
-                    ),*/
-
-                    //Chats
-                    GestureDetector(
-                      onTap: () {
-                        //open chat
-                      },
-                      child: const Column(
-                        children: [
-                          Icon(
-                              Icons.chat_outlined,
-                            color: Colors.white,
-                            size: 16,
-                          ),
-                          Text(
-                            'Chats',
-                            style: TextStyle(
-                                color: Colors.white,
-                                overflow: TextOverflow.ellipsis,
-                                fontFamily: 'Urbanist'
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
 
                     //Points
                     GestureDetector(
                       onTap: () {
-                        // Navigator.of(context).push(
-                        //     MaterialPageRoute(builder: (context) => const Coins(),)
-                        // );
-                        Get.to(
-                          const Coins(),
-                          transition: Transition.fade,
-                        );
+                        GoRouter.of(context).go('/coin');
                       },
                       child: Column(
                         children: [

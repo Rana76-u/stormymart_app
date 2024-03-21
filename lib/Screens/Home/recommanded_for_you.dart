@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 import 'package:stormymart_v2/utility/globalvariable.dart';
-import 'package:get/get.dart';
 import '../../Components/custom_image.dart';
 import '../../theme/color.dart';
-import '../Search/search.dart';
 
 class RecommendedForYou extends StatelessWidget {
   const RecommendedForYou({super.key});
@@ -42,13 +40,6 @@ class RecommendedForYou extends StatelessWidget {
                       double discountCal = (product.get('price') / 100) * (100 - product.get('discount'));
                       return GestureDetector(
                         onTap: () {
-                          /*Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => ProductScreen(productId: product.id))
-                      );*/
-                          /*Get.to(
-                            ProductScreen(productId: product.id),
-                            transition: Transition.fade,
-                          );*/
                           GoRouter.of(context).go('/product/${product.id}');
                         },
                         child: SizedBox(
@@ -161,11 +152,6 @@ class RecommendedForYou extends StatelessWidget {
                                   left: 5,
                                   child: Row(
                                     children: [
-                                      /*SvgPicture.asset(
-                                    "assets/icons/taka.svg",
-                                    width: 17,
-                                    height: 17,
-                                  ),*/
                                       Text(
                                         "Tk ${discountCal.toStringAsFixed(2)}/-",
                                         maxLines: 1,
@@ -178,40 +164,6 @@ class RecommendedForYou extends StatelessWidget {
                                   )
                               ),
 
-                              //Rating & Sold Amount
-                              /*Positioned(
-                            top: 260,
-                            left: 2,
-                            child:  Row(
-                              children: [
-                                const Icon(
-                                  Icons.star,
-                                  color: Colors.amber,
-                                  size: 15,
-                                ),
-                                const SizedBox(width: 3,),
-                                //Rating
-                                Text(
-                                  product.get('rating').toString(),
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 13,
-                                      color: Colors.grey.shade400//darker
-                                  ),
-                                ),
-                                const SizedBox(width: 20,),
-                                //Sold
-                                Text(
-                                  "${product.get('sold').toString()} Sold",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 13,
-                                      color: Colors.grey.shade400//darker
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),*/
                             ],
                           ),
                         ),
@@ -258,13 +210,7 @@ class RecommendedForYouTitle extends StatelessWidget {
           GestureDetector(
             onTap: () {
               keyword = null;
-              /*Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => BottomBar(),)
-              );*/
-              Get.to(
-                SearchPage(keyword: keyword),
-                transition: Transition.fade,
-              );
+              GoRouter.of(context).go('/search');
             },
             child: const Text(
               'See All',

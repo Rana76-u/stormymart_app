@@ -15,21 +15,12 @@ class WishListTop extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              //Arrow back
-              GestureDetector(
-                onTap: (){
-                  Navigator.of(context).pop();
-                },
-                child: const Icon(
-                    Icons.arrow_back_ios
-                ),
-              ),
 
               const Text(
                 'WishList',
                 style: TextStyle(
                     fontSize: 22,
-                    fontFamily: 'Urbanist',
+                    
                     fontWeight: FontWeight.bold
                 ),
               ),

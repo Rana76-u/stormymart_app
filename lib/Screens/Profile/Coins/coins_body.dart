@@ -23,7 +23,7 @@ class _CoinsBodyState extends State<CoinsBody> {
               'Remaining Coins: ',
               style: TextStyle(
                   fontSize: 30,
-                  fontFamily: 'Urbanist',
+                  
                   fontWeight: FontWeight.bold
               ),
             ),
@@ -45,7 +45,7 @@ class _CoinsBodyState extends State<CoinsBody> {
                         style: const TextStyle(
                             fontSize: 50,
                             color: Colors.amber,
-                            fontFamily: 'Urbanist',
+                            
                             fontWeight: FontWeight.bold
                         ),
                       )
@@ -66,7 +66,7 @@ class _CoinsBodyState extends State<CoinsBody> {
               'Conversion Rates of Coins: \n1 Tk for 1000 coins',
               style: TextStyle(
                   fontSize: 20,
-                  fontFamily: 'Urbanist',
+                  
                 fontWeight: FontWeight.bold,
                 overflow: TextOverflow.clip,
 

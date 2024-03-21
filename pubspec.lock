@@ -113,14 +113,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.3"
-  dotted_line:
-    dependency: "direct main"
-    description:
-      name: dotted_line
-      sha256: c931ba331656154711d9420f369f80cf9e8869ca9933ae5fb35b7669bcbe7d2e
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.2.2"
   fake_async:
     dependency: transitive
     description:
@@ -201,14 +193,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.0"
-  flashy_tab_bar2:
-    dependency: "direct main"
-    description:
-      name: flashy_tab_bar2
-      sha256: e5cd3deaae3724269e6cce79cb6cc289763fbd28cf66e3a621fd4b6ff85aaba5
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.9"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -264,14 +248,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  get:
-    dependency: "direct main"
-    description:
-      name: get
-      sha256: e4e7335ede17452b391ed3b2ede016545706c01a02292a6c97619705e7d2a85e
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.6.6"
   go_router:
     dependency: "direct main"
     description:

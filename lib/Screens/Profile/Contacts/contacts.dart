@@ -43,7 +43,7 @@ class _ContactsState extends State<Contacts> {
                 'Contacts',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontFamily: 'Urbanist',
+                    
                     fontSize: 25
                 ),
               ),
@@ -56,7 +56,7 @@ class _ContactsState extends State<Contacts> {
                     'https://www.facebook.com/stormymart\n'
                 'Address: Banasree, Dhaka, Bangladesh',
                 style: TextStyle(
-                  fontFamily: 'Urbanist',
+                  
                   height: 1.5
                 ),
               ),

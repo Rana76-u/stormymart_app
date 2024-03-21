@@ -44,7 +44,7 @@ class HorizontalSlider extends StatelessWidget {
   Widget cards(String title, BuildContext context) {
     return GestureDetector(
       onTap: (){
-        GoRouter.of(context).go('/search/searchTerm/$title');
+        GoRouter.of(context).go('/search/item/$title');
       },
       child: SizedBox(
         width: 160,//MediaQuery.of(context).size.width*0.4,

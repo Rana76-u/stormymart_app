@@ -6,10 +6,9 @@ import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:stormymart_v2/Blocks/Cart%20Bloc/cart_bloc.dart';
 import 'package:stormymart_v2/Screens/Cart/cart.dart';
 import 'package:stormymart_v2/theme/color.dart';
-import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../Blocks/Cart Bloc/cart_events.dart';
-import '../../Components/image_viewer.dart';
+import '../../ViewModels/open_photo.dart';
 
 class ProductScreen extends StatefulWidget {
   final String productId;
@@ -101,7 +100,8 @@ class _ProductScreenState extends State<ProductScreen> {
         ],
       ),
       backgroundColor: appBgColor,
-      floatingActionButton: floatingButtonWidget(widget.productId.toString().trim()),
+      floatingActionButton:
+          floatingButtonWidget(widget.productId.toString().trim()),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -130,7 +130,9 @@ class _ProductScreenState extends State<ProductScreen> {
                     imageSliderWidget(id),
 
                     //Space
-                    const SizedBox(height: 5,),
+                    const SizedBox(
+                      height: 5,
+                    ),
 
                     variationWidget(id),
 
@@ -140,16 +142,18 @@ class _ProductScreenState extends State<ProductScreen> {
                         height: 7,
                       ),
 
-                    productInfoWidget(id, discount, discountCal, snapshot.data!, price, quantityAvailable),
+                    productInfoWidget(id, discount, discountCal, snapshot.data!,
+                        price, quantityAvailable),
 
                     messageSellerWidget(),
 
                     //Space At the BOTTOM
-                    const SizedBox(height: 70,),
+                    const SizedBox(
+                      height: 70,
+                    ),
                   ],
                 );
-              }
-              else {
+              } else {
                 return loadingWidget();
               }
             },
@@ -166,60 +170,51 @@ class _ProductScreenState extends State<ProductScreen> {
           .doc(imageSliderDocID)
           .get()
           .then((value) => value),
-      builder:
-          (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+      builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
         if (snapshot.hasData) {
           List<dynamic> images = snapshot.data!.get('images');
           return images.isNotEmpty
               ? Padding(
-            padding: const EdgeInsets.all(0),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(25),
-              child: ImageSlideshow(
-                  width: double.infinity,
-                  height:
-                  MediaQuery.of(context).size.height *
-                      0.42,
-                  //0.45
-                  initialPage: 0,
-                  indicatorColor: Colors.amber,
-                  indicatorBackgroundColor: Colors.grey,
-                  onPageChanged: (value) {},
-                  autoPlayInterval: 7000,
-                  isLoop: true,
-                  children: List.generate(images.length,
-                          (index) {
-                        return GestureDetector(
-                          onTap: () {
-                            Get.to(
-                              ImageViewerScreen(
-                                imageUrl: images[index],
-                              ),
-                            );
-                          },
-                          child: Image.network(
-                            images[index],
-                            fit: BoxFit.cover,
-                          ),
-                        );
-                      })),
-            ),
-          )
+                  padding: const EdgeInsets.all(0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(25),
+                    child: ImageSlideshow(
+                        width: double.infinity,
+                        height: MediaQuery.of(context).size.height * 0.42,
+                        //0.45
+                        initialPage: 0,
+                        indicatorColor: Colors.amber,
+                        indicatorBackgroundColor: Colors.grey,
+                        onPageChanged: (value) {},
+                        autoPlayInterval: 7000,
+                        isLoop: true,
+                        children: List.generate(images.length, (index) {
+                          return GestureDetector(
+                            onTap: () {
+                              OpenPhoto().openPhotoGallery(context, index, images);
+                            },
+                            child: Image.network(
+                              images[index],
+                              fit: BoxFit.cover,
+                            ),
+                          );
+                        })),
+                  ),
+                )
               : Padding(
-            padding: const EdgeInsets.all(8),
-            child: SizedBox(
-              width: double.infinity,
-              height: MediaQuery.of(context).size.height *
-                  0.45,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(15),
-                child: Image.network(
-                  'https://cdn.dribbble.com/users/256646/screenshots/17751098/media/768417cc4f382d6171053ad620bc3c3b.png',
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-          );
+                  padding: const EdgeInsets.all(8),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: MediaQuery.of(context).size.height * 0.45,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: Image.network(
+                        'https://cdn.dribbble.com/users/256646/screenshots/17751098/media/768417cc4f382d6171053ad620bc3c3b.png',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                );
         } else {
           return const Center(
             child: CircularProgressIndicator(),
@@ -229,15 +224,13 @@ class _ProductScreenState extends State<ProductScreen> {
     );
   }
 
-  Widget variationWidget(String id, ) {
+  Widget variationWidget(String id) {
     return Container(
       height: variationWarning ? 140 : 116,
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
-        color: variationWarning
-            ? Colors.red.withOpacity(0.25)
-            : appBgColor,
+        color: variationWarning ? Colors.red.withOpacity(0.25) : appBgColor,
       ),
       child: ListView.builder(
         controller: scrollController,
@@ -257,8 +250,7 @@ class _ProductScreenState extends State<ProductScreen> {
                   children: [
                     //Name
                     Container(
-                      margin: const EdgeInsets.only(
-                          top: 5, left: 11),
+                      margin: const EdgeInsets.only(top: 5, left: 11),
                       width: 70,
                       child: Text(
                         //snapshot.data!.docs[index].id,
@@ -275,17 +267,13 @@ class _ProductScreenState extends State<ProductScreen> {
                       onTap: () {
                         setState(() {
                           variationSelected = index;
-                          imageSliderDocID =
-                              snapshot.data!.docs[index].id;
+                          imageSliderDocID = snapshot.data!.docs[index].id;
                           variationWarning = false;
                         });
                       },
                       child: Container(
                         margin: const EdgeInsets.only(
-                            top: 5,
-                            left: 10,
-                            right: 15,
-                            bottom: 15),
+                            top: 5, left: 10, right: 15, bottom: 15),
                         width: 70,
                         //200
                         height: 70,
@@ -298,36 +286,30 @@ class _ProductScreenState extends State<ProductScreen> {
                                   : Colors.red,
                               width: 2, //5
                             ),
-                            borderRadius:
-                            BorderRadius.circular(10)),
+                            borderRadius: BorderRadius.circular(10)),
                         child: FutureBuilder(
                           future: FirebaseFirestore.instance
-                              .collection(
-                              '/Products/$id/Variations')
+                              .collection('/Products/$id/Variations')
                               .doc(
-                              variationDocID) //place String value of selected variation
+                                  variationDocID) //place String value of selected variation
                               .get()
                               .then((value) => value),
                           builder: (context,
-                              AsyncSnapshot<DocumentSnapshot>
-                              snapshot) {
+                              AsyncSnapshot<DocumentSnapshot> snapshot) {
                             if (snapshot.hasData) {
                               List<dynamic> images =
-                              snapshot.data!.get('images');
+                                  snapshot.data!.get('images');
                               return ImageSlideshow(
                                   initialPage: 0,
                                   indicatorColor: Colors.amber,
-                                  indicatorBackgroundColor:
-                                  Colors.grey,
+                                  indicatorBackgroundColor: Colors.grey,
                                   onPageChanged: (value) {},
                                   autoPlayInterval: 3500,
                                   isLoop: true,
-                                  children: List.generate(
-                                      images.length, (index) {
+                                  children:
+                                      List.generate(images.length, (index) {
                                     return ClipRRect(
-                                      borderRadius:
-                                      BorderRadius.circular(
-                                          8),
+                                      borderRadius: BorderRadius.circular(8),
                                       child: Image.network(
                                         images[index],
                                         fit: BoxFit.cover,
@@ -336,8 +318,7 @@ class _ProductScreenState extends State<ProductScreen> {
                                   }));
                             } else {
                               return const Center(
-                                child:
-                                CircularProgressIndicator(),
+                                child: CircularProgressIndicator(),
                               );
                             }
                           },
@@ -346,20 +327,18 @@ class _ProductScreenState extends State<ProductScreen> {
                     ),
                     if (variationWarning == true)
                       Padding(
-                        padding:
-                        const EdgeInsets.only(left: 15),
+                        padding: const EdgeInsets.only(left: 15),
                         child: Container(
                           color: Colors.red,
                           alignment: Alignment.center,
                           child: const Padding(
-                            padding: EdgeInsets.only(
-                                left: 4, right: 4),
+                            padding: EdgeInsets.only(left: 4, right: 4),
                             child: Text(
                               'Please select a variation',
                               style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 12,
-                                  fontFamily: 'Urbanist',
+                                  
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -383,8 +362,7 @@ class _ProductScreenState extends State<ProductScreen> {
   Widget productInfoWidget(String id, double discount, double discountCal,
       DocumentSnapshot snapshot, double price, double quantityAvailable) {
     return Card(
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Padding(
         padding: const EdgeInsets.all(10),
         child: Column(
@@ -397,8 +375,7 @@ class _ProductScreenState extends State<ProductScreen> {
                 //Discount
                 if (discount == 0.0) ...[
                   const SizedBox(),
-                ]
-                else ...[
+                ] else ...[
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.red.shade800,
@@ -420,19 +397,16 @@ class _ProductScreenState extends State<ProductScreen> {
                 //wishlist
                 GestureDetector(
                   onTap: () async {
-                    final messenger =
-                    ScaffoldMessenger.of(context);
+                    final messenger = ScaffoldMessenger.of(context);
                     await FirebaseFirestore.instance
                         .collection('/userData')
-                        .doc(FirebaseAuth
-                        .instance.currentUser!.uid)
+                        .doc(FirebaseAuth.instance.currentUser!.uid)
                         .update({
                       'wishlist': FieldValue.arrayUnion([id])
                     });
 
                     messenger.showSnackBar(const SnackBar(
-                        content:
-                        Text('Item added to Wishlist')));
+                        content: Text('Item added to Wishlist')));
                   },
                   child: Container(
                     decoration: BoxDecoration(
@@ -456,8 +430,8 @@ class _ProductScreenState extends State<ProductScreen> {
 
             //Title
             Padding(
-              padding: const EdgeInsets.only(
-                  top: 10, bottom: 5, left: 0, right: 5),
+              padding:
+                  const EdgeInsets.only(top: 10, bottom: 5, left: 0, right: 5),
               child: Text(
                 snapshot.get('title'),
                 style: TextStyle(
@@ -486,7 +460,7 @@ class _ProductScreenState extends State<ProductScreen> {
                   Text(
                     "of ${price.toString()}/-",
                     style: const TextStyle(
-                      //fontWeight: FontWeight.bold,
+                        //fontWeight: FontWeight.bold,
                         fontSize: 16,
                         color: Colors.grey,
                         fontWeight: FontWeight.bold,
@@ -502,8 +476,7 @@ class _ProductScreenState extends State<ProductScreen> {
               child: Text(
                 snapshot.get('description'),
                 style: const TextStyle(
-                    color: Colors.grey,
-                    fontWeight: FontWeight.w600),
+                    color: Colors.grey, fontWeight: FontWeight.w600),
               ),
             ),
 
@@ -530,20 +503,16 @@ class _ProductScreenState extends State<ProductScreen> {
                             ? _cardColor(index)
                             : Colors.red,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                                100)), //CircleBorder()
+                            borderRadius:
+                                BorderRadius.circular(100)), //CircleBorder()
                         child: Center(
                           child: Padding(
                             padding: const EdgeInsets.only(
-                                top: 10,
-                                bottom: 10,
-                                right: 15,
-                                left: 15),
+                                top: 10, bottom: 10, right: 15, left: 15),
                             child: Text(
                               sizes[index],
                               style: TextStyle(
-                                color: sizeSelected == index ||
-                                    sizeWarning
+                                color: sizeSelected == index || sizeWarning
                                     ? Colors.white
                                     : Colors.black,
                                 fontWeight: FontWeight.bold,
@@ -567,13 +536,12 @@ class _ProductScreenState extends State<ProductScreen> {
                   '*Sold Out',
                   style: TextStyle(
                       fontSize: 22,
-                      fontFamily: 'Urbanist',
+                      
                       fontWeight: FontWeight.bold,
                       color: Colors.amber),
                 ),
               ),
-            ]
-            else ...[
+            ] else ...[
               const Padding(
                 padding: EdgeInsets.only(top: 10, bottom: 5),
                 child: Text(
@@ -592,8 +560,7 @@ class _ProductScreenState extends State<ProductScreen> {
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: Row(
-                    mainAxisAlignment:
-                    MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       IconButton(
                         icon: const Icon(Icons.remove),
@@ -651,16 +618,16 @@ class _ProductScreenState extends State<ProductScreen> {
                 Icons.messenger_rounded,
                 color: Colors.white,
               ),
-              SizedBox(width: 10,),
+              SizedBox(
+                width: 10,
+              ),
               Text(
                 "Message Seller",
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
+                style:
+                    TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
               )
             ],
-          )
-      ),
+          )),
     );
   }
 
@@ -669,7 +636,9 @@ class _ProductScreenState extends State<ProductScreen> {
       child: Column(
         children: [
           //Do not remove this, otherwise it causes continues rendering
-          SizedBox(height: MediaQuery.of(context).size.height * 0.45,),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.45,
+          ),
 
           const CircularProgressIndicator(),
         ],
@@ -709,14 +678,12 @@ class _ProductScreenState extends State<ProductScreen> {
                   icon: const Icon(Icons.shopping_cart_rounded),
                 ),
               );
-            }
-            else if (snapshot.connectionState == ConnectionState.waiting) {
+            } else if (snapshot.connectionState == ConnectionState.waiting) {
               return SizedBox(
                 width: MediaQuery.of(context).size.width * 0.4,
                 child: const LinearProgressIndicator(),
               );
-            }
-            else {
+            } else {
               return const Text('Error Loading');
             }
           },
@@ -729,35 +696,30 @@ class _ProductScreenState extends State<ProductScreen> {
     final messenger = ScaffoldMessenger.of(context);
     final mediaQuery = MediaQuery.of(context);
 
-
     setState(() {
       sizeWarning = false;
       variationWarning = false;
     });
     if (quantityAvailable == 0) {
-      messenger.showSnackBar(const SnackBar(
-          content: Text('Product Got Sold Out')));
-    }
-    else if (quantity > quantityAvailable) {
-      messenger.showSnackBar( SnackBar(
-          content: Text("Only $quantityAvailable items available")));
-    }
-    else {
+      messenger
+          .showSnackBar(const SnackBar(content: Text('Product Got Sold Out')));
+    } else if (quantity > quantityAvailable) {
+      messenger.showSnackBar(
+          SnackBar(content: Text("Only $quantityAvailable items available")));
+    } else {
       if (sizeSelected == -1 && sizes.isNotEmpty) {
         setState(() {
           sizeWarning = true;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Select Size')));
-      }
-      else if (variationSelected == -1) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Select Size')));
+      } else if (variationSelected == -1) {
         setState(() {
           variationWarning = true;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Select Variant')));
-      }
-      else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Select Variant')));
+      } else {
         //user logged in
         if (FirebaseAuth.instance.currentUser != null) {
           String uid = FirebaseAuth.instance.currentUser!.uid;
@@ -778,13 +740,14 @@ class _ProductScreenState extends State<ProductScreen> {
         }
         //user Not logged in
         else {
-
           BlocProvider.of<CartBloc>(context).add(AddItemEvent(
-              id: id, price: discountCal,
+              id: id,
+              price: discountCal,
               size: sizeSelected == -1
-              ? 'not applicable'
-              : sizes[sizeSelected].toString(),
-              variant: imageSliderDocID, quantity: quantity));
+                  ? 'not applicable'
+                  : sizes[sizeSelected].toString(),
+              variant: imageSliderDocID,
+              quantity: quantity));
         }
 
         //notify
@@ -796,15 +759,13 @@ class _ProductScreenState extends State<ProductScreen> {
               ));
             },
             child: Row(
-              mainAxisAlignment:
-              MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 SizedBox(
                   width: mediaQuery.size.width * 0.4,
                   child: const Text(
                     'Item added into the cart.',
-                    style: TextStyle(
-                        overflow: TextOverflow.clip),
+                    style: TextStyle(overflow: TextOverflow.clip),
                   ),
                 ),
                 if (mounted) ...[
@@ -813,19 +774,17 @@ class _ProductScreenState extends State<ProductScreen> {
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
-                            borderRadius:
-                            BorderRadius.circular(20)),
+                            borderRadius: BorderRadius.circular(20)),
                       ),
                       onPressed: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(
+                        Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => const Cart(),
                         ));
                       },
                       child: const Text(
                         'Open Cart',
                         style: TextStyle(
-                            fontFamily: 'Urbanist',
+                            
                             fontWeight: FontWeight.bold,
                             fontSize: 14.5),
                       ),
@@ -837,7 +796,6 @@ class _ProductScreenState extends State<ProductScreen> {
           ),
           duration: const Duration(seconds: 3),
         ));
-
       }
     }
   }

@@ -14,7 +14,13 @@ class LoadUserDataEvent extends CheckOutEvents {
   LoadUserDataEvent({required this.uid});
 }
 
+class ChangeUserInfoEvent extends CheckOutEvents {
+  final String name;
+  final String phoneNumber;
+  final String address;
 
+  ChangeUserInfoEvent({required this.name, required this.phoneNumber, required this.address});
+}
 class ChangeDivisionEvent extends CheckOutEvents {
   final String selectedDivision;
 

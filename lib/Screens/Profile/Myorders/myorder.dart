@@ -22,7 +22,7 @@ class _MyOrdersState extends State<MyOrders> {
             'My Orders',
             style: TextStyle(
                 fontSize: 22,
-                fontFamily: 'Urbanist',
+                
                 fontWeight: FontWeight.bold
             ),
           ),
@@ -65,7 +65,7 @@ class _MyOrdersState extends State<MyOrders> {
                           'My Orders',
                           style: TextStyle(
                               fontSize: 22,
-                              fontFamily: 'Urbanist',
+                              
                               fontWeight: FontWeight.bold
                           ),
                         ),
@@ -123,7 +123,7 @@ class _MyOrdersState extends State<MyOrders> {
                           'My Orders',
                           style: TextStyle(
                               fontSize: 22,
-                              fontFamily: 'Urbanist',
+                              
                               fontWeight: FontWeight.bold
                           ),
                         ),
@@ -181,7 +181,7 @@ class _MyOrdersState extends State<MyOrders> {
                           'My Orders',
                           style: TextStyle(
                               fontSize: 22,
-                              fontFamily: 'Urbanist',
+                              
                               fontWeight: FontWeight.bold
                           ),
                         ),

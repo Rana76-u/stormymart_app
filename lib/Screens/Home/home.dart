@@ -80,13 +80,16 @@ class HomePage extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 14,),
-                        Text(
-                          FirebaseAuth.instance.currentUser!.displayName ?? "",
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 17,
-                              color: Colors.white,
-                              fontFamily: 'Urbanist'
+                        SizedBox(
+                          width: 170,
+                          child: Text(
+                            FirebaseAuth.instance.currentUser!.displayName ?? "",
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 17,
+                                color: Colors.white,
+                                overflow: TextOverflow.ellipsis
+                            ),
                           ),
                         ),
                       ],
@@ -110,7 +113,7 @@ class HomePage extends StatelessWidget {
                       child: const Text(
                         'Sign in using Google',
                         style: TextStyle(
-                            fontFamily: 'Urbanist',
+                            
                             fontWeight: FontWeight.bold,
                             fontSize: 13
                         ),
@@ -134,7 +137,7 @@ class HomePage extends StatelessWidget {
                       'StormyMart',
                       style: TextStyle(
                           fontSize: 21,
-                          fontFamily: 'Urbanist',
+                          
                           fontWeight: FontWeight.w700,
                           color: Colors.white
                       ),
@@ -170,7 +173,7 @@ class HomePage extends StatelessWidget {
                             title: Text(subCategories[index]),
                             onTap: () {
                               keyword = subCategories[index];
-                              GoRouter.of(context).go('/search/searchTerm/$keyword');
+                              GoRouter.of(context).go('/search/item/$keyword');
                             },
                           );
                         },
@@ -215,7 +218,7 @@ class HomePage extends StatelessWidget {
 
             //update code
             const Text(
-              '   update 6',
+              '   update 7',
               style: TextStyle(
                   fontSize: 14,
                 color: Colors.grey

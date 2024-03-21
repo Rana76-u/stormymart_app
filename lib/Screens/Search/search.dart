@@ -378,7 +378,7 @@ class _SearchPageState extends State<SearchPage> {
                           widget.keyword!.isNotEmpty ? '${widget.keyword}' : '',
                           style: const TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontFamily: 'Urbanist',
+                              
                               fontSize: 20,
                               color: Colors.white
                           ),
@@ -433,13 +433,6 @@ class _SearchPageState extends State<SearchPage> {
                                   padding: const EdgeInsets.only(right: 10),
                                   child: GestureDetector(
                                     onTap: () {
-                                      /*Navigator.of(context).push(
-                              MaterialPageRoute(builder: (context) => ProductScreen(productId: product.id))
-                          );*/
-                                      /*Get.to(
-                                        ProductScreen(productId: result.id),
-                                        transition: Transition.fade,
-                                      );*/
                                       GoRouter.of(context).go('/product/${result.id}');
                                     },
                                     child: SizedBox(

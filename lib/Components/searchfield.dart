@@ -1,7 +1,6 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:stormymart_v2/Screens/Search/search.dart';
+import 'package:go_router/go_router.dart';
 
 class SearchField extends StatelessWidget {
   const SearchField({super.key});
@@ -20,13 +19,7 @@ class SearchField extends StatelessWidget {
         child: Center(
           child: GestureDetector(
             onTap: () {
-              /*Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => BottomBar(),)
-            );*/
-              Get.to(
-                SearchPage(),
-                transition: Transition.fade,
-              );
+              GoRouter.of(context).go('/search');
             },
             child: TextField(
               onChanged: (value) => log(value),

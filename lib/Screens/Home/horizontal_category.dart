@@ -1,6 +1,5 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:stormymart_v2/Screens/Home/show_all_hotdeals.dart';
+import 'package:go_router/go_router.dart';
 
 
 class HotDealsTitle extends StatelessWidget {
@@ -18,17 +17,14 @@ class HotDealsTitle extends StatelessWidget {
             style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 17,
-                fontFamily: 'Urbanist',
+
                 color: Color(0xFF212121)
             )
         ),
 
         GestureDetector(
           onTap: () {
-            Get.to(
-              const ShowAllHotDeals(),
-              transition: Transition.fade,
-            );
+            GoRouter.of(context).go('/hotdeals');
           },
           child: const Text(
             'See All',

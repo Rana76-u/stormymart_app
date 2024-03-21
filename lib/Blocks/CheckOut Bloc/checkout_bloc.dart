@@ -37,21 +37,28 @@ class CheckoutBloc extends Bloc<CheckOutEvents, CheckOutState> {
       else if (event is LoadUserDataEvent) {
         newState = await _loadUserData(newState, event);
       }
+
+      else if(event is ChangeUserInfoEvent){
+        newState = _changeUserInfo(newState, event);
+      }
       else if(event is ChangeDivisionEvent){
         newState = _changeDivision(newState, event);
       }
+
       else if (event is IsPromoCodeFound) {
         newState = _changeIsPromoCodeFound(state, event);
       }
       else if (event is UpdateIsUsingCoinEvent) {
         newState = _updateIsUsingCoinEvent(state, event);
       }
+
       else if (event is UpdateIsLoading) {
         newState = _updateIsLoading(state, event);
       }
       else if(event is UpdateTotal){
         newState = _changeTotal(state, event);
       }
+
       else if (event is ResetCheckoutEvent) {
         newState = CheckOutState(
           idList: [],
@@ -129,6 +136,13 @@ class CheckoutBloc extends Bloc<CheckOutEvents, CheckOutState> {
     );
   }
 
+  CheckOutState _changeUserInfo(CheckOutState state, ChangeUserInfoEvent event) {
+    return state.copyWith(
+      userName: event.name,
+      phoneNumber: event.phoneNumber,
+      selectedAddress: event.address
+    );
+  }
   CheckOutState _changeDivision(CheckOutState state, ChangeDivisionEvent event) {
     return state.copyWith(
       selectedDivision: event.selectedDivision
