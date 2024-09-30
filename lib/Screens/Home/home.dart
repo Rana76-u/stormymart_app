@@ -2,12 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:stormymart_v2/Screens/Home/Home%20AppBar/appbar_widgets.dart';
 import 'package:stormymart_v2/Screens/Home/carousel_slider.dart';
 import 'package:stormymart_v2/Screens/Home/horizontal_category.dart';
 import 'package:stormymart_v2/Screens/Home/hot_deals.dart';
 import 'package:stormymart_v2/Screens/Home/imageslider.dart';
 import 'package:stormymart_v2/Screens/Home/recommanded_for_you.dart';
 import 'package:stormymart_v2/Screens/Profile/profile.dart';
+import 'package:stormymart_v2/Screens/Search/searchbar_widget.dart';
 import 'package:stormymart_v2/utility/globalvariable.dart';
 import 'package:transparent_image/transparent_image.dart';
 
@@ -20,7 +22,7 @@ class HomePage extends StatelessWidget {
     return PopScope(
       canPop: false,
       child: Scaffold(
-        drawer: _drawer(context),
+        //drawer: _drawer(context),
         body: CustomScrollView( //RefreshIndicator just above here
           slivers: <Widget>[
             _appbar(context),
@@ -201,70 +203,50 @@ class HomePage extends StatelessWidget {
 
   Widget _appbar(BuildContext context){
     return SliverAppBar(
-        pinned: true,
-        title: Row(
+      toolbarHeight: 75,
+      backgroundColor: Colors.black,
+      pinned: true,
+      expandedHeight: 150.0, // The height when expanded
+      flexibleSpace: FlexibleSpaceBar(
+        collapseMode: CollapseMode.parallax, // Add parallax effect
+        stretchModes: const [
+          StretchMode.zoomBackground,  // Zoom the background when overscrolled
+          StretchMode.fadeTitle,       // Fade the title in and out
+        ],
+        background: Container(
+          height: 100,
+            width: 100,
+          color: Colors.black,
+        ),
+      ),
+      title: Row(
           children: [
+            const Expanded(child: SizedBox()),
             //StormyMart
-            const Text(
-              'StormyMart',
-              style: TextStyle(
-                  color: Color(0xFF212121),
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Urbanist'
-              ),
-              textAlign: TextAlign.start,
+            Image.asset(
+              'assets/images/logo/wide-logo.png',
+              height: 85,
+              width: 85,
             ),
 
-            //update code
-            const Text(
-              '   update 7',
-              style: TextStyle(
-                  fontSize: 14,
-                color: Colors.grey
+            const SizedBox(width: 25,),
+            //Search Bar
+            Expanded(
+              flex: 5,
+              child: GestureDetector(
+                onTap: () {
+                  GoRouter.of(context).go('/search');
+                },
+                child: searchBar(context),
               ),
-              textAlign: TextAlign.start,
             ),
+
+            topLeftItem(Icons.person_outline, 'Welcome', 'Login / Sign up'),
+
+            topLeftItem(Icons.shopping_cart_outlined, '0', 'Cart'),
 
             const Expanded(child: SizedBox()),
 
-            //Search icon
-            GestureDetector(
-              onTap: () {
-                GoRouter.of(context).go('/search');
-              },
-              child: const Icon(
-                Icons.search_rounded,
-                size: 20,
-              ),
-            ),
-
-            //Cart icon
-            GestureDetector(
-              onTap: () {
-                GoRouter.of(context).go('/cart');
-              },
-              child: const Padding(
-                padding: EdgeInsets.only(left: 15),
-                child: Icon(
-                  Icons.shopping_cart_outlined,
-                  size: 20,
-                ),
-              ),
-            ),
-
-            //Profile icon
-            GestureDetector(
-              onTap: () {
-                GoRouter.of(context).go('/profile');
-              },
-              child: const Padding(
-                padding: EdgeInsets.only(left: 15),
-                child: Icon(
-                  Icons.person_outline_rounded,
-                ),
-              )
-            ),
           ],
         ),
         //flexibleSpace: HomePageHeader(),
