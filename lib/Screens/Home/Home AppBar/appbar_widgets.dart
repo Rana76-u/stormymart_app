@@ -50,3 +50,18 @@ Widget topLeftItem(IconData icon, String text1, String text2) {
     ),
   );
 }
+
+Widget appBarCategories(String text) {
+  ///todo: on hover trasparent white container bg
+  return Padding(
+    padding: EdgeInsets.only(left: text == 'All Categories' ? 15 : 40),
+    child: Text(
+      text,
+      style: TextStyle(
+        color: text == 'HotDeals' ? Colors.red : Colors.white,
+        fontWeight: text != 'HotDeals' ? FontWeight.w400 : FontWeight.bold,
+        fontSize: 17
+      ),
+    ),
+  );
+}

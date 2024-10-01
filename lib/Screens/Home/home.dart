@@ -206,7 +206,7 @@ class HomePage extends StatelessWidget {
       toolbarHeight: 75,
       backgroundColor: Colors.black,
       pinned: true,
-      expandedHeight: 150.0, // The height when expanded
+      expandedHeight: 132, // The height when expanded
       flexibleSpace: FlexibleSpaceBar(
         collapseMode: CollapseMode.parallax, // Add parallax effect
         stretchModes: const [
@@ -214,9 +214,34 @@ class HomePage extends StatelessWidget {
           StretchMode.fadeTitle,       // Fade the title in and out
         ],
         background: Container(
-          height: 100,
-            width: 100,
           color: Colors.black,
+          padding: const EdgeInsets.only(top: 65),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              //const Expanded(child: SizedBox(),),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(50),
+                child: Container(
+                  color: Colors.white.withOpacity(0.5),
+                  padding: const EdgeInsets.only(left: 30, top: 10, right: 30, bottom: 10),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.menu, color: Colors.white,),
+                      appBarCategories('All Categories')
+                    ],
+                  ),
+                ),
+              ),
+
+              appBarCategories('HotDeals'),
+              appBarCategories('Clothing'),
+              appBarCategories('Accessories'),
+              appBarCategories('Home Appliances'),
+              appBarCategories('Kids'),
+              appBarCategories('Automotive'),
+            ],
+          ),
         ),
       ),
       title: Row(
@@ -232,7 +257,7 @@ class HomePage extends StatelessWidget {
             const SizedBox(width: 25,),
             //Search Bar
             Expanded(
-              flex: 5,
+              flex: 1,
               child: GestureDetector(
                 onTap: () {
                   GoRouter.of(context).go('/search');
