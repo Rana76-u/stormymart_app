@@ -17,43 +17,32 @@ class ImageSlider extends StatelessWidget {
           for(int i =0; i<snapshot.data!.docs.length; i++){
             images.add(snapshot.data?.docs[i]['image']);
           }
-          return Padding(
-            padding: const EdgeInsets.only(right: 0, left: 0, top: 10),
-            child: SizedBox(
-              //margin: const EdgeInsets.only(top: 15,left: 15, right: 15, bottom: 15),
-              width: MediaQuery.of(context).size.width,//150, 0.38
-              height: MediaQuery.of(context).size.width <= 600 ?
-              181
-                  :
-              MediaQuery.of(context).size.height*0.4,//137
-              child: images.isNotEmpty ? ClipRRect(
-                borderRadius: BorderRadius.circular(15),
-                child: ImageSlideshow(
-                    height: 200, //MediaQuery.of(context).size.height * 0.45,
-                    initialPage: 0,
-                    indicatorColor: Colors.amber,
-                    indicatorBackgroundColor: Colors.grey,
-                    onPageChanged: (value) {},
-                    autoPlayInterval: 8000,
-                    isLoop: true,
-                    children: List.generate(images.length, (index) {
-                      return CustomImage(
-                        images[index],
-                        radius: 10,
-                        height: 200,
-                        //fit: BoxFit.cover,
-                      );
-                    })
-                ),
-              )
-                  :
-              ClipRRect(
-                borderRadius: BorderRadius.circular(15),
-                child: Image.network(
-                  'https://cdn.dribbble.com/users/256646/screenshots/17751098/media/768417cc4f382d6171053ad620bc3c3b.png',
-                  fit: BoxFit.cover,
-                ),
-              ),
+          return SizedBox(
+            width: MediaQuery.of(context).size.width,//150, 0.38
+            height: MediaQuery.of(context).size.width <= 600 ?
+            181
+                :
+            MediaQuery.of(context).size.height*0.4,//137
+            child: images.isNotEmpty ? ImageSlideshow(
+                height: 200, //MediaQuery.of(context).size.height * 0.45,
+                initialPage: 0,
+                indicatorColor: Colors.amber,
+                indicatorBackgroundColor: Colors.grey,
+                onPageChanged: (value) {},
+                autoPlayInterval: 8000,
+                isLoop: true,
+                children: List.generate(images.length, (index) {
+                  return CustomImage(
+                    images[index],
+                    radius: 0,
+                    //fit: BoxFit.cover,
+                  );
+                })
+            )
+                :
+            Image.network(
+              'https://cdn.dribbble.com/users/256646/screenshots/17751098/media/768417cc4f382d6171053ad620bc3c3b.png',
+              fit: BoxFit.cover,
             ),
           );
         }

@@ -9,9 +9,10 @@ import 'package:stormymart_v2/Screens/Home/hot_deals.dart';
 import 'package:stormymart_v2/Screens/Home/imageslider.dart';
 import 'package:stormymart_v2/Screens/Home/recommanded_for_you.dart';
 import 'package:stormymart_v2/Screens/Profile/profile.dart';
-import 'package:stormymart_v2/Screens/Search/searchbar_widget.dart';
 import 'package:stormymart_v2/utility/globalvariable.dart';
 import 'package:transparent_image/transparent_image.dart';
+
+import 'motoline.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -25,7 +26,7 @@ class HomePage extends StatelessWidget {
         //drawer: _drawer(context),
         body: CustomScrollView( //RefreshIndicator just above here
           slivers: <Widget>[
-            _appbar(context),
+            homeAppbar(context),
 
             //build body
             SliverPadding(
@@ -201,87 +202,10 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _appbar(BuildContext context){
-    return SliverAppBar(
-      toolbarHeight: 75,
-      backgroundColor: Colors.black,
-      pinned: true,
-      expandedHeight: 132, // The height when expanded
-      flexibleSpace: FlexibleSpaceBar(
-        collapseMode: CollapseMode.parallax, // Add parallax effect
-        stretchModes: const [
-          StretchMode.zoomBackground,  // Zoom the background when overscrolled
-          StretchMode.fadeTitle,       // Fade the title in and out
-        ],
-        background: Container(
-          color: Colors.black,
-          padding: const EdgeInsets.only(top: 65),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              //const Expanded(child: SizedBox(),),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(50),
-                child: Container(
-                  color: Colors.white.withOpacity(0.5),
-                  padding: const EdgeInsets.only(left: 30, top: 10, right: 30, bottom: 10),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.menu, color: Colors.white,),
-                      appBarCategories('All Categories')
-                    ],
-                  ),
-                ),
-              ),
-
-              appBarCategories('HotDeals'),
-              appBarCategories('Clothing'),
-              appBarCategories('Accessories'),
-              appBarCategories('Home Appliances'),
-              appBarCategories('Kids'),
-              appBarCategories('Automotive'),
-            ],
-          ),
-        ),
-      ),
-      title: Row(
-          children: [
-            const Expanded(child: SizedBox()),
-            //StormyMart
-            Image.asset(
-              'assets/images/logo/wide-logo.png',
-              height: 85,
-              width: 85,
-            ),
-
-            const SizedBox(width: 25,),
-            //Search Bar
-            Expanded(
-              flex: 1,
-              child: GestureDetector(
-                onTap: () {
-                  GoRouter.of(context).go('/search');
-                },
-                child: searchBar(context),
-              ),
-            ),
-
-            topLeftItem(Icons.person_outline, 'Welcome', 'Login / Sign up'),
-
-            topLeftItem(Icons.shopping_cart_outlined, '0', 'Cart'),
-
-            const Expanded(child: SizedBox()),
-
-          ],
-        ),
-        //flexibleSpace: HomePageHeader(),
-      );
-  }
-
   Widget _buildBody(BuildContext context){
     return Padding(
       padding: MediaQuery.of(context).size.width >= 600 ?
-      EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05) :
+      EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.15) :
       const EdgeInsets.symmetric(horizontal: 0), //EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.1)
       child: const Column(
         children: [
@@ -290,20 +214,19 @@ class HomePage extends StatelessWidget {
           SizedBox(height: 10,),
           //Replace with Carosoul
           //GridViewPart(),
-          Padding(
-            padding: EdgeInsets.only(left: 4, right: 4),
-            child: Column(
-              children: [
-                HorizontalSlider(),
-                SizedBox(height: 10,),
-                HotDealsTitle(),
-                HotDeals(),
-                RecommendedForYouTitle(),
-                SizedBox(height: 10,),
-                //MostPopularCategory(),
-                RecommendedForYou(),
-              ],
-            ),
+          Column(
+            children: [
+              SizedBox(height: 20,),
+              MotoLine(),
+              HorizontalSlider(),
+              SizedBox(height: 10,),
+              HotDealsTitle(),
+              HotDeals(),
+              RecommendedForYouTitle(),
+              SizedBox(height: 10,),
+              //MostPopularCategory(),
+              RecommendedForYou(),
+            ],
           ),
           SizedBox(height: 100,)
         ],
