@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
+import '../../../utility/auth_service.dart';
 import '../../Search/searchbar_widget.dart';
 
 Widget homeAppbar(BuildContext context){
@@ -23,7 +23,12 @@ Widget homeAppbar(BuildContext context){
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Icon(Icons.menu, color: Colors.white, size: 20,),
+            GestureDetector(
+              onTap: () {
+
+              },
+              child: const Icon(Icons.menu, color: Colors.white, size: 20,),
+            ),
             const SizedBox(width: 15,),
             const SizedBox(
               height: 20,
@@ -77,53 +82,60 @@ Widget homeAppbar(BuildContext context){
 
 List homeAppBarItems = ['HotDeals', 'Clothing', 'Accessories', 'Home Appliances', 'Kids', 'Automotive', 'Electronics', 'Gadgets', 'Gift'];
 
-Widget topLeftItem(IconData icon, String text1, String text2) {
-  return Padding(
-    padding: const EdgeInsets.only(left: 75),
-    child: Row(
-      children: [
-        Icon(icon, color: Colors.white,),
-        const SizedBox(width: 10,),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            text2 != 'Cart' ?
-            Text(
-              text1,
-              style: const TextStyle(
-                fontSize: 12,
-                color: Colors.white
-              ),
-            ) :
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.only(top: 2, left: 5, right: 5, bottom: 2),
-                child: Text(
-                  text1,
-                  style: const TextStyle(
-                      fontSize: 12,
-                      color: Colors.black,
-                    fontWeight: FontWeight.bold
+Widget topLeftItem(IconData icon, String text1, String text2, ) {
+  return GestureDetector(
+    onTap: () {
+      if(text2 == 'Login / Sign up') {
+        AuthService().signInWithGoogle().then((_) {}).catchError((error) {});
+      }
+    },
+    child: Padding(
+      padding: const EdgeInsets.only(left: 75),
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.white,),
+          const SizedBox(width: 10,),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              text2 != 'Cart' ?
+              Text(
+                text1,
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Colors.white
+                ),
+              ) :
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 2, left: 5, right: 5, bottom: 2),
+                  child: Text(
+                    text1,
+                    style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.black,
+                      fontWeight: FontWeight.bold
+                    ),
                   ),
                 ),
               ),
-            ),
 
-            Text(
-              text2,
-              style: const TextStyle(
-                fontSize: 11,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold
+              Text(
+                text2,
+                style: const TextStyle(
+                  fontSize: 11,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold
+                ),
               ),
-            ),
-          ],
-        )
-      ],
+            ],
+          )
+        ],
+      ),
     ),
   );
 }
