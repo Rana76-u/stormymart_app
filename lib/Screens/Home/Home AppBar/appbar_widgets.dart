@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../utility/auth_service.dart';
@@ -68,9 +69,9 @@ Widget homeAppbar(BuildContext context){
           ),
         ),
 
-        topLeftItem(Icons.person_outline, 'Welcome', 'Login / Sign up'),
+        topLeftItem(Icons.person_outline, 'Welcome', 'Login / Sign up', context),
 
-        topLeftItem(Icons.shopping_cart_outlined, '0', 'Cart'),
+        topLeftItem(Icons.shopping_cart_outlined, '0', 'Cart', context),
 
         const Expanded(child: SizedBox()),
 
@@ -82,18 +83,28 @@ Widget homeAppbar(BuildContext context){
 
 List homeAppBarItems = ['HotDeals', 'Clothing', 'Accessories', 'Home Appliances', 'Kids', 'Automotive', 'Electronics', 'Gadgets', 'Gift'];
 
-Widget topLeftItem(IconData icon, String text1, String text2, ) {
+Widget topLeftItem(IconData icon, String text1, String text2, BuildContext context) {
   return GestureDetector(
     onTap: () {
       if(text2 == 'Login / Sign up') {
-        AuthService().signInWithGoogle().then((_) {}).catchError((error) {});
+        AuthService().signInWithGoogle().then((_) {
+          GoRouter.of(context).go('/');
+        }).catchError((error) {});
       }
     },
     child: Padding(
       padding: const EdgeInsets.only(left: 75),
       child: Row(
         children: [
-          Icon(icon, color: Colors.white,),
+          FirebaseAuth.instance.currentUser != null && text2 == 'Login / Sign up' ?
+          ClipRRect(
+            borderRadius: BorderRadius.circular(50),
+            child: Image.network(
+              FirebaseAuth.instance.currentUser!.photoURL!,
+              height: 25,
+              width: 25,
+            ),
+          ) : Icon(icon, color: Colors.white,),
           const SizedBox(width: 10,),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,7 +136,7 @@ Widget topLeftItem(IconData icon, String text1, String text2, ) {
               ),
 
               Text(
-                text2,
+                FirebaseAuth.instance.currentUser != null && text2 == 'Login / Sign up' ? FirebaseAuth.instance.currentUser!.displayName ?? '' : text2,
                 style: const TextStyle(
                   fontSize: 11,
                     color: Colors.white,
