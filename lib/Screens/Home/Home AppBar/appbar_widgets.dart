@@ -1,10 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:stormymart_v2/Blocks/Home%20Bloc/home_bloc.dart';
+import 'package:stormymart_v2/Blocks/Home%20Bloc/home_event.dart';
+import 'package:stormymart_v2/Blocks/Home%20Bloc/home_state.dart';
 import '../../../utility/auth_service.dart';
 import '../../Search/searchbar_widget.dart';
 
-Widget homeAppbar(BuildContext context){
+Widget homeAppbar(BuildContext context, HomeState state) {
   return SliverAppBar(
     toolbarHeight: 75,
     backgroundColor: Colors.black,
@@ -69,9 +73,9 @@ Widget homeAppbar(BuildContext context){
           ),
         ),
 
-        topLeftItem(Icons.person_outline, 'Welcome', 'Login / Sign up', context),
+        topLeftItem(Icons.person_outline, 'Welcome', state.profileName, context),
 
-        topLeftItem(Icons.shopping_cart_outlined, '0', 'Cart', context),
+        topLeftItem(Icons.shopping_cart_outlined, state.cartValue.toString(), 'Cart', context),
 
         const Expanded(child: SizedBox()),
 
@@ -85,18 +89,80 @@ List homeAppBarItems = ['HotDeals', 'Clothing', 'Accessories', 'Home Appliances'
 
 Widget topLeftItem(IconData icon, String text1, String text2, BuildContext context) {
   return GestureDetector(
-    onTap: () {
+    onTap: () async {
+      final provider = BlocProvider.of<HomeBloc>(context);
+
       if(text2 == 'Login / Sign up') {
-        AuthService().signInWithGoogle().then((_) {
-          GoRouter.of(context).go('/');
-        }).catchError((error) {});
+
+        if(FirebaseAuth.instance.currentUser != null) {
+          showDialog(
+            useRootNavigator: true,
+
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Menu'),
+                content: SingleChildScrollView(
+                  child: ListBody(
+                    children: <Widget>[
+                      ListTile(
+                        title: const Text('Profile'),
+                        onTap: () {
+                          // Handle item 1 tap
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      ListTile(
+                        title: const Text('Logout'),
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          AuthService().signOut();
+                          provider.add(UpdateProfileEvent(name: 'Login / Sign up', imageUrl: ''));
+                        },
+                      ),
+                      // Add more items as needed
+                    ],
+                  ),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('Close'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        }
+        else{
+          AuthService().signInWithGoogle().then((_) {
+
+            provider.add(UpdateProfileEvent(
+                name: FirebaseAuth.instance.currentUser!.displayName ?? '',
+                imageUrl: FirebaseAuth.instance.currentUser!.photoURL ?? ''
+            )
+            );
+          })
+              .catchError((error) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                    content: Text('Error: $error')
+                )
+            );
+
+            debugPrint('Error: $error');
+          });
+        }
+
       }
     },
     child: Padding(
       padding: const EdgeInsets.only(left: 75),
       child: Row(
         children: [
-          FirebaseAuth.instance.currentUser != null && text2 == 'Login / Sign up' ?
+          FirebaseAuth.instance.currentUser != null && text1 == 'Welcome' ?
           ClipRRect(
             borderRadius: BorderRadius.circular(50),
             child: Image.network(
@@ -113,8 +179,8 @@ Widget topLeftItem(IconData icon, String text1, String text2, BuildContext conte
               Text(
                 text1,
                 style: const TextStyle(
-                  fontSize: 12,
-                  color: Colors.white
+                    fontSize: 12,
+                    color: Colors.white
                 ),
               ) :
               Container(
@@ -129,7 +195,7 @@ Widget topLeftItem(IconData icon, String text1, String text2, BuildContext conte
                     style: const TextStyle(
                         fontSize: 12,
                         color: Colors.black,
-                      fontWeight: FontWeight.bold
+                        fontWeight: FontWeight.bold
                     ),
                   ),
                 ),
@@ -138,7 +204,7 @@ Widget topLeftItem(IconData icon, String text1, String text2, BuildContext conte
               Text(
                 FirebaseAuth.instance.currentUser != null && text2 == 'Login / Sign up' ? FirebaseAuth.instance.currentUser!.displayName ?? '' : text2,
                 style: const TextStyle(
-                  fontSize: 11,
+                    fontSize: 11,
                     color: Colors.white,
                     fontWeight: FontWeight.bold
                 ),

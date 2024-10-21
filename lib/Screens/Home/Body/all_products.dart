@@ -2,11 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
+import 'package:stormymart_v2/Blocks/Home%20Bloc/home_state.dart';
 import 'package:stormymart_v2/Screens/Product%20Card/product_card_widget.dart';
 import 'package:stormymart_v2/utility/globalvariable.dart';
 
 class AllProducts extends StatelessWidget {
-  const AllProducts({super.key});
+  final HomeState homeState;
+  const AllProducts({super.key, required this.homeState});
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +86,7 @@ class AllProducts extends StatelessWidget {
 
                                       const SizedBox(height: 15,),
 
-                                      productButtons()
+                                      productButtons(context, homeState)
                                     ],
                                   ),
                                 ),

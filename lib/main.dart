@@ -12,6 +12,7 @@ import 'package:stormymart_v2/Screens/Profile/Coins/coins.dart';
 import 'package:stormymart_v2/Screens/Profile/profile.dart';
 import 'package:stormymart_v2/Screens/Search/search.dart';
 import 'package:stormymart_v2/firebase_options.dart';
+import 'Blocks/Home Bloc/home_bloc.dart';
 import 'Screens/Home/show_all_hotdeals.dart';
 import 'Screens/Profile/Wishlists/wishlist.dart';
 
@@ -146,13 +147,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider(create: (context) => HomeBloc()),
         BlocProvider(create: (context) => CartBloc()),
         BlocProvider(create: (context) => CheckoutBloc()),
       ],
       child: MaterialApp.router(
         title: 'StormyMart',
         theme: ThemeData(
-          primaryColor: MaterialStateColor.resolveWith((states) => const Color(0xFFFAB416))
+          primaryColor: WidgetStateColor.resolveWith((states) => const Color(0xFFFAB416))
         ),
         routerConfig: _router,
         debugShowCheckedModeBanner: false,
