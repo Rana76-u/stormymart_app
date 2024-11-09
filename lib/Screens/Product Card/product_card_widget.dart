@@ -1,9 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:stormymart_v2/Blocks/Home%20Bloc/home_bloc.dart';
-import 'package:stormymart_v2/Blocks/Home%20Bloc/home_event.dart';
-import '../../Blocks/Home Bloc/home_state.dart';
+import 'package:go_router/go_router.dart';
 import '../../Components/custom_image.dart';
 
 Widget productImage(String productId, ) {
@@ -128,7 +125,7 @@ Widget productSoldAmount(double soldAmount) {
   );
 }
 
-Widget productButtons(BuildContext context, HomeState state) {
+Widget productButtons(BuildContext context, String productId) {
   return Row(
     children: [
       Expanded(
@@ -136,7 +133,7 @@ Widget productButtons(BuildContext context, HomeState state) {
           height: 40,
           child: FilledButton(
               onPressed: () {
-
+                GoRouter.of(context).go('/product/$productId');
               },
               style: ButtonStyle(
                 backgroundColor: WidgetStateProperty.all(Colors.orange.withOpacity(0.1)),
@@ -163,7 +160,8 @@ Widget productButtons(BuildContext context, HomeState state) {
           height: 40,
           child: FilledButton(
               onPressed: () {
-                BlocProvider.of<HomeBloc>(context).add(UpdateCartValueEvent(cartValue: state.cartValue + 1));
+                GoRouter.of(context).go('/product/$productId');
+                //BlocProvider.of<HomeBloc>(context).add(UpdateCartValueEvent(cartValue: state.cartValue + 1));
               },
               style: ButtonStyle(
                 backgroundColor: WidgetStateProperty.all(Colors.grey.withOpacity(0.3)),

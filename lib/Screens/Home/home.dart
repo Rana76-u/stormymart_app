@@ -57,7 +57,7 @@ class HomePage extends StatelessWidget {
       MediaQuery.of(context).size.width <= 1565 ?
       EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.065)
           :
-      EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.15), //EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.1)
+      EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.15),
       child: Column(
         children: [
           const ImageSlider(),

@@ -86,7 +86,7 @@ class AllProducts extends StatelessWidget {
 
                                       const SizedBox(height: 15,),
 
-                                      productButtons(context, homeState)
+                                      productButtons(context, product.id)
                                     ],
                                   ),
                                 ),
