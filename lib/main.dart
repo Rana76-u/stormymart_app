@@ -85,7 +85,7 @@ final GoRouter _router = GoRouter(
         );
       },
     ),
-    //cart
+    //checkout
     GoRoute(
       path: '/checkout',
       pageBuilder: (context, state) {

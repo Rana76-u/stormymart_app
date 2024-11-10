@@ -3,12 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
+import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:stormymart_v2/Blocks/Cart%20Bloc/cart_bloc.dart';
 import 'package:stormymart_v2/Screens/Cart/cart.dart';
 import 'package:stormymart_v2/theme/color.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../Blocks/Cart Bloc/cart_events.dart';
+import '../../Blocks/Home Bloc/home_bloc.dart';
+import '../../Blocks/Home Bloc/home_state.dart';
 import '../../ViewModels/open_photo.dart';
+import '../Home/Footer/home_footer.dart';
+import '../Home/Home AppBar/appbar_widgets.dart';
 
 class ProductScreen extends StatefulWidget {
   final String productId;
@@ -68,123 +74,154 @@ class _ProductScreenState extends State<ProductScreen> {
     }
   }
 
-  Widget _appBar() {
-    return Padding(
-      padding: const EdgeInsets.only(right: 30),
-      child: GestureDetector(
-        onTap: () {
-          if (FirebaseAuth.instance.currentUser != null) {
-            //open chat
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("You're Not Logged In.")));
-          }
-        },
-        child: const Icon(
-          Icons.mark_chat_unread_rounded,
+
+  @override
+  Widget build(BuildContext context) {
+    const padding = EdgeInsets.only(left: 10, right: 10);
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        backgroundColor: appBgColor,
+        floatingActionButton: floatingButtonWidget(widget.productId.toString().trim()),
+        //drawer: _drawer(context),
+        body: CustomScrollView( //RefreshIndicator just above here
+          slivers: <Widget>[
+            BlocBuilder<HomeBloc, HomeState>(
+              builder: (context, state) {
+                return homeAppbar(context, state);
+              },
+            ),
+
+            //build body
+            SliverPadding(
+              padding: padding,
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  ((context, index) => _buildBody(context)),
+                  childCount: 1,
+                ),
+              ),
+            ),
+
+            //build footer
+            SliverToBoxAdapter(
+              child: homeFooter(),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildBody(BuildContext context) {
     String id = widget.productId.toString().trim();
-    //var shopID = '';
 
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        actions: [
-          _appBar(),
-        ],
-      ),
-      backgroundColor: appBgColor,
-      floatingActionButton:
-          floatingButtonWidget(widget.productId.toString().trim()),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: MediaQuery.of(context).size.width <= 600 ?
-          const EdgeInsets.symmetric(horizontal: 15)
-              :
-          MediaQuery.of(context).size.width <= 1565 ?
-          EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.065)
-              :
-          EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.15),
-          child: FutureBuilder(
-            future: FirebaseFirestore.instance
-                .collection('Products')
-                .doc(id)
-                .get()
-                .then((value) => value),
-            builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-              if (snapshot.hasData) {
-                var price = snapshot.data!.get('price');
-                var discount = snapshot.data!.get('discount');
-                discountCal = (price / 100) * (100 - discount);
-                //var rating = snapshot.data!.get('rating');
-                //var sold = snapshot.data!.get('sold');
-                var quantityAvailable = snapshot.data!.get('quantityAvailable');
-                //shopID = snapshot.data!.get('Shop ID');
+    return Padding(
+      padding: MediaQuery.of(context).size.width <= 600 ?
+      const EdgeInsets.symmetric(horizontal: 15)
+          :
+      MediaQuery.of(context).size.width <= 1565 ?
+      EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.065)
+          :
+      EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.15),
+      child: FutureBuilder(
+        future: FirebaseFirestore.instance
+            .collection('Products')
+            .doc(id)
+            .get()
+            .then((value) => value),
+        builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          if (snapshot.hasData) {
+            var price = snapshot.data!.get('price');
+            var discount = snapshot.data!.get('discount');
+            discountCal = (price / 100) * (100 - discount);
+            //var rating = snapshot.data!.get('rating');
+            //var sold = snapshot.data!.get('sold');
+            var quantityAvailable = snapshot.data!.get('quantityAvailable');
+            //shopID = snapshot.data!.get('Shop ID');
 
-                //SIZE LIST
-                sizes = snapshot.data!.get('size');
+            //SIZE LIST
+            sizes = snapshot.data!.get('size');
 
-                return Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    variationWidget(id),
+            return Padding(
+              padding: const EdgeInsets.only(top: 30, bottom: 30),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      variationWidget(id),
 
-                    //Space
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    /*if (variationWarning == true)
+                      //Space
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      /*if (variationWarning == true)
                       const SizedBox(
                         width: 7,
                       ),*/
 
-                    imageSliderWidget(id),
+                      imageSliderWidget(id),
 
-                    //Space
-                    const SizedBox(
-                      width: 30,
-                    ),
-
-                    Expanded(
-                      flex: 1,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-
-                          productInfoWidget(id, discount, discountCal, snapshot.data!,
-                              price, quantityAvailable),
-
-                          Row(
-                            children: [
-                              buttons("Add To Cart", Colors.grey.withOpacity(0.5), Colors.black, quantityAvailable, id, id),
-                              const SizedBox(width: 20,),
-                              buttons("Buy Now", Colors.deepOrangeAccent, Colors.white, quantityAvailable, id, id),
-                            ],
-                          ),
-                          const SizedBox(height: 20,),
-                          Row(
-                            children: [
-                              buttons("Message Seller", const Color(0xFFFAB416), Colors.white, quantityAvailable, id, id),
-                            ],
-                          )
-                        ],
+                      //Space
+                      const SizedBox(
+                        width: 30,
                       ),
-                    )
-                  ],
-                );
-              } else {
-                return loadingWidget();
-              }
-            },
-          ),
-        ),
+
+                      Expanded(
+                        flex: 1,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+
+                            productInfoWidget(id, discount, discountCal, snapshot.data!,
+                                price, quantityAvailable),
+
+                            Row(
+                              children: [
+                                buttons("Add To Cart", Colors.grey.withOpacity(0.5), Colors.black, quantityAvailable, id, id),
+                                const SizedBox(width: 20,),
+                                buttons("Buy Now", Colors.deepOrangeAccent, Colors.white, quantityAvailable, id, id),
+                              ],
+                            ),
+                            const SizedBox(height: 20,),
+                            //buttons("Message Seller", const Color(0xFFFAB416), Colors.white, quantityAvailable, id, id),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                  const Divider(height: 25,),
+                  const SizedBox(height: 35,),
+                  //Description Heading
+                  const Text(
+                    'Description',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      color: Colors.deepOrangeAccent,
+                    ),
+                  ),
+                  //Orange Divider
+                  const SizedBox(
+                    width: 80,
+                    child: Divider(color: Colors.deepOrange, thickness: 2,),
+                  ),
+                  //Description Text
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Text(
+                      snapshot.data!.get('description'),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          } else {
+            return loadingWidget();
+          }
+        },
       ),
     );
   }
@@ -263,7 +300,7 @@ class _ProductScreenState extends State<ProductScreen> {
       height: variationWarning ? MediaQuery.of(context).size.height*0.5 + 25 : MediaQuery.of(context).size.height*0.5, //116
       width: 100,//double.infinity,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(3),
         color: variationWarning ? Colors.red.withOpacity(0.25) : appBgColor,
       ),
       child: ListView.builder(
@@ -282,6 +319,22 @@ class _ProductScreenState extends State<ProductScreen> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    if (variationWarning == true && index == 0)
+                      Container(
+                        color: Colors.red,
+                        alignment: Alignment.center,
+                        child: const Padding(
+                          padding: EdgeInsets.only(left: 4, right: 4),
+                          child: Text(
+                            'Please Select A Variant',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
                     //image
                     GestureDetector(
                       onTap: () {
@@ -355,25 +408,6 @@ class _ProductScreenState extends State<ProductScreen> {
                         maxLines: 1,
                       ),
                     ),
-                    if (variationWarning == true)
-                      Padding(
-                        padding: const EdgeInsets.only(left: 15),
-                        child: Container(
-                          color: Colors.red,
-                          alignment: Alignment.center,
-                          child: const Padding(
-                            padding: EdgeInsets.only(left: 4, right: 4),
-                            child: Text(
-                              'Please select a variation',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                  
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                      ),
                   ],
                 );
               } else {
@@ -396,9 +430,8 @@ class _ProductScreenState extends State<ProductScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          //Discount
+          //Discount, Wishlist, Share
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               //Discount
               if (discount == 0.0) ...[
@@ -422,6 +455,8 @@ class _ProductScreenState extends State<ProductScreen> {
                 ),
               ],
 
+              const Spacer(),
+
               //wishlist
               GestureDetector(
                 onTap: () async {
@@ -438,18 +473,31 @@ class _ProductScreenState extends State<ProductScreen> {
                 },
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.blueGrey,
-                    borderRadius: BorderRadius.circular(5),
+                    color: Colors.red.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(50),
                   ),
                   child: const Padding(
-                    padding: EdgeInsets.all(7),
-                    child: Text(
-                      '+ wishlist',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15),
-                    ),
+                    padding: EdgeInsets.all(15),
+                    child: Icon(Icons.favorite_border_rounded, color: Colors.red,),
+                  ),
+                ),
+              ),
+
+              const SizedBox(width: 10,),
+
+              //Share
+              GestureDetector(
+                onTap: () async {
+                  await Share.share('https://www.stormymart.com/#/product/$id');
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  child: const Padding(
+                    padding: EdgeInsets.all(15),
+                    child: Icon(Icons.screen_share_rounded, color: Colors.blueGrey,),
                   ),
                 ),
               ),
@@ -464,7 +512,7 @@ class _ProductScreenState extends State<ProductScreen> {
               snapshot.get('title'),
               style: const TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 23,
+                  fontSize: 25,
               ),
             ),
           ),
@@ -489,7 +537,7 @@ class _ProductScreenState extends State<ProductScreen> {
                 "TK ${discountCal.toStringAsFixed(0)}/-",
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 21.5,
+                  fontSize: 20,
                   color: Colors.deepOrangeAccent
                 ),
               ),
@@ -500,27 +548,15 @@ class _ProductScreenState extends State<ProductScreen> {
                 const SizedBox(),
               ] else ...[
                 Text(
-                  "of ${price.toString()}/-",
+                  "Tk ${price.toString()}/-",
                   style: const TextStyle(
-                      //fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: Colors.grey,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
                       decoration: TextDecoration.lineThrough),
                 ),
               ]
             ],
           ),
           const SizedBox(height: 20,),
-          // Description
-          Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: Text(
-              snapshot.get('description'),
-              style: const TextStyle(
-                  color: Colors.grey, fontWeight: FontWeight.w600),
-            ),
-          ),
 
           const SizedBox(height: 20,),
 
@@ -801,6 +837,7 @@ class _ProductScreenState extends State<ProductScreen> {
                         Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => const Cart(),
                         ));
+                        GoRouter.of(context).go('/cart');
                       },
                       child: const Text(
                         'Open Cart',

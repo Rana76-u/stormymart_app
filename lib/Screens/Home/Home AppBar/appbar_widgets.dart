@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:stormymart_v2/Blocks/Home%20Bloc/home_bloc.dart';
 import 'package:stormymart_v2/Blocks/Home%20Bloc/home_event.dart';
 import 'package:stormymart_v2/Blocks/Home%20Bloc/home_state.dart';
+import '../../../Blocks/Cart Bloc/cart_bloc.dart';
+import '../../../Blocks/Cart Bloc/cart_states.dart';
 import '../../../utility/auth_service.dart';
 import '../../Search/searchbar_widget.dart';
 
@@ -55,10 +57,15 @@ Widget homeAppbar(BuildContext context, HomeState state) {
       children: [
         const Expanded(child: SizedBox()),
         //StormyMart
-        Image.asset(
-          'assets/images/logo/wide-logo.png',
-          height: 85,
-          width: 85,
+        GestureDetector(
+          onTap: () {
+            GoRouter.of(context).go('/');
+          },
+          child: Image.asset(
+            'assets/images/logo/wide-logo.png',
+            height: 85,
+            width: 85,
+          ),
         ),
 
         const SizedBox(width: 25,),
@@ -75,7 +82,11 @@ Widget homeAppbar(BuildContext context, HomeState state) {
 
         topLeftItem(Icons.person_outline, 'Welcome', state.profileName, context),
 
-        topLeftItem(Icons.shopping_cart_outlined, state.cartValue.toString(), 'Cart', context),
+        BlocBuilder<CartBloc, CartState>(
+          builder: (context, state) {
+            return topLeftItem(Icons.shopping_cart_outlined, state.idList.length.toString(), 'Cart', context);
+          },
+        ),
 
         const Expanded(child: SizedBox()),
 
@@ -126,7 +137,7 @@ Widget topLeftItem(IconData icon, String text1, String text2, BuildContext conte
                 ),
                 actions: <Widget>[
                   TextButton(
-                    child: Text('Close'),
+                    child: const Text('Close'),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
@@ -156,6 +167,9 @@ Widget topLeftItem(IconData icon, String text1, String text2, BuildContext conte
           });
         }
 
+      }
+      else if(text2 == 'Cart') {
+        GoRouter.of(context).go('/cart');
       }
     },
     child: Padding(
