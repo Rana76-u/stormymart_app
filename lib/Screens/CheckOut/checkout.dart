@@ -7,14 +7,62 @@ import 'package:stormymart_v2/Blocks/CheckOut%20Bloc/checkout_bloc.dart';
 import 'package:stormymart_v2/Blocks/CheckOut%20Bloc/checkout_events.dart';
 import 'package:stormymart_v2/Blocks/CheckOut%20Bloc/checkout_state.dart';
 import 'package:stormymart_v2/ViewModels/checkout_viewmodel.dart';
+import 'package:stormymart_v2/utility/padding_provider.dart';
 import 'package:transparent_image/transparent_image.dart';
+
+import '../../Blocks/Home Bloc/home_bloc.dart';
+import '../../Blocks/Home Bloc/home_state.dart';
 import '../Cart/item_util.dart';
+import '../Home/Footer/home_footer.dart';
+import '../Home/Home AppBar/appbar_widgets.dart';
 
 class CheckOut extends StatelessWidget {
   const CheckOut({super.key});
 
   @override
   Widget build(BuildContext context) {
+    const padding = EdgeInsets.only(left: 10, right: 10);
+    return PopScope(
+      canPop: false,
+      child: BlocConsumer<CheckoutBloc, CheckOutState>(
+          listener: (context, state) {},
+          builder: (context, state) {
+            return Scaffold(
+              //floatingActionButton: floatingButtonWidget(state, context),
+              //floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+              //drawer: _drawer(context),
+              body: CustomScrollView(
+                //RefreshIndicator just above here
+                slivers: <Widget>[
+                  BlocBuilder<HomeBloc, HomeState>(
+                    builder: (context, state) {
+                      return homeAppbar(context, state);
+                    },
+                  ),
+
+                  //build body
+                  SliverPadding(
+                    padding: padding,
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        ((context, index) => _buildBody(context)),
+                        childCount: 1,
+                      ),
+                    ),
+                  ),
+
+                  //build footer
+                  SliverToBoxAdapter(
+                    child: homeFooter(),
+                  ),
+                ],
+              ),
+            );
+          }),
+    );
+  }
+
+  Widget _buildBody(BuildContext context) {
     final provider = BlocProvider.of<CheckoutBloc>(context);
     final user = FirebaseAuth.instance.currentUser;
 
@@ -24,109 +72,196 @@ class CheckOut extends StatelessWidget {
     TextEditingController divisionController = TextEditingController();
     TextEditingController promoCodeController = TextEditingController();
 
-    if(user != null) {
+    if (user != null) {
       provider.add(LoadUserDataEvent(uid: user.uid));
-    }
-    else{
+    } else {
       provider.add(UpdateIsLoading(isLoading: false));
     }
 
     return BlocConsumer<CheckoutBloc, CheckOutState>(
       listener: (context, state) {},
       builder: (context, state) {
-        nameController.text = state.userName;
-        phnNumberController.text = state.phoneNumber;
-        addressController.text = state.selectedAddress;
-        divisionController.text = state.selectedDivision;
+        if (state.userName.isNotEmpty) {
+          nameController.text = state.userName;
+          phnNumberController.text = state.phoneNumber;
+          addressController.text = state.selectedAddress;
+          divisionController.text = state.selectedDivision;
+        }
 
-        return Scaffold(
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            centerTitle: true,
-            title: const Text(
-              'Checkout',
-              style: TextStyle(
-                  fontWeight: FontWeight.bold
-              ),
-            ),
-          ),
-          body: state.isLoading ?
-          Center(
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width*0.45,
-              child: const LinearProgressIndicator(),
-            ),
-          ) :
-          SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  titlesWidget('Contact Info'),
+        return state.isLoading
+            ? Center(
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.45,
+                  child: const LinearProgressIndicator(),
+                ),
+              )
+            : Padding(
+                padding:
+                    EdgeInsets.symmetric(horizontal: paddingProvider(context)),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 40, bottom: 60),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.45 -
+                            paddingProvider(context),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Checkout',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.deepOrange),
+                            ),
 
-                  textBox(37, double.infinity, nameController, "Full Name", const Icon(Icons.abc), TextInputType.text),
+                            const SizedBox(
+                              height: 25,
+                            ),
 
-                  textBox(37, double.infinity, phnNumberController, "Phone Number", const Icon(Icons.onetwothree), TextInputType.phone),
+                            //billing info
+                            Card(
+                              color: Colors.white,
+                              elevation: 0,
+                              child: Padding(
+                                padding: const EdgeInsets.all(15),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    titlesWidget('Contact Info'),
+                                    textBox(
+                                        37,
+                                        double.infinity,
+                                        nameController,
+                                        "Full Name",
+                                        const Icon(Icons.abc),
+                                        TextInputType.text),
+                                    textBox(
+                                        37,
+                                        double.infinity,
+                                        phnNumberController,
+                                        "Phone Number",
+                                        const Icon(Icons.onetwothree),
+                                        TextInputType.phone),
+                                    const Divider(
+                                      height: 20,
+                                      color: Colors.white,
+                                    ),
+                                    titlesWidget('Shipping Info'),
+                                    textBox(
+                                        37,
+                                        double.infinity,
+                                        addressController,
+                                        "Address",
+                                        const Icon(Icons.location_on_rounded),
+                                        TextInputType.streetAddress),
+                                    divisionPicker(context, divisionController),
+                                    estimatedDelivery(),
+                                  ],
+                                ),
+                              ),
+                            ),
 
-                  titlesWidget('Shipping Info'),
+                            const SizedBox(
+                              height: 25,
+                            ),
 
-                  textBox(37, double.infinity, addressController, "Address", const Icon(Icons.location_on_rounded), TextInputType.streetAddress),
-
-                  divisionPicker(context, divisionController),
-
-                  estimatedDelivery(),
-
-                  itemsWidget(state),
-
-                  Divider(color: Colors.grey.shade300,),
-
-                  promoWidget(context, state, promoCodeController),
-
-                  coinWidget(context, state),
-
-                  Divider(color: Colors.grey.shade300,),
-
-                  titlesWidget('Order Summary'),
-                  orderSummaryText('Items Total', '৳ ${state.itemTotal}'),
-                  orderSummaryText('Delivery Fee', '৳ 70/-'),
-                  orderSummaryText('Promo Discount', '-৳ ${state.promoDiscountAmount}'),
-                  Visibility(
-                    visible: state.isUsingCoin ? true : false,
-                    child: orderSummaryText('Coin Discount', '-৳ ${state.coinAmount / 1000}'),
+                            //payment info
+                            Card(
+                              color: Colors.white,
+                              elevation: 0,
+                              child: Padding(
+                                padding: const EdgeInsets.all(15),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Image.network(
+                                        'https://i.imgur.com/QH1SUwO.jpg',
+                                        fit: BoxFit.fill,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Spacer(),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.45 -
+                            paddingProvider(context),
+                        child: Card(
+                          elevation: 0,
+                          color: Colors.white,
+                          child: Padding(
+                            padding: const EdgeInsets.all(15),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                titlesWidget('Order Summary'),
+                                const Divider(
+                                  height: 25,
+                                  color: Colors.white,
+                                ),
+                                itemsWidget(state),
+                                const Divider(
+                                  height: 25,
+                                  color: Colors.white,
+                                ),
+                                promoWidget(
+                                    context, state, promoCodeController),
+                                coinWidget(context, state),
+                                Divider(
+                                  color: Colors.grey.shade300,
+                                ),
+                                orderSummaryText(
+                                    'Subtotal', '৳ ${state.itemTotal}'),
+                                orderSummaryText('Delivery Fee', '৳ 70/-'),
+                                orderSummaryText('Promo Discount',
+                                    '-৳ ${state.promoDiscountAmount}'),
+                                Visibility(
+                                  visible: state.isUsingCoin ? true : false,
+                                  child: orderSummaryText('Coin Discount',
+                                      '-৳ ${state.coinAmount / 1000}'),
+                                ),
+                                titlesWidget('Total : ৳ ${state.total}'),
+                                const SizedBox(
+                                  height: 30,
+                                ),
+                                buttonWidget(48, double.infinity, Colors.green,
+                                    'Place Order', () {
+                                  provider.add(ChangeUserInfoEvent(
+                                      name: nameController.text,
+                                      phoneNumber: phnNumberController.text,
+                                      address: addressController.text));
+                                  CheckOutViewModel().placeOrder(
+                                      context, promoCodeController.text);
+                                }),
+                              ],
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
                   ),
-
-                  titlesWidget('Total : ৳ ${state.total}'),
-
-                  const SizedBox(height: 30,),
-
-                  buttonWidget(48, double.infinity, Colors.green, 'Place Order',
-                          () {
-                    provider.add(ChangeUserInfoEvent(
-                        name: nameController.text,
-                        phoneNumber: phnNumberController.text,
-                        address: addressController.text));
-                    CheckOutViewModel().placeOrder(context, promoCodeController.text);
-                          })
-                ],
-              ),
-            ),
-          ),
-        );
+                ),
+              );
       },
     );
   }
 
   Widget titlesWidget(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 20),
-      child: Text(
-        text,
-        style: const TextStyle(
-            fontSize: 17,
-            fontWeight: FontWeight.bold
-        ),
-      ),
+    return Text(
+      text,
+      style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
     );
   }
 
@@ -154,10 +289,7 @@ class CheckOut extends StatelessWidget {
               borderSide: BorderSide(color: Colors.green),
             ),
             hintText: hintText,
-            hintStyle: const TextStyle(
-                fontSize: 13,
-                color: Colors.grey
-            ),
+            hintStyle: const TextStyle(fontSize: 13, color: Colors.grey),
             prefixIcon: prefixIcon,
             //labelText: "Semester",
           ),
@@ -166,9 +298,10 @@ class CheckOut extends StatelessWidget {
     );
   }
 
-  Widget buttonWidget(double height, double width, Color bgColor, String text, VoidCallback voidCallback) {
+  Widget buttonWidget(double height, double width, Color bgColor, String text,
+      VoidCallback voidCallback) {
     return Padding(
-      padding: const EdgeInsets.only(left: 5),
+      padding: const EdgeInsets.only(left: 10),
       child: SizedBox(
         height: height,
         width: width,
@@ -177,43 +310,38 @@ class CheckOut extends StatelessWidget {
               voidCallback();
             },
             style: ButtonStyle(
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    )
-                ),
-                backgroundColor: MaterialStateColor.resolveWith((states) => bgColor)
-            ),
+                  borderRadius: BorderRadius.circular(8),
+                )),
+                backgroundColor:
+                    WidgetStateColor.resolveWith((states) => bgColor)),
             child: Text(
               text,
               style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold
-              ),
-            )
-        ),
+                  color: Colors.white, fontWeight: FontWeight.bold),
+            )),
       ),
     );
   }
-  
-  Widget divisionPicker(BuildContext context, TextEditingController divisionController) {
+
+  Widget divisionPicker(
+      BuildContext context, TextEditingController divisionController) {
     final provider = BlocProvider.of<CheckoutBloc>(context);
-    
+
     return Padding(
       padding: const EdgeInsets.only(top: 15),
       child: Container(
         decoration: BoxDecoration(
-            border: Border.all(
-                color: Colors.grey,
-                width: 1
-            ),
-            borderRadius: BorderRadius.circular(5)
-        ),
+            border: Border.all(color: Colors.grey, width: 1),
+            borderRadius: BorderRadius.circular(5)),
         child: Padding(
           padding: const EdgeInsets.all(5),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
-              value: divisionController.text != "" ? divisionController.text : "Dhaka",
+              value: divisionController.text != ""
+                  ? divisionController.text
+                  : "Dhaka",
               hint: const Text('Select City'),
               isDense: true,
               iconSize: 0,
@@ -222,15 +350,20 @@ class CheckOut extends StatelessWidget {
                 provider.add(ChangeDivisionEvent(selectedDivision: newValue!));
               },
               items: <String>[
-                'Dhaka', 'Barisal', 'Chittagong', 'Khulna',
-                'Mymensingh', 'Rajshahi', 'Rangpur', 'Sylhet']
-                  .map<DropdownMenuItem<String>>((String value) {
+                'Dhaka',
+                'Barisal',
+                'Chittagong',
+                'Khulna',
+                'Mymensingh',
+                'Rajshahi',
+                'Rangpur',
+                'Sylhet'
+              ].map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(value),
                 );
-              })
-                  .toList(),
+              }).toList(),
             ),
           ),
         ),
@@ -242,19 +375,15 @@ class CheckOut extends StatelessWidget {
     return const Padding(
       padding: EdgeInsets.only(top: 15),
       child: Text.rich(
-          TextSpan(
-              text: 'You will get the delivery ',
-              children: <InlineSpan>[
-                TextSpan(
-                  text: 'within 2-3 Days ',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                TextSpan(
-                  text: 'after confirmation.',
-                ),
-              ]
-          )
-      ),
+          TextSpan(text: 'You will get the delivery ', children: <InlineSpan>[
+        TextSpan(
+          text: 'within 2-3 Days ',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        TextSpan(
+          text: 'after confirmation.',
+        ),
+      ])),
     );
   }
 
@@ -275,9 +404,9 @@ class CheckOut extends StatelessWidget {
                 .get(),
             builder: (context, productSnapshot) {
               if (productSnapshot.hasData) {
-
                 double priceAfterDiscount =
-                    (productSnapshot.data!.get('price') / 100) * (100 - productSnapshot.data!.get('discount'));
+                    (productSnapshot.data!.get('price') / 100) *
+                        (100 - productSnapshot.data!.get('discount'));
 
                 return Card(
                   elevation: 0,
@@ -294,19 +423,22 @@ class CheckOut extends StatelessWidget {
                           if (imageSnapshot.hasData) {
                             return GestureDetector(
                               onTap: () {
-                                GoRouter.of(context).go('/product/${state.idList[index]}');
+                                GoRouter.of(context)
+                                    .go('/product/${state.idList[index]}');
                               },
                               child: Padding(
-                                padding: const EdgeInsets.only(right: 8, top: 5, bottom: 5),
+                                padding: const EdgeInsets.only(
+                                    right: 8, left: 8, top: 5, bottom: 5),
                                 child: Container(
-                                  width: 65,
-                                  height: 65, //137 127 120 124
+                                  width: 70,
+                                  height: 70, //137 127 120 124
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(20)),
                                   child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
+                                    borderRadius: BorderRadius.circular(5),
                                     child: FadeInImage.memoryNetwork(
-                                      image: imageSnapshot.data!.get('images')[0],
+                                      image:
+                                          imageSnapshot.data!.get('images')[0],
                                       placeholder: kTransparentImage,
                                       fit: BoxFit.cover,
                                     ),
@@ -314,13 +446,12 @@ class CheckOut extends StatelessWidget {
                                 ),
                               ),
                             );
-                          }
-                          else if (imageSnapshot.connectionState ==
+                          } else if (imageSnapshot.connectionState ==
                               ConnectionState.waiting) {
                             return ItemUtil().loadingWidget(context, 0.4);
-                          }
-                          else {
-                            return ItemUtil().errorWidget(context, 'Error Loading Data');
+                          } else {
+                            return ItemUtil()
+                                .errorWidget(context, 'Error Loading Data');
                           }
                         },
                       ),
@@ -329,87 +460,86 @@ class CheckOut extends StatelessWidget {
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.only(top: 5, bottom: 5),
-                          child: SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.55 -
-                                20, //200, 0.45
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                //Title
-                                Text(
-                                  productSnapshot.data!.get('title'),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              //Title
+                              Text(
+                                productSnapshot.data!.get('title'),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
                                 ),
+                              ),
 
-                                //Quantity
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        //Size
-                                        Text(
-                                          'Size: ${state.sizeList[index]}',
-                                          style: const TextStyle(
-                                              fontSize: 11,
-                                              color: Colors.black54,
-                                              overflow: TextOverflow.ellipsis),
-                                        ),
+                              //Quantity
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      //Size
+                                      Text(
+                                        'Size: ${state.sizeList[index]}',
+                                        style: const TextStyle(
+                                            fontSize: 11,
+                                            color: Colors.black54,
+                                            overflow: TextOverflow.ellipsis),
+                                      ),
 
-                                        //Variant
-                                        Text(
-                                          'Variant: ${state.variantList[index]}',
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
-                                              fontSize: 11, color: Colors.black54),
-                                        ),
-
-                                        //Quantity
-                                        Text(
-                                          'Quantity: ${state.quantityList[index]}',
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
-                                              fontSize: 11, color: Colors.black54),
-                                        ),
-                                      ],
-                                    ),
-
-                                    //Price
-                                    Padding(
-                                      padding: const EdgeInsets.only(right: 20),
-                                      child: Text(
-                                        '৳ ${priceAfterDiscount * state.quantityList[index]}',
+                                      //Variant
+                                      Text(
+                                        'Variant: ${state.variantList[index]}',
                                         overflow: TextOverflow.ellipsis,
                                         style: const TextStyle(
-                                            fontSize: 17,
-                                            color: Colors.purple,
-                                            fontWeight: FontWeight.bold),
+                                            fontSize: 11,
+                                            color: Colors.black54),
                                       ),
+
+                                      //Quantity
+                                      Text(
+                                        'Quantity: ${state.quantityList[index]}',
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontSize: 11,
+                                            color: Colors.black54),
+                                      ),
+                                    ],
+                                  ),
+
+                                  //Price
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 20),
+                                    child: Text(
+                                      '৳ ${priceAfterDiscount * state.quantityList[index]}',
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                          fontSize: 17,
+                                          color: Colors.purple,
+                                          fontWeight: FontWeight.bold),
                                     ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
                       ),
                     ],
                   ),
                 );
-              }
-              else if (productSnapshot.connectionState == ConnectionState.waiting) {
+              } else if (productSnapshot.connectionState ==
+                  ConnectionState.waiting) {
                 //return loadingWidget(context, 0.4);
                 return ItemUtil().shimmerLoading(context);
-              }
-              else {
+              } else {
                 return ItemUtil().errorWidget(context, 'Error Loading Data');
               }
             },
@@ -419,31 +549,38 @@ class CheckOut extends StatelessWidget {
     );
   }
 
-  Widget promoWidget(BuildContext context, CheckOutState state, TextEditingController promoCodeController) {
+  Widget promoWidget(BuildContext context, CheckOutState state,
+      TextEditingController promoCodeController) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             textBox(
-                60, MediaQuery.of(context).size.width*0.7,
-                promoCodeController, 'Enter Promo Code',
+                55,
+                MediaQuery.of(context).size.width * 0.3 -
+                    paddingProvider(context),
+                //MediaQuery.of(context).size.width*0.7
+                promoCodeController,
+                'Enter Promo Code',
                 const Icon(Icons.sell_rounded),
-              TextInputType.text
-            ),
+                TextInputType.text),
             buttonWidget(
-                48, MediaQuery.of(context).size.width*0.3 - 25, Colors.green, 'Apply',
-                    () => CheckOutViewModel().promoCodeOnTapFunctions(context, promoCodeController.text)),
+                40,
+                MediaQuery.of(context).size.width * 0.15 -
+                    paddingProvider(context),
+                Colors.green,
+                'Apply',
+                () => CheckOutViewModel().promoCodeOnTapFunctions(
+                    context, promoCodeController.text)),
           ],
         ),
-
         Visibility(
           visible: state.isPromoCodeFound ? false : true,
           child: const Text(
             'Sorry, this promo code is not valid.',
-            style: TextStyle(
-              color: Colors.red
-            ),
+            style: TextStyle(color: Colors.red),
           ),
         )
       ],
@@ -458,9 +595,7 @@ class CheckOut extends StatelessWidget {
       children: [
         const Text(
           '🪙 Use Coins',
-          style: TextStyle(
-              fontWeight: FontWeight.bold
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
         const Expanded(child: SizedBox()),
         Text(
@@ -470,14 +605,17 @@ class CheckOut extends StatelessWidget {
           value: state.isUsingCoin,
           onChanged: (value) {
             //means already using coins, now it's going to changed to no using. So, we have to increase the total
-            if(state.isUsingCoin){
-              provider.add(UpdateTotal(total: state.total + coinDiscountAmount));
+            if (state.isUsingCoin) {
+              provider
+                  .add(UpdateTotal(total: state.total + coinDiscountAmount));
             }
             //means not using coins, now it's going to changed to using. So, we have to decrease the total
             else {
-              provider.add(UpdateTotal(total: state.total - coinDiscountAmount));
+              provider
+                  .add(UpdateTotal(total: state.total - coinDiscountAmount));
             }
-            provider.add(UpdateIsUsingCoinEvent(isUsingCoin: !state.isUsingCoin));
+            provider
+                .add(UpdateIsUsingCoinEvent(isUsingCoin: !state.isUsingCoin));
           },
         )
       ],
