@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:go_router/go_router.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:stormymart_v2/Blocks/Cart%20Bloc/cart_bloc.dart';
 import 'package:stormymart_v2/Screens/Cart/cart.dart';
 import 'package:stormymart_v2/theme/color.dart';
@@ -488,7 +487,7 @@ class _ProductScreenState extends State<ProductScreen> {
               //Share
               GestureDetector(
                 onTap: () async {
-                  await Share.share('https://www.stormymart.com/#/product/$id');
+                  //await Share.share('https://www.stormymart.com/#/product/$id');
                 },
                 child: Container(
                   decoration: BoxDecoration(
