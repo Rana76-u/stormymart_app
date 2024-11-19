@@ -39,61 +39,13 @@ class AllProducts extends StatelessWidget {
                     if(snapshot.hasData){
                       DocumentSnapshot product = snapshot.data!.docs[index];
                       double discountCal = (product.get('price') / 100) * (100 - product.get('discount'));
-                      return GestureDetector(
-                        onTap: () {
-                          GoRouter.of(context).go('/product/${product.id}');
-                        },
-                        child: SizedBox(
-                          //width: MediaQuery.of(context).size.width*0.48,
-                          height: 465,
-                          child: Card(
-                            elevation: 0,
-                            color: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5)
-                            ),
-                            child: Column(
-                              children: [
-                                Stack(
-                                  children: [
-                                    //Pulls image from variation 1's 1st image
-                                    productImage(product.id),
-
-                                    //Discount %Off
-                                    if(product.get('discount') != 0)...[
-                                      productDiscount(product.get('discount')),
-                                    ],
-                                  ],
-                                ),
-
-                                //texts
-                                Padding(
-                                  padding: const EdgeInsets.all(13),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      const SizedBox(height: 30,),
-                                      //Title
-                                      productTitle(product.get('title')),
-
-                                      const SizedBox(height: 10,),
-                                      //price
-                                      productPrice(discountCal),
-
-                                      const SizedBox(height: 15,),
-
-                                      productSoldAmount(product.get('sold')),
-
-                                      const SizedBox(height: 15,),
-
-                                      productButtons(context, product.id)
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                      return productCard(
+                          context,
+                          product.id,
+                          product.get('discount'),
+                          discountCal,
+                          product.get('title'),
+                          product.get('sold'),
                       );
                     }
                     else{

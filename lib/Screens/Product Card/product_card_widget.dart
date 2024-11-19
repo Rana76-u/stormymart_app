@@ -3,6 +3,66 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../Components/custom_image.dart';
 
+Widget productCard(BuildContext context, String productId, double discount, double discountCal,
+    String title, double sold, ) {
+  return GestureDetector(
+    onTap: () {
+      GoRouter.of(context).go('/product/$productId');
+    },
+    child: SizedBox(
+      width: 300,
+      height: 465,
+      child: Card(
+        elevation: 0,
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5)
+        ),
+        child: Column(
+          children: [
+            Stack(
+              children: [
+                //Pulls image from variation 1's 1st image
+                productImage(productId),
+
+                //Discount %Off
+                if(discount != 0)...[
+                  productDiscount(discount),
+                ],
+              ],
+            ),
+
+            //texts
+            Padding(
+              padding: const EdgeInsets.all(13),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 30,),
+                  //Title
+                  productTitle(title),
+
+                  const SizedBox(height: 10,),
+                  //price
+                  productPrice(discountCal),
+
+                  const SizedBox(height: 15,),
+
+                  productSoldAmount(sold),
+
+                  const SizedBox(height: 15,),
+
+                  productButtons(context, productId)
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
 Widget productImage(String productId, ) {
   return FutureBuilder(
     future: FirebaseFirestore

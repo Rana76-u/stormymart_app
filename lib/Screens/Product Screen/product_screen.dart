@@ -6,6 +6,7 @@ import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:go_router/go_router.dart';
 import 'package:stormymart_v2/Blocks/Cart%20Bloc/cart_bloc.dart';
 import 'package:stormymart_v2/Screens/Cart/cart.dart';
+import 'package:stormymart_v2/Screens/Product%20Screen/suggested_products.dart';
 import 'package:stormymart_v2/theme/color.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../Blocks/Cart Bloc/cart_events.dart';
@@ -51,10 +52,46 @@ class _ProductScreenState extends State<ProductScreen> {
     imageSliderDocID = snapshot.docs.first.id;
   }
 
+  void addToFavCats() async {
+    try {
+      // Fetch the product document
+      DocumentSnapshot snapshot = await FirebaseFirestore.instance
+          .collection('Products')
+          .doc(widget.productId)
+          .get();
+
+      // Get the keywords list from the product document
+      List<dynamic> category = snapshot.get('keywords');
+
+      // Fetch the user's FavCats map
+      DocumentReference userDoc = FirebaseFirestore.instance
+          .collection('userData')
+          .doc(FirebaseAuth.instance.currentUser!.uid);
+
+      DocumentSnapshot userSnapshot = await userDoc.get();
+      Map<String, dynamic> favCats = userSnapshot.get('FavCats') ?? {};
+
+      // Update the FavCats map
+      for (String keyword in category) {
+        if (favCats.containsKey(keyword)) {
+          favCats[keyword] += 1; // Increment the count
+        } else {
+          favCats[keyword] = 1; // Add new keyword with a count of 1
+        }
+      }
+
+      // Save the updated map back to Firestore
+      await userDoc.update({'FavCats': favCats});
+    } catch (e) {
+      print('Error updating FavCats: $e');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     checkLength();
+    addToFavCats();
   }
 
   Color _cardColor(int i) {
@@ -72,7 +109,6 @@ class _ProductScreenState extends State<ProductScreen> {
       return Colors.blueGrey;
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -214,6 +250,20 @@ class _ProductScreenState extends State<ProductScreen> {
                       snapshot.data!.get('description'),
                     ),
                   ),
+
+                  //You may also like
+                  const Padding(
+                    padding: EdgeInsets.only(top: 50),
+                    child: Text(
+                      'You may also like',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+
+                    ),
+                  ),
+                  suggestedProducts(snapshot.data!.id)
                 ],
               ),
             );
