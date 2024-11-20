@@ -60,7 +60,59 @@ class HomePage extends StatelessWidget {
       EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.15),
       child: Column(
         children: [
-          const ImageSlider(),
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              const ImageSlider(),
+
+              // Suggestion section
+              if (state.searchResults.isNotEmpty)
+                SizedBox(
+                  width: 700,
+                  child: Positioned(
+                    child: Material(
+                      elevation: 5,
+                      child: Container(
+                        color: Colors.white,
+                        constraints: BoxConstraints(
+                          maxHeight: MediaQuery.of(context).size.height * 0.4,
+                        ),
+                        child: ListView.builder(
+                          itemCount: state.searchResults.length,
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                              title: GestureDetector(
+                                onTap: () {
+                                  /*setState(() {
+                                    searchedText = searchResults[index].get('title');
+                                    isTyping = false;
+                                    _searchController.clear();
+                                  });
+                                  performSearch(_searchResults[index].get('title'));*/
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 20),
+                                  child: Text(
+                                    state.searchResults[index].get('title'),
+                                    maxLines: 1,
+                                    style: const TextStyle(
+                                      overflow: TextOverflow.ellipsis,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
           const SizedBox(height: 10,),
           const SizedBox(height: 20,),
           const MotoLine(),

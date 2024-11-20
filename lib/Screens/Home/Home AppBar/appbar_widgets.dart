@@ -69,14 +69,14 @@ Widget homeAppbar(BuildContext context, HomeState state) {
         ),
 
         const SizedBox(width: 25,),
-        //Search Bar
+
         Expanded(
           flex: 1,
           child: GestureDetector(
             onTap: () {
               GoRouter.of(context).go('/search');
             },
-            child: searchBar(context),
+            child: const SearchbarWidget(),//searchBar(context),
           ),
         ),
 

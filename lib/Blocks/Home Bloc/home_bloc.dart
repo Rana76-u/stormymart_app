@@ -7,6 +7,7 @@ class HomeBloc extends Bloc<HomeEvents, HomeState> {
     profileName: 'Login / Sign up',
     profileImageUrl: '',
     cartValue: 0,
+    searchResults: [],
   )) {
 
     on<HomeEvents>((event, emit) {
@@ -21,6 +22,12 @@ class HomeBloc extends Bloc<HomeEvents, HomeState> {
       if(event is UpdateCartValueEvent) {
         emit(state.copyWith(
           cartValue: event.cartValue
+        ));
+      }
+
+      if(event is UpdateSearchResults) {
+        emit(state.copyWith(
+          searchResults: event.searchResults
         ));
       }
     });
