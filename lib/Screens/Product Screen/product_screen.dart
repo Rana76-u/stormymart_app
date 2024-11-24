@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
-import 'package:go_router/go_router.dart';
 import 'package:stormymart_v2/Blocks/Cart%20Bloc/cart_bloc.dart';
-import 'package:stormymart_v2/Screens/Cart/cart.dart';
 import 'package:stormymart_v2/Screens/Product%20Screen/suggested_products.dart';
 import 'package:stormymart_v2/theme/color.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -844,25 +842,23 @@ class _ProductScreenState extends State<ProductScreen> {
           });
         }
         //user Not logged in
-        else {
-          BlocProvider.of<CartBloc>(context).add(AddItemEvent(
-              id: id,
-              price: discountCal,
-              size: sizeSelected == -1
-                  ? 'not applicable'
-                  : sizes[sizeSelected].toString(),
-              variant: imageSliderDocID,
-              quantity: quantity)
-          );
-        }
+        BlocProvider.of<CartBloc>(context).add(AddItemEvent(
+            id: id,
+            price: discountCal,
+            size: sizeSelected == -1
+                ? 'not applicable'
+                : sizes[sizeSelected].toString(),
+            variant: imageSliderDocID,
+            quantity: quantity)
+        );
 
         //notify
         messenger.showSnackBar(SnackBar(
           content: GestureDetector(
             onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
+              /*Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => const Cart(),
-              ));
+              ));*/
             },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -874,7 +870,7 @@ class _ProductScreenState extends State<ProductScreen> {
                     style: TextStyle(overflow: TextOverflow.clip),
                   ),
                 ),
-                if (mounted) ...[
+                /*if (mounted) ...[
                   SizedBox(
                     width: mediaQuery.size.width * 0.4,
                     child: ElevatedButton(
@@ -897,7 +893,7 @@ class _ProductScreenState extends State<ProductScreen> {
                       ),
                     ),
                   )
-                ]
+                ]*/
               ],
             ),
           ),

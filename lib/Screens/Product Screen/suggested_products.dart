@@ -34,8 +34,8 @@ Widget suggestedProducts(String thisProductID) {
         QuerySnapshot querySnapshot = await FirebaseFirestore.instance
             .collection('Products')
             .where('keywords', arrayContains: category)
-            .limit(
-                10 - relevantProducts.length) // Get only the remaining products
+            .orderBy('sold', descending: true)
+            .limit(10 - relevantProducts.length) // Get only the remaining products
             .get();
 
         relevantProducts.addAll(querySnapshot.docs);
