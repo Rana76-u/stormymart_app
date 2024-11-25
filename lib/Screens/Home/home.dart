@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:stormymart_v2/Screens/Home/Footer/home_footer.dart';
 import 'package:stormymart_v2/Screens/Home/Home%20AppBar/appbar_widgets.dart';
 import 'package:stormymart_v2/Screens/Home/imageslider.dart';
@@ -69,44 +70,43 @@ class HomePage extends StatelessWidget {
               if (state.searchResults.isNotEmpty)
                 SizedBox(
                   width: 700,
-                  child: Positioned(
-                    child: Material(
-                      elevation: 5,
-                      child: Container(
-                        color: Colors.white,
-                        constraints: BoxConstraints(
-                          maxHeight: MediaQuery.of(context).size.height * 0.4,
-                        ),
-                        child: ListView.builder(
-                          itemCount: state.searchResults.length,
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            return ListTile(
-                              title: GestureDetector(
-                                onTap: () {
-                                  /*setState(() {
-                                    searchedText = searchResults[index].get('title');
-                                    isTyping = false;
-                                    _searchController.clear();
-                                  });
-                                  performSearch(_searchResults[index].get('title'));*/
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.only(top: 20),
-                                  child: Text(
-                                    state.searchResults[index].get('title'),
-                                    maxLines: 1,
-                                    style: const TextStyle(
-                                      overflow: TextOverflow.ellipsis,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12,
-                                    ),
+                  child: Material(
+                    elevation: 5,
+                    child: Container(
+                      color: Colors.white,
+                      constraints: BoxConstraints(
+                        maxHeight: MediaQuery.of(context).size.height * 0.4,
+                      ),
+                      child: ListView.builder(
+                        itemCount: state.searchResults.length,
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            title: GestureDetector(
+                              onTap: () {
+                                GoRouter.of(context).go('/product/${state.searchResults[index].id}');
+                                /*setState(() {
+                                  searchedText = searchResults[index].get('title');
+                                  isTyping = false;
+                                  _searchController.clear();
+                                });
+                                performSearch(_searchResults[index].get('title'));*/
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 20),
+                                child: Text(
+                                  state.searchResults[index].get('title'),
+                                  maxLines: 1,
+                                  style: const TextStyle(
+                                    overflow: TextOverflow.ellipsis,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
                                   ),
                                 ),
                               ),
-                            );
-                          },
-                        ),
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ),
