@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../Components/custom_image.dart';
+import '../../../Components/custom_image.dart';
 
 Widget productCard(BuildContext context, String productId, double discount, double discountCal,
-    String title, double sold, ) {
+    String title, double sold) {
   return GestureDetector(
     onTap: () {
       GoRouter.of(context).go('/product/$productId');

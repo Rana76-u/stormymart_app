@@ -8,10 +8,10 @@ import 'package:stormymart_v2/Screens & Features/Product%20Screen/suggested_prod
 import 'package:stormymart_v2/Core/theme/color.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../Blocks/Cart Bloc/cart_events.dart';
-import '../../Blocks/Home Bloc/home_bloc.dart';
-import '../../Blocks/Home Bloc/home_state.dart';
 import '../../ViewModels/open_photo.dart';
-import '../Home/Footer/home_footer.dart';
+import '../Home/Bloc/home_bloc.dart';
+import '../Home/Bloc/home_state.dart';
+import '../Home/Presentation/home_footer.dart';
 import '../../Core/Appbar/Presentation/appbar_ui_desktop.dart';
 
 class ProductScreen extends StatefulWidget {

@@ -6,13 +6,13 @@ import 'package:stormymart_v2/Blocks/Cart%20Bloc/cart_bloc.dart';
 import 'package:stormymart_v2/Blocks/CheckOut%20Bloc/checkout_bloc.dart';
 import 'package:stormymart_v2/Screens & Features/Cart/cart.dart';
 import 'package:stormymart_v2/Screens & Features/CheckOut/checkout.dart';
-import 'package:stormymart_v2/Screens & Features/Home/home.dart';
+import 'package:stormymart_v2/Screens%20&%20Features/Home/Presentation/home.dart';
 import 'package:stormymart_v2/Screens & Features/Product%20Screen/product_screen.dart';
 import 'package:stormymart_v2/Screens & Features/Profile/Coins/coins.dart';
 import 'package:stormymart_v2/Screens & Features/Profile/profile.dart';
 import 'package:stormymart_v2/Screens & Features/Search/search.dart';
 import 'package:stormymart_v2/firebase_options.dart';
-import 'Blocks/Home Bloc/home_bloc.dart';
+import 'Screens & Features/Home/Bloc/home_bloc.dart';
 import 'Screens & Features/Home/show_all_hotdeals.dart';
 import 'Screens & Features/Profile/Wishlists/wishlist.dart';
 

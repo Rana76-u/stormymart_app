@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:stormymart_v2/Blocks/Home%20Bloc/home_event.dart';
-import 'package:stormymart_v2/Blocks/Home%20Bloc/home_state.dart';
+import 'home_event.dart';
+import 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvents, HomeState> {
   HomeBloc() : super(HomeState(

@@ -9,11 +9,10 @@ import 'package:stormymart_v2/Blocks/CheckOut%20Bloc/checkout_state.dart';
 import 'package:stormymart_v2/ViewModels/checkout_viewmodel.dart';
 import 'package:stormymart_v2/Core/Utils/padding_provider.dart';
 import 'package:transparent_image/transparent_image.dart';
-
-import '../../Blocks/Home Bloc/home_bloc.dart';
-import '../../Blocks/Home Bloc/home_state.dart';
 import '../Cart/item_util.dart';
-import '../Home/Footer/home_footer.dart';
+import '../Home/Bloc/home_bloc.dart';
+import '../Home/Bloc/home_state.dart';
+import '../Home/Presentation/home_footer.dart';
 import '../../Core/Appbar/Presentation/appbar_ui_desktop.dart';
 
 class CheckOut extends StatelessWidget {

@@ -1,12 +1,12 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:stormymart_v2/Core/Utils/core_progress_bars.dart';
 import 'package:stormymart_v2/Core/Utils/errors_n_empty_messages.dart';
+import 'package:stormymart_v2/Screens%20&%20Features/Home/Data/load_category_services.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-import '../../Utils/globalvariable.dart';
+import '../../Utils/global_variables.dart';
 import '../../../Screens & Features/Profile/profile.dart';
 
 Widget coreDrawer(BuildContext context){
@@ -132,26 +132,24 @@ Widget drawerHeader(BuildContext context) {
 
 Widget drawerItems(BuildContext context) {
   return FutureBuilder(
-    future: FirebaseFirestore.instance.collection('/Category').doc('/Drawer').get(),
+    future: loadCategory(),
 
     builder: (context, snapshot) {
 
       if(snapshot.hasData){
 
-        int length = snapshot.data!.data()!.keys.length;
-
         return ListView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemCount: length,
+          itemCount: categories.length,
           itemBuilder: (context, index) {
-            String title = snapshot.data!.data()!.keys.elementAt(index);
-            List<dynamic> subCategories = snapshot.data!.get(title);
+            String categoryName = categories.keys.elementAt(index);
+            List<dynamic> subCategoryNames = categories.values.elementAt(index);
             return ExpansionTile(
               iconColor: Colors.amber,
               textColor: Colors.amber,
               title: Text(
-                  title,
+                  categoryName,
                   style: const TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold
@@ -159,12 +157,12 @@ Widget drawerItems(BuildContext context) {
               ),
               childrenPadding: const EdgeInsets.only(left: 60),
               children: List.generate(
-                subCategories.length,
+                subCategoryNames.length,
                     (index) {
                   return ListTile(
-                    title: Text(subCategories[index]),
+                    title: Text(subCategoryNames[index]),
                     onTap: () {
-                      keyword = subCategories[index];
+                      keyword = subCategoryNames[index];
                       GoRouter.of(context).go('/search/item/$keyword');
                     },
                   );
@@ -178,7 +176,7 @@ Widget drawerItems(BuildContext context) {
         return centeredLinearProgress();
       }
       else{
-        return emptyMessage();
+        return ErrorsAndEmptyMessages.emptyMessage();
       }
     },
   );

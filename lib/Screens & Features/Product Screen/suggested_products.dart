@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../Product Card/product_card_widget.dart';
+import '../Product/Widgets/product_card_widget.dart';
 
 Widget suggestedProducts(String thisProductID) {
   Future<List<QueryDocumentSnapshot>> getRelevantProducts() async {
@@ -86,7 +86,14 @@ Widget suggestedProducts(String thisProductID) {
               else{
                 itemRepetitionChecker.add(products[index].id);
 
-                return productCard(context, products[index].id, product['discount'], priceAfterDiscount, product['title'], product['sold']);
+                return productCard(
+                    context,
+                    products[index].id,
+                    product['discount'],
+                    priceAfterDiscount,
+                    product['title'],
+                    product['sold']
+                );
               }
 
             },

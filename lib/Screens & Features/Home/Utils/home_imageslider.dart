@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 
-import '../../Components/custom_image.dart';
+import '../../../Components/custom_image.dart';
 
 class ImageSlider extends StatelessWidget {
   const ImageSlider({super.key});
@@ -17,12 +17,15 @@ class ImageSlider extends StatelessWidget {
           for(int i =0; i<snapshot.data!.docs.length; i++){
             images.add(snapshot.data?.docs[i]['image']);
           }
-          return SizedBox(
-            width: MediaQuery.of(context).size.width,//150, 0.38
-            height: MediaQuery.of(context).size.width <= 600 ?
-            181
+          return Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.width <= 600 ? 181
                 :
-            MediaQuery.of(context).size.height*0.4,//137
+            MediaQuery.of(context).size.height*0.4,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+            ),
             child: images.isNotEmpty ? ImageSlideshow(
                 height: 200, //MediaQuery.of(context).size.height * 0.45,
                 initialPage: 0,
@@ -32,10 +35,13 @@ class ImageSlider extends StatelessWidget {
                 autoPlayInterval: 8000,
                 isLoop: true,
                 children: List.generate(images.length, (index) {
-                  return CustomImage(
-                    images[index],
-                    radius: 0,
-                    //fit: BoxFit.cover,
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                    child: CustomImage(
+                      images[index],
+                      radius: 10,
+                      //fit: BoxFit.cover,
+                    ),
                   );
                 })
             )

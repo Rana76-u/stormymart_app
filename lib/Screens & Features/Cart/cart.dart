@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:stormymart_v2/Blocks/Cart%20Bloc/cart_events.dart';
-import 'package:stormymart_v2/Blocks/Home%20Bloc/home_bloc.dart';
-import 'package:stormymart_v2/Blocks/Home%20Bloc/home_state.dart';
 import 'package:stormymart_v2/Screens & Features/Cart/item_util.dart';
 import 'package:stormymart_v2/Screens & Features/Cart/order_summary.dart';
 import 'package:stormymart_v2/Core/Utils/padding_provider.dart';
@@ -15,7 +13,9 @@ import '../../Blocks/Cart Bloc/cart_states.dart';
 import '../../Blocks/CheckOut Bloc/checkout_bloc.dart';
 import '../../Blocks/CheckOut Bloc/checkout_events.dart';
 import '../../ViewModels/cart_viewmodel.dart';
-import '../Home/Footer/home_footer.dart';
+import '../Home/Bloc/home_bloc.dart';
+import '../Home/Bloc/home_state.dart';
+import '../Home/Presentation/home_footer.dart';
 import '../../Core/Appbar/Presentation/appbar_ui_desktop.dart';
 
 class Cart extends StatelessWidget {

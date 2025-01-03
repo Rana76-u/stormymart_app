@@ -12,7 +12,12 @@ class MotoLine extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         shrinkWrap: true,
         itemBuilder: (context, index) {
-          return motoLineWidget(motoLineItemList[index][0], motoLineItemList[index][1], motoLineItemList[index][2], index);
+          return motoLineWidget(
+              motoLineItemList[index][0],
+              motoLineItemList[index][1],
+              motoLineItemList[index][2],
+              index
+          );
         },
       ),
     );
@@ -30,7 +35,7 @@ Widget motoLineWidget(IconData icon, Color iconColor, String text, int index) {
   return Row(
     children: [
 
-      const SizedBox(width: 15,),
+      const SizedBox(width: 5,),
 
       index != 0 ?
           SizedBox(
@@ -43,17 +48,17 @@ Widget motoLineWidget(IconData icon, Color iconColor, String text, int index) {
           :
       const SizedBox(),
 
-      const SizedBox(width: 15,),
+      const SizedBox(width: 5,),
       Icon(
         icon,
         color: iconColor,
-        size: 45,
+        size: 25,
       ),
-      const SizedBox(width: 15,),
+      const SizedBox(width: 5,),
       Text(
           text,
         style: TextStyle(
-          fontSize: 17,
+          fontSize: 14,
           fontWeight: FontWeight.bold,
           color: Colors.grey.shade900,
           overflow: TextOverflow.clip

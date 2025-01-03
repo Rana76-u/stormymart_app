@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:stormymart_v2/Blocks/Home%20Bloc/home_bloc.dart';
 
-import '../../Blocks/Home Bloc/home_event.dart';
+import '../Home/Bloc/home_bloc.dart';
+import '../Home/Bloc/home_event.dart';
 
 class SearchbarWidget extends StatefulWidget {
   const SearchbarWidget({super.key});
