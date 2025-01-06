@@ -7,4 +7,11 @@ class Product {
         .orderBy('sold', descending: true).limit(10)
         .get();
   }
+
+  Future<QuerySnapshot<Map<String, dynamic>>> getHotDeals() {
+    return FirebaseFirestore.instance
+        .collection('/Products')
+        .where('keywords', arrayContains: 'hotDeals').limit(10)
+        .get();
+  }
 }

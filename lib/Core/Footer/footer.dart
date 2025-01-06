@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Widget homeFooter() {
+Widget coreFooter() {
   return Container(
     height: 300,
     width: double.infinity,

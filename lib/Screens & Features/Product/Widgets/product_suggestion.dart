@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../Product/Widgets/product_card_widget.dart';
+import 'product_card.dart';
 
 Widget suggestedProducts(String thisProductID) {
   Future<List<QueryDocumentSnapshot>> getRelevantProducts() async {

@@ -12,7 +12,7 @@ import 'package:transparent_image/transparent_image.dart';
 import '../Cart/item_util.dart';
 import '../Home/Bloc/home_bloc.dart';
 import '../Home/Bloc/home_state.dart';
-import '../Home/Presentation/home_footer.dart';
+import '../../Core/Footer/footer.dart';
 import '../../Core/Appbar/Presentation/appbar_ui_desktop.dart';
 
 class CheckOut extends StatelessWidget {
@@ -52,7 +52,7 @@ class CheckOut extends StatelessWidget {
 
                   //build footer
                   SliverToBoxAdapter(
-                    child: homeFooter(),
+                    child: coreFooter(),
                   ),
                 ],
               ),

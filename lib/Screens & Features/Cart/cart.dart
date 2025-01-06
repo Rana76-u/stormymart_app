@@ -15,7 +15,7 @@ import '../../Blocks/CheckOut Bloc/checkout_events.dart';
 import '../../ViewModels/cart_viewmodel.dart';
 import '../Home/Bloc/home_bloc.dart';
 import '../Home/Bloc/home_state.dart';
-import '../Home/Presentation/home_footer.dart';
+import '../../Core/Footer/footer.dart';
 import '../../Core/Appbar/Presentation/appbar_ui_desktop.dart';
 
 class Cart extends StatelessWidget {
@@ -54,7 +54,7 @@ class Cart extends StatelessWidget {
 
                   //build footer
                   SliverToBoxAdapter(
-                    child: homeFooter(),
+                    child: coreFooter(),
                   ),
                 ],
               ),

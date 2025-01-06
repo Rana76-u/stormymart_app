@@ -11,7 +11,7 @@ Widget productCard(BuildContext context, String productId, double discount, doub
     },
     child: SizedBox(
       width: 300,
-      height: 465,
+      height: 352,
       child: Card(
         elevation: 0,
         color: Colors.white,
@@ -20,6 +20,7 @@ Widget productCard(BuildContext context, String productId, double discount, doub
         ),
         child: Column(
           children: [
+            //image & discount
             Stack(
               children: [
                 //Pulls image from variation 1's 1st image
@@ -34,23 +35,24 @@ Widget productCard(BuildContext context, String productId, double discount, doub
 
             //texts
             Padding(
-              padding: const EdgeInsets.all(13),
+              padding: const EdgeInsets.only(left: 13, right: 13, top: 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  const SizedBox(height: 30,),
+
                   //Title
                   productTitle(title),
 
-                  const SizedBox(height: 10,),
+                  //const SizedBox(height: 10,),
                   //price
                   productPrice(discountCal),
 
-                  const SizedBox(height: 15,),
+                  //const SizedBox(height: 15,),
 
                   productSoldAmount(sold),
 
-                  const SizedBox(height: 15,),
+                  //const SizedBox(height: 15,),
 
                   productButtons(context, productId)
                 ],
@@ -150,7 +152,6 @@ Widget productDiscount(double productDiscount) {
 
 Widget productTitle(String productTitle) {
   return SizedBox(
-    height: 60,
     child: Text(
       productTitle,
       style: TextStyle(
@@ -177,7 +178,7 @@ Widget productPrice(double productPrice) {
 
 Widget productSoldAmount(double soldAmount) {
   return Text(
-    "$soldAmount items sold",
+    "${soldAmount.toStringAsFixed(0)} items sold",
     style: TextStyle(
         fontSize: 13,
         color: Colors.grey.shade700
@@ -186,63 +187,55 @@ Widget productSoldAmount(double soldAmount) {
 }
 
 Widget productButtons(BuildContext context, String productId) {
-  return Row(
-    children: [
-      Expanded(
-        child: SizedBox(
-          height: 40,
-          child: FilledButton(
-              onPressed: () {
-                GoRouter.of(context).go('/product/$productId');
-              },
-              style: ButtonStyle(
-                backgroundColor: WidgetStateProperty.all(Colors.orange.withOpacity(0.1)),
-                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                    )
-                ),
-              ),
-              child: const Text(
-                  'Buy Now',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.deepOrangeAccent,
-                  fontSize: 13
-                ),
+  return SizedBox(
+    width: double.infinity,
+    child: FilledButton(
+        onPressed: () {
+          GoRouter.of(context).go('/product/$productId');
+        },
+        style: ButtonStyle(
+          backgroundColor: WidgetStateProperty.all(Colors.orange.withValues(alpha: 0.1)),
+          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(5.0),
               )
           ),
         ),
-      ),
-      const SizedBox(width: 7,),
-      Expanded(
-        child: SizedBox(
-          height: 40,
-          child: FilledButton(
-              onPressed: () {
-                GoRouter.of(context).go('/product/$productId');
-                //BlocProvider.of<HomeBloc>(context).add(UpdateCartValueEvent(cartValue: state.cartValue + 1));
-              },
-              style: ButtonStyle(
-                backgroundColor: WidgetStateProperty.all(Colors.grey.withOpacity(0.3)),
-                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                    )
-                ),
-              ),
-              child: Text(
-                'Add To Cart',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey.shade700,
-                    fontSize: 12,
-                  overflow: TextOverflow.ellipsis
-                ),
-              )
+        child: const Text(
+            'Buy Now',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.deepOrangeAccent,
+            fontSize: 12
           ),
-        ),
-      ),
-    ],
+        )
+    ),
   );
 }
+
+/*const SizedBox(width: 5,),
+      Expanded(
+        child: FilledButton(
+            onPressed: () {
+              GoRouter.of(context).go('/product/$productId');
+              //BlocProvider.of<HomeBloc>(context).add(UpdateCartValueEvent(cartValue: state.cartValue + 1));
+            },
+            style: ButtonStyle(
+              backgroundColor: WidgetStateProperty.all(Colors.grey.withValues(alpha: 0.3)),
+              shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5.0),
+                  )
+              ),
+            ),
+            child: Text(
+              'Add To Cart',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey.shade700,
+                  fontSize: 12,
+                overflow: TextOverflow.clip
+              ),
+            )
+        ),
+      ),*/
