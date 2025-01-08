@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../Components/custom_image.dart';
 
-Widget productCard(BuildContext context, String productId, double discount, double discountCal,
-    String title, double sold) {
+Widget productCard(BuildContext context, String productId, num discount, num discountCal,
+    String title, num sold) {
   return GestureDetector(
     onTap: () {
       GoRouter.of(context).go('/product/$productId');
@@ -125,7 +125,7 @@ Widget productImage(String productId, ) {
   );
 }
 
-Widget productDiscount(double productDiscount) {
+Widget productDiscount(num productDiscount) {
 
   return Positioned(
     top: 10,
@@ -164,7 +164,7 @@ Widget productTitle(String productTitle) {
   );
 }
 
-Widget productPrice(double productPrice) {
+Widget productPrice(num productPrice) {
   return Text(
     "Tk ${productPrice.toStringAsFixed(2)}/-",
     maxLines: 1,
@@ -176,7 +176,7 @@ Widget productPrice(double productPrice) {
   );
 }
 
-Widget productSoldAmount(double soldAmount) {
+Widget productSoldAmount(num soldAmount) {
   return Text(
     "${soldAmount.toStringAsFixed(0)} items sold",
     style: TextStyle(

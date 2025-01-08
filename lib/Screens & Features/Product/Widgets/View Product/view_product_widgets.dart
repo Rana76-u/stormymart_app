@@ -338,6 +338,37 @@ class ViewProductWidgets {
     );
   }
 
+  Widget productDescription(String description) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        //Description Heading
+        const Text(
+          'Description',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.deepOrangeAccent,
+          ),
+        ),
+        //Orange Divider
+        const SizedBox(
+          width: 80,
+          child: Divider(
+            color: Colors.deepOrange,
+            thickness: 2,
+          ),
+        ),
+        //Description Text
+        Padding(
+          padding: const EdgeInsets.only(top: 10),
+          child: Text(
+            description,
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget buttons(String text, Color bgColor, Color textColor, quantityAvailable,
       String shopID, String id, BuildContext context, ProductState state) {
     return Expanded(

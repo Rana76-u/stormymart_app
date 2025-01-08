@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:stormymart_v2/Screens%20&%20Features/Product/Presentation/show_product_by_query.dart';
+import 'package:stormymart_v2/Screens%20&%20Features/User/user_services.dart';
 import '../Bloc/product_bloc.dart';
 import '../Bloc/product_events.dart';
 import '../Bloc/product_states.dart';
@@ -79,62 +80,37 @@ Widget productBuildBody(BuildContext context, ProductState state, String id) {
 
                   Row(
                     children: [
-                      ViewProductWidgets().buttons(
-                          "Add To Cart",
-                          Colors.grey.withValues(alpha: 0.5),
-                          Colors.black,
-                          quantityAvailable,
-                          id,
-                          id,
-                          context,
-                          state),
+                      ViewProductWidgets().buttons("Add To Cart", Colors.grey.withValues(alpha: 0.5),
+                          Colors.black, quantityAvailable, 'shop_id', id, context, state),
                       const SizedBox(
                         width: 20,
                       ),
                       ViewProductWidgets().buttons("Buy Now", Colors.deepOrangeAccent,
-                          Colors.white, quantityAvailable, id, id, context, state),
+                          Colors.white, quantityAvailable, 'shop_id', id, context, state),
                     ],
                   ),
+
                   const SizedBox(
                     height: 20,
                   ),
-                  //Description Heading
-                  const Text(
-                    'Description',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.deepOrangeAccent,
-                    ),
-                  ),
-                  //Orange Divider
-                  const SizedBox(
-                    width: 80,
-                    child: Divider(
-                      color: Colors.deepOrange,
-                      thickness: 2,
-                    ),
-                  ),
-                  //Description Text
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Text(
-                      snapshot.data!.get('description'),
-                    ),
-                  ),
 
-                  //You may also like
-                  const Padding(
-                    padding: EdgeInsets.only(top: 50),
-                    child: Text(
-                      'You may also like',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                  ),
-                  //todo: suggestedProducts(snapshot.data!.id)
-                ],
+                  //Description
+                  ViewProductWidgets().productDescription(snapshot.data!.get('description')),
+
+                  //Suggested Products
+                  UserServices().isUserLoggedIn() ?
+                  const ShowProductByQueryType(
+                      query: 'suggestedProducts',
+                      title: 'You may also like',
+                      listType: 'list'
+                  ) :
+                  const ShowProductByQueryType(
+                      query: 'popular',
+                      title: 'You may also like',
+                      listType: 'list'
+                  )
+                ]
+                ,
               ),
             )
           ],

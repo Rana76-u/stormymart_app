@@ -26,15 +26,15 @@ Widget showProductsAsGridList(AsyncSnapshot<QuerySnapshot> snapshot, BuildContex
             DocumentSnapshot product = snapshot.data!.docs[index];
             num price = product.get('price');
             num discount = product.get('discount');
-            double discountCal = (price / 100) * (100 - discount);
-            //double discountCal = (product.get('price') / 100) * (100 - product.get('discount'));
+            num discountCal = (price / 100) * (100 - discount);
+
             return productCard(
               context,
               product.id,
-              (product.get('discount')).toDouble(),
-              discountCal.toDouble(),
+              (product.get('discount')),
+              discountCal,
               product.get('title'),
-              product.get('sold').toDouble(),
+              product.get('sold'),
             );
           }
           else{

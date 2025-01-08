@@ -60,9 +60,9 @@ Widget homeBuildBody(BuildContext context, HomeState state) {
           ),
         ),
 
-      const ShowProductByQueryType(query: 'popular', title: 'Popular Items'),
+      const ShowProductByQueryType(query: 'popular', title: 'Popular Items', listType: 'grid'),
 
-      const ShowProductByQueryType(query: 'hotDeals', title: 'Hot Deals'),
+      const ShowProductByQueryType(query: 'hotDeals', title: 'Hot Deals', listType: 'grid'),
 
       const SizedBox(height: 100,),
     ],
