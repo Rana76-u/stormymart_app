@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../Blocks/Cart Bloc/cart_bloc.dart';
 import '../../../Blocks/Cart Bloc/cart_states.dart';
-import '../../../Screens & Features/Auth/auth_service.dart';
+import '../../../Screens & Features/Auth/Data/auth_service.dart';
 import '../../../Screens & Features/Home/Bloc/home_bloc.dart';
 import '../../../Screens & Features/Home/Bloc/home_event.dart';
 import '../../../Screens & Features/Home/Bloc/home_state.dart';

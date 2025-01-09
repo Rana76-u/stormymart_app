@@ -12,7 +12,13 @@ class VariationsSubWidgets {
 
   Widget getVariationWarningWidget() {
     return Container(
-      color: Colors.red,
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(8),
+          topRight: Radius.circular(8),
+        ),
+        color: Colors.red,
+      ),
       alignment: Alignment.center,
       child: const Padding(
         padding: EdgeInsets.only(left: 4, right: 4),
@@ -103,8 +109,6 @@ class VariationsSubWidgets {
   }
 
 }
-
-
 
 Widget viewProductAltImage(BuildContext context) {
   return Padding(

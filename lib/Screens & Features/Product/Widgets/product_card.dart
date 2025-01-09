@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:stormymart_v2/Screens%20&%20Features/Product/Data/onpress_functions.dart';
 import '../../../Components/custom_image.dart';
 
 Widget productCard(BuildContext context, String productId, num discount, num discountCal,
     String title, num sold) {
+
   return GestureDetector(
     onTap: () {
       GoRouter.of(context).go('/product/$productId');
@@ -41,20 +43,23 @@ Widget productCard(BuildContext context, String productId, num discount, num dis
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
 
-                  //Title
                   productTitle(title),
 
-                  //const SizedBox(height: 10,),
-                  //price
                   productPrice(discountCal),
-
-                  //const SizedBox(height: 15,),
 
                   productSoldAmount(sold),
 
-                  //const SizedBox(height: 15,),
-
-                  productButtons(context, productId)
+                  //View Product Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: productButtons(
+                        context,
+                        'View Product',
+                        Colors.orange.withValues(alpha: 0.1),
+                        Colors.deepOrangeAccent,
+                        () => OnPressFunctions().viewProduct(context, productId)
+                    )
+                  ),
                 ],
               ),
             ),
@@ -186,56 +191,33 @@ Widget productSoldAmount(num soldAmount) {
   );
 }
 
-Widget productButtons(BuildContext context, String productId) {
+Widget productButtons(BuildContext context,
+    String buttonText,
+    Color buttonColor,
+    Color textColor,
+    VoidCallback onPressed) {
   return SizedBox(
-    width: double.infinity,
+    //width: double.infinity,
     child: FilledButton(
         onPressed: () {
-          GoRouter.of(context).go('/product/$productId');
+          onPressed();
         },
         style: ButtonStyle(
-          backgroundColor: WidgetStateProperty.all(Colors.orange.withValues(alpha: 0.1)),
+          backgroundColor: WidgetStateProperty.all(buttonColor),
           shape: WidgetStateProperty.all<RoundedRectangleBorder>(
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5.0),
               )
           ),
         ),
-        child: const Text(
-            'Buy Now',
+        child: Text(
+            buttonText,
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Colors.deepOrangeAccent,
+            color: textColor,
             fontSize: 12
           ),
         )
     ),
   );
 }
-
-/*const SizedBox(width: 5,),
-      Expanded(
-        child: FilledButton(
-            onPressed: () {
-              GoRouter.of(context).go('/product/$productId');
-              //BlocProvider.of<HomeBloc>(context).add(UpdateCartValueEvent(cartValue: state.cartValue + 1));
-            },
-            style: ButtonStyle(
-              backgroundColor: WidgetStateProperty.all(Colors.grey.withValues(alpha: 0.3)),
-              shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5.0),
-                  )
-              ),
-            ),
-            child: Text(
-              'Add To Cart',
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey.shade700,
-                  fontSize: 12,
-                overflow: TextOverflow.clip
-              ),
-            )
-        ),
-      ),*/

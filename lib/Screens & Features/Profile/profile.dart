@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:stormymart_v2/Screens & Features/Profile/About%20Us/about_us.dart';
 import 'package:stormymart_v2/Screens & Features/Profile/Contacts/contacts.dart';
 import 'package:stormymart_v2/Screens & Features/Profile/FeedBack/feedback.dart';
-import 'package:stormymart_v2/Screens & Features/Profile/login.dart';
+import 'package:stormymart_v2/Screens%20&%20Features/Auth/Presentation/login.dart';
 import 'package:stormymart_v2/Screens & Features/Profile/Myorders/myorder.dart';
 import 'package:stormymart_v2/Screens & Features/Profile/profile_top.dart';
-import 'package:stormymart_v2/Screens%20&%20Features/Auth/auth_service.dart';
+import 'package:stormymart_v2/Screens%20&%20Features/Auth/Data/auth_service.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});

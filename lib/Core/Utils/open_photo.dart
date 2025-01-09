@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../Components/image_viewer_gallery.dart';
+import '../../Components/image_viewer_gallery.dart';
 
 class OpenPhoto {
 

@@ -8,11 +8,12 @@ import 'package:stormymart_v2/Screens%20&%20Features/Product/Bloc/product_states
 import 'package:stormymart_v2/Screens%20&%20Features/Product/Widgets/View%20Product/view_product_widget_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../Core/theme/color.dart';
-import '../../../../ViewModels/open_photo.dart';
+import '../../../../Core/Utils/open_photo.dart';
 import '../../Bloc/product_bloc.dart';
 import '../../Bloc/product_events.dart';
-import '../../Data/add_to_cart_func.dart';
+import '../../Data/onpress_functions.dart';
 import '../../Utils/size_card_color.dart';
+import '../product_card.dart';
 
 class ViewProductWidgets {
   Widget getImageSliderWidget(String id, String imageSliderDocID) {
@@ -56,49 +57,59 @@ class ViewProductWidgets {
   }
 
   Widget variationWidget(ProductState state, BuildContext context) {
-    return Container(
-      height: 95,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(3),
-        color: state.variationWarning
-            ? Colors.red.withValues(alpha: 0.25)
-            : appBgColor,
-      ),
-      child: ListView.builder(
-        controller: state.scrollController,
-        scrollDirection: Axis.horizontal,
-        itemCount: state.variationCount,
-        itemBuilder: (context, index) {
-          return FutureBuilder(
-            future: FirebaseFirestore.instance
-                .collection('/Products/${state.productID}/Variations')
-                .get()
-                .then((value) => value),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                state.variationDocID = snapshot.data!.docs[index].id;
-                return Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: Column(
-                    children: [
-                      if (state.variationWarning == true && index == 0)
-                        VariationsSubWidgets().getVariationWarningWidget(),
+    return Padding(
+      padding: const EdgeInsets.only(top: 10, bottom: 5),
+      child: Container(
+        height: state.variationWarning == true ? 115 : 95,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          color: state.variationWarning
+              ? Colors.red.withValues(alpha: 0.25)
+              : appBgColor,
+        ),
+        child: Column(
+          children: [
+            if (state.variationWarning == true)
+              VariationsSubWidgets().getVariationWarningWidget(),
 
-                      //image
-                      VariationsSubWidgets().getVariationImageSliderWidget(
-                          context, state, snapshot, index),
-                      //Name
-                      VariationsSubWidgets().getVariationTitle(state),
-                    ],
-                  ),
-                );
-              } else {
-                return const SizedBox();
-              }
-            },
-          );
-        },
+            SizedBox(
+              height: 95,
+              child: ListView.builder(
+                controller: state.scrollController,
+                scrollDirection: Axis.horizontal,
+                itemCount: state.variationCount,
+                itemBuilder: (context, index) {
+                  return FutureBuilder(
+                    future: FirebaseFirestore.instance
+                        .collection('/Products/${state.productID}/Variations')
+                        .get()
+                        .then((value) => value),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        state.variationDocID = snapshot.data!.docs[index].id;
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: Column(
+                            children: [
+                              //image
+                              VariationsSubWidgets().getVariationImageSliderWidget(
+                                  context, state, snapshot, index),
+                              //Name
+                              VariationsSubWidgets().getVariationTitle(state),
+                            ],
+                          ),
+                        );
+                      } else {
+                        return const SizedBox();
+                      }
+                    },
+                  );
+                },
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -290,15 +301,16 @@ class ViewProductWidgets {
       ),
     )
     :
-    Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         const Padding(
-          padding: EdgeInsets.only(top: 10, bottom: 5),
+          padding: EdgeInsets.only(top: 10, bottom: 5, right: 10),
           child: Text(
             'Select Quantity',
             style: TextStyle(
               fontWeight: FontWeight.bold,
+              fontSize: 12
             ),
           ),
         ),
@@ -369,12 +381,39 @@ class ViewProductWidgets {
     );
   }
 
+  Widget cartBuyButtons(BuildContext context,
+      num quantityAvailable, String shopID, String id, ProductState state) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        SizedBox(
+            width: MediaQuery.of(context).size.width * 0.45,
+            child: productButtons(
+                context,
+                'Add To Cart',
+                Colors.orange.withValues(alpha: 0.1),
+                Colors.deepOrangeAccent,
+                () => OnPressFunctions().addToCartFunction(quantityAvailable, shopID, id, context, state))
+        ),
+        SizedBox(
+            width: MediaQuery.of(context).size.width * 0.45,
+            child: productButtons(context,
+                'Buy Now',
+                Colors.grey.withValues(alpha: 0.1),
+                Colors.grey.shade900,
+                //todo: add buy now functions here
+                () => {})
+        ),
+      ],
+    );
+  }
+
   Widget buttons(String text, Color bgColor, Color textColor, quantityAvailable,
       String shopID, String id, BuildContext context, ProductState state) {
     return Expanded(
       child: GestureDetector(
         onTap: () async {
-          addToCartFunction(quantityAvailable, shopID, id, context, state);
+          //addToCartFunction(quantityAvailable, shopID, id, context, state);
         },
         child: Container(
             height: 50,

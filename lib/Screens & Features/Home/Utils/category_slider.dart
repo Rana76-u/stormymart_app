@@ -11,7 +11,7 @@ class CategorySlider extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: SizedBox(
-        height: 46.5,
+        height: 44.5,
         width: double.infinity,
         child: FutureBuilder(
           future: loadCategory(),
@@ -51,8 +51,11 @@ class CategorySlider extends StatelessWidget {
       onTap: (){
         GoRouter.of(context).go('/search/item/$categoryName');
       },
-      child: SizedBox(
-        width: 115,
+      child: Container(
+        constraints: const BoxConstraints(
+          minWidth: 115,
+        ),
+        //width: 115,
         child: Card(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           elevation: 0,

@@ -41,12 +41,12 @@ class ProductScreen extends StatelessWidget {
               ),
               backgroundColor: appBgColor,
               floatingActionButton: ViewProductWidgets()
-                  .floatingButtonWidget(productId.toString().trim()),
+                  .floatingButtonWidget(state.productID),
               drawer: coreDrawer(context),
               body: SingleChildScrollView(
                 child: Column(
                   children: [
-                    productBuildBody(context, state, productId.toString().trim()),
+                    productBuildBody(context, state, state.productID),
 
                     coreFooter(),
                   ],

@@ -11,113 +11,109 @@ import '../Widgets/View Product/view_product_widgets.dart';
 Widget productBuildBody(BuildContext context, ProductState state, String id) {
   final productBloc = BlocProvider.of<ProductBloc>(context);
 
-  return FutureBuilder(
-    future: FirebaseFirestore.instance
-        .collection('Products')
-        .doc(id)
-        .get()
-        .then((value) => value),
-    builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-      if (snapshot.hasData) {
-        num price = snapshot.data!.get('price');
-        num discount = snapshot.data!.get('discount');
-        num quantityAvailable = snapshot.data!.get('quantityAvailable');
-        List<String> sizes = List<String>.from(snapshot.data!.get('size'));
+  if (id.isEmpty) {
+    return const Center(child: Text('Invalid product ID'));
+  }
+  else{
+    return FutureBuilder(
+      future: FirebaseFirestore.instance
+          .collection('Products')
+          .doc(id)
+          .get()
+          .then((value) => value),
+      builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+        if (snapshot.hasData) {
+          num price = snapshot.data!.get('price');
+          num discount = snapshot.data!.get('discount');
+          num quantityAvailable = snapshot.data!.get('quantityAvailable');
+          List<String> sizes = List<String>.from(snapshot.data!.get('size'));
 
-        productBloc.add(UpdateDiscountCal((price / 100) * (100 - discount)));
-        productBloc.add(UpdateSizes(sizes));
+          productBloc.add(UpdateDiscountCal((price / 100) * (100 - discount)));
+          productBloc.add(UpdateSizes(sizes));
 
-        return Column(
-          children: [
-            ViewProductWidgets()
-                .getImageSliderWidget(id, state.imageSliderDocID),
+          return Column(
+            children: [
+              ViewProductWidgets()
+                  .getImageSliderWidget(id, state.imageSliderDocID),
 
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ViewProductWidgets().variationWidget(state, context),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ViewProductWidgets().variationWidget(state, context),
 
-                  ViewProductWidgets().productTitle(snapshot.data!.get('title')),
+                    ViewProductWidgets().productTitle(snapshot.data!.get('title')),
 
-                  //Review, Add to wishlist and Share Icons
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      ViewProductWidgets().productReview(),
-                      const Spacer(),
-                      ViewProductWidgets().addToWishListIcon(context, id),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      ViewProductWidgets().shareProductIcon()
-                    ],
-                  ),
+                    //Review, Add to wishlist and Share Icons
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        ViewProductWidgets().productReview(),
+                        const Spacer(),
+                        ViewProductWidgets().addToWishListIcon(context, id),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        ViewProductWidgets().shareProductIcon()
+                      ],
+                    ),
 
-                  //Price and Discount
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      ViewProductWidgets()
-                          .productPrice(state.discountCal, discount, price),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      ViewProductWidgets().discountTag(discount)
-                    ],
-                  ),
+                    //Price and Discount
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        ViewProductWidgets()
+                            .productPrice(state.discountCal, discount, price),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        ViewProductWidgets().discountTag(discount)
+                      ],
+                    ),
 
-                  ViewProductWidgets().productSizes(
-                      sizes, context, state.sizeSelected, state.sizeWarning),
+                    ViewProductWidgets().productSizes(
+                        sizes, context, state.sizeSelected, state.sizeWarning),
 
-                  ViewProductWidgets()
-                      .productQuantity(quantityAvailable, state, context),
+                    ViewProductWidgets()
+                        .productQuantity(quantityAvailable, state, context),
 
-                  const SizedBox(
-                    height: 20,
-                  ),
+                    const SizedBox(
+                      height: 20,
+                    ),
 
-                  Row(
-                    children: [
-                      ViewProductWidgets().buttons("Add To Cart", Colors.grey.withValues(alpha: 0.5),
-                          Colors.black, quantityAvailable, 'shop_id', id, context, state),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      ViewProductWidgets().buttons("Buy Now", Colors.deepOrangeAccent,
-                          Colors.white, quantityAvailable, 'shop_id', id, context, state),
-                    ],
-                  ),
+                    ViewProductWidgets().cartBuyButtons(context, quantityAvailable, '', id, state),
 
-                  const SizedBox(
-                    height: 20,
-                  ),
+                    const SizedBox(
+                      height: 20,
+                    ),
 
-                  //Description
-                  ViewProductWidgets().productDescription(snapshot.data!.get('description')),
+                    //Description
+                    ViewProductWidgets().productDescription(snapshot.data!.get('description')),
 
-                  //Suggested Products
-                  UserServices().isUserLoggedIn() ?
-                  const ShowProductByQueryType(
-                      query: 'suggestedProducts',
-                      title: 'You may also like',
-                      listType: 'list'
-                  ) :
-                  const ShowProductByQueryType(
-                      query: 'popular',
-                      title: 'You may also like',
-                      listType: 'list'
-                  )
-                ]
-                ,
-              ),
-            )
-          ],
-        );
-      } else {
-        return ViewProductWidgets().loadingWidget(context);
-      }
-    },
-  );
+                    //Suggested Products
+                    UserServices().isUserLoggedIn() ?
+                    const ShowProductByQueryType(
+                        query: 'suggestedProducts',
+                        title: 'You may also like',
+                        listType: 'list'
+                    ) :
+                    const ShowProductByQueryType(
+                        query: 'popular',
+                        title: 'You may also like',
+                        listType: 'list'
+                    )
+                  ]
+                  ,
+                ),
+              )
+            ],
+          );
+        } else {
+          return ViewProductWidgets().loadingWidget(context);
+        }
+      },
+    );
+  }
+
 }
