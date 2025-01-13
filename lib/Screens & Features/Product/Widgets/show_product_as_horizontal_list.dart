@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:stormymart_v2/Screens%20&%20Features/Cart/Data/cart_services.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Product/Widgets/product_card.dart';
 
 Widget showProductAsHorizontalList(AsyncSnapshot<QuerySnapshot> snapshot, String thisProductID) {
@@ -26,7 +27,7 @@ Widget showProductAsHorizontalList(AsyncSnapshot<QuerySnapshot> snapshot, String
 
             num price = product['price'];
             num discount = product['discount'];
-            num priceAfterDiscount = (price / 100) * (100 - discount);
+            num priceAfterDiscount = CartServices().calculateDiscountedPrice(price.toDouble(), discount.toDouble());
 
             return productCard(
                 context,

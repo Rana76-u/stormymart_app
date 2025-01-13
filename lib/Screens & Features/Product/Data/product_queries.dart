@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class Product {
+class ProductQueries {
   Future<QuerySnapshot<Map<String, dynamic>>> getPopularProducts() {
     return FirebaseFirestore.instance
         .collection('/Products')

@@ -2,10 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
-
-import '../../Blocks/Cart Bloc/cart_bloc.dart';
-import '../../Blocks/Cart Bloc/cart_events.dart';
-import '../../ViewModels/cart_viewmodel.dart';
+import '../Bloc/cart_bloc.dart';
+import '../Bloc/cart_events.dart';
+import '../Data/cart_services.dart';
 
 class ItemUtil {
 
@@ -164,7 +163,7 @@ class ItemUtil {
                   TextButton(
                       onPressed: () {
                         if(user != null){
-                          CartViewModel().deleteDocument(
+                          CartServices().deleteDocument(
                               context, cartItemDocID!, priceAfterDiscount, index!
                           );
                         }

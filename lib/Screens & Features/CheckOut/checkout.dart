@@ -6,14 +6,15 @@ import 'package:go_router/go_router.dart';
 import 'package:stormymart_v2/Blocks/CheckOut%20Bloc/checkout_bloc.dart';
 import 'package:stormymart_v2/Blocks/CheckOut%20Bloc/checkout_events.dart';
 import 'package:stormymart_v2/Blocks/CheckOut%20Bloc/checkout_state.dart';
+import 'package:stormymart_v2/Core/Appbar/Presentation/appbar_ui_mobile.dart';
+import 'package:stormymart_v2/Screens%20&%20Features/Cart/Data/cart_services.dart';
 import 'package:stormymart_v2/ViewModels/checkout_viewmodel.dart';
 import 'package:stormymart_v2/Core/Utils/padding_provider.dart';
 import 'package:transparent_image/transparent_image.dart';
-import '../Cart/item_util.dart';
+import '../Cart/Util/item_util.dart';
 import '../Home/Bloc/home_bloc.dart';
 import '../Home/Bloc/home_state.dart';
 import '../../Core/Footer/footer.dart';
-import '../../Core/Appbar/Presentation/appbar_ui_desktop.dart';
 
 class CheckOut extends StatelessWidget {
   const CheckOut({super.key});
@@ -35,7 +36,7 @@ class CheckOut extends StatelessWidget {
                 slivers: <Widget>[
                   BlocBuilder<HomeBloc, HomeState>(
                     builder: (context, state) {
-                      return homeAppbar(context, state);
+                      return coreAppBar(context, state);
                     },
                   ),
 
@@ -403,9 +404,10 @@ class CheckOut extends StatelessWidget {
                 .get(),
             builder: (context, productSnapshot) {
               if (productSnapshot.hasData) {
-                double priceAfterDiscount =
-                    (productSnapshot.data!.get('price') / 100) *
-                        (100 - productSnapshot.data!.get('discount'));
+                double priceAfterDiscount = CartServices().calculateDiscountedPrice(
+                    productSnapshot.data!.get('price'),
+                    productSnapshot.data!.get('discount')
+                );
 
                 return Card(
                   elevation: 0,

@@ -5,8 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Product/Bloc/product_events.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Product/Bloc/product_states.dart';
-import '../../../Blocks/Cart Bloc/cart_bloc.dart';
-import '../../../Blocks/Cart Bloc/cart_events.dart';
+import '../../Cart/Bloc/cart_bloc.dart';
+import '../../Cart/Bloc/cart_events.dart';
 import '../Bloc/product_bloc.dart';
 
 class OnPressFunctions {

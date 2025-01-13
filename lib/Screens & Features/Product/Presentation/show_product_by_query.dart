@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:stormymart_v2/Core/Utils/errors_n_empty_messages.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Product/Widgets/show_products_as_grid_list_.dart';
-import '../Data/product_services.dart';
+import '../Data/product_queries.dart';
 import '../Widgets/show_product_as_horizontal_list.dart';
 
 class ShowProductByQueryType extends StatelessWidget {
@@ -15,17 +15,17 @@ class ShowProductByQueryType extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    var productType = Product().getPopularProducts();
+    var productType = ProductQueries().getPopularProducts();
 
     switch(query){
       case 'popular':
-        productType = Product().getPopularProducts();
+        productType = ProductQueries().getPopularProducts();
         break;
       case 'hotDeals':
-        productType = Product().getHotDeals();
+        productType = ProductQueries().getHotDeals();
         break;
       case 'suggestedProducts':
-        productType = Product().getSuggestedProducts();
+        productType = ProductQueries().getSuggestedProducts();
         break;
         //todo: more queries
       /*case 'newArrivals':
