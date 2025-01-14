@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:stormymart_v2/Components/notification_sender.dart';
+import 'package:stormymart_v2/Core/Notification/notification_sender.dart';
 
 class PendingOrders extends StatefulWidget {
   const PendingOrders({super.key});

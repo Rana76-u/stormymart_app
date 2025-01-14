@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 import 'package:stormymart_v2/Core/theme/color.dart';
 import 'package:stormymart_v2/Core/Utils/global_variables.dart';
-import '../../Components/custom_image.dart';
+import '../../Core/Image/custom_image.dart';
 
 // ignore: must_be_immutable
 class SearchPage extends StatefulWidget {

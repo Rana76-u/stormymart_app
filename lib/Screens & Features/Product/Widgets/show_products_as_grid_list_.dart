@@ -38,7 +38,7 @@ Widget showProductsAsGridList(AsyncSnapshot<QuerySnapshot> snapshot, BuildContex
             );
           }
           else{
-            return centeredLinearProgress();
+            return centeredLinearProgress(context);
           }
         }
     ), // The list of widgets in the grid

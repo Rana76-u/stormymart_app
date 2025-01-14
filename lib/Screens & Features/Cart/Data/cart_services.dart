@@ -62,8 +62,22 @@ class CartServices {
     this.total = total;
   }
 
+  num getTotal(CartState cartState) {
+    num priceAfterDiscount = CartServices().calculateDiscountedPrice(
+        CartServices().getCartSelectedItemTotal(cartState), 5
+    );
+
+    return priceAfterDiscount + 120;
+  }
+
   double calculateDiscountedPrice(num price, num discount) {
     return price * (1 - discount / 100);
+  }
+
+  bool getCheckBoxValueForIndividual(CartState state, int index) {
+    return state.checkList.isNotEmpty
+        ? state.checkList[index]
+        : false;
   }
 
 }

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
-Widget centeredLinearProgress() {
-  return const Center(
-    child: LinearProgressIndicator(),
+Widget centeredLinearProgress(BuildContext context) {
+  return Center(
+    child: SizedBox(
+      width: MediaQuery.of(context).size.width * 0.45,
+      child: const LinearProgressIndicator(),
+    ),
   );
 }
 

@@ -5,23 +5,16 @@ import 'cart_order_summary.dart';
 
 Widget cartBuildBody(BuildContext context, CartState state) {
   return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      const SizedBox(
-        height: 50,
-      ),
+      CartWidgets().cartTitle(),
+      CartWidgets().numberOfItemsWidget(state.idList.length),
+      CartWidgets().selectAllWidget(context, state),
+      CartWidgets().cartItems(state),
+      OrderSummary(cartState: state),
+      CartWidgets().checkOutButton(context, state),
 
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CartWidgets().numberOfItemsWidget(state.idList.length),
-          CartWidgets().cartItems(state),
-          OrderSummary(cartState: state),
-        ],
-      ),
-
-      const SizedBox(
-        height: 150,
-      )
+      const SizedBox(height: 80,)
     ],
   );
 }

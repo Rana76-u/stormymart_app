@@ -1,4 +1,4 @@
-import '../../Screens & Features/Cart/Bloc/cart_states.dart';
+import '../../Cart/Bloc/cart_states.dart';
 
 abstract class CheckOutEvents {}
 

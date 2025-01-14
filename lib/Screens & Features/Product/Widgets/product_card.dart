@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Product/Data/onpress_functions.dart';
-import '../../../Components/custom_image.dart';
+import '../../../Core/Image/custom_image.dart';
 
 Widget productCard(BuildContext context, String productId, num discount, num discountCal,
     String title, num sold) {

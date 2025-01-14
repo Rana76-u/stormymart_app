@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Cart/Bloc/cart_states.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Cart/Presentation/cart_order_summary_widgets.dart';
 
+import '../Data/cart_services.dart';
+
 class OrderSummary extends StatelessWidget {
   final CartState cartState;
   const OrderSummary({super.key, required this.cartState});
@@ -20,9 +22,17 @@ class OrderSummary extends StatelessWidget {
 
           OrderSummaryWidgets().listOfItemCalculations(context, cartState),
 
-          OrderSummaryWidgets().total(cartState),
+          const Divider(),
 
-          OrderSummaryWidgets().checkOutButton(context, cartState),
+          OrderSummaryWidgets().summaryTexts('Sub Total:', "BDT ${CartServices().getCartSelectedItemTotal(cartState).toStringAsFixed(1)}"),
+
+          OrderSummaryWidgets().appDiscount(cartState, 5),
+
+          OrderSummaryWidgets().summaryTexts('Delivery Charge:', 'BDT 120'),
+
+          const Divider(),
+
+          OrderSummaryWidgets().summaryTexts('Total:', CartServices().getTotal(cartState).toStringAsFixed(1)),
         ],
       ),
     );

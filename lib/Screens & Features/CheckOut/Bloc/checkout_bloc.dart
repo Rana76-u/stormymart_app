@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:stormymart_v2/Blocks/CheckOut%20Bloc/checkout_events.dart';
-import 'package:stormymart_v2/Blocks/CheckOut%20Bloc/checkout_state.dart';
+import 'package:stormymart_v2/Screens%20&%20Features/CheckOut/Bloc/checkout_events.dart';
+import 'package:stormymart_v2/Screens%20&%20Features/CheckOut/Bloc/checkout_state.dart';
 
 class CheckoutBloc extends Bloc<CheckOutEvents, CheckOutState> {
   CheckoutBloc()
@@ -90,12 +90,12 @@ class CheckoutBloc extends Bloc<CheckOutEvents, CheckOutState> {
 
     // Filtering data based on the checklist
     List<String> filteredIdList = [];
-    List<double> filteredPriceList = [];
+    List<num> filteredPriceList = [];
     List<String> filteredSizeList = [];
     List<String> filteredVariantList = [];
-    List<int> filteredQuantityList = [];
+    List<num> filteredQuantityList = [];
 
-    double total = 0;
+    num total = 0;
     for (int i = 0; i < checkList.length; i++) {
       if (checkList[i]) {
         filteredIdList.add(event.cartState.idList[i]);

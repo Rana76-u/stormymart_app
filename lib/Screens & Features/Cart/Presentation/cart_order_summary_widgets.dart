@@ -1,10 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Cart/Bloc/cart_states.dart';
-import '../../../Blocks/CheckOut Bloc/checkout_bloc.dart';
-import '../../../Blocks/CheckOut Bloc/checkout_events.dart';
 import '../Data/cart_services.dart';
 import '../Util/item_util.dart';
 
@@ -17,45 +13,16 @@ class OrderSummaryWidgets {
     );
   }
 
-  Widget total(CartState cartState) {
-    return Text(
-      "Total: BDT ${CartServices().getCartSelectedItemTotal(cartState).toStringAsFixed(2)}",
-      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-    );
-  }
-
-  Widget checkOutButton(BuildContext context, CartState cartState) {
-    return Container(
-      height: 55,
-      width: double.infinity,
-      margin: const EdgeInsets.only(top: 20),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.deepOrangeAccent,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(3),
-          ),
-        ),
-        child: const Text(
-          "Checkout",
-          style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.bold,
-              color: Colors.white
-          ),
-        ),
-        onPressed: () {
-          BlocProvider.of<CheckoutBloc>(context).add(ResetCheckoutEvent());
-          BlocProvider.of<CheckoutBloc>(context).add(TransferDataEvent(cartState));
-          GoRouter.of(context).go('/checkout');
-        },),
-    );
-  }
-
   Widget listOfItemCalculations(BuildContext context, CartState cartState) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
-      child: ListView.builder(
+      child: ListView.separated(
+        separatorBuilder: (context, index) {
+          return const Divider(
+            height: 25,
+            thickness: 0.2,
+          );
+        },
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         itemCount: cartState.idList.length,
@@ -95,7 +62,6 @@ class OrderSummaryWidgets {
                               overflow: TextOverflow.visible,
                               style: const TextStyle(
                                 fontSize: 14,
-                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
@@ -104,7 +70,6 @@ class OrderSummaryWidgets {
                             ' × $quantity',
                             style: const TextStyle(
                               fontSize: 14,
-                              fontWeight: FontWeight.bold,
                             ),
                           ),
 
@@ -122,10 +87,7 @@ class OrderSummaryWidgets {
                           ),
                         ],
                       ),
-                      const Divider(
-                        height: 35,
-                        thickness: 0.2,
-                      )
+
                     ],
                   );
                 }
@@ -142,6 +104,66 @@ class OrderSummaryWidgets {
             return const SizedBox();
           }
         },
+      ),
+    );
+  }
+
+  Widget summaryTexts(String title, String amount) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          Text(
+            amount,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget appDiscount(CartState cartState, num discountPercentage) {
+
+    num priceAfterDiscount = CartServices().calculateDiscountedPrice(
+        CartServices().getCartSelectedItemTotal(cartState), discountPercentage
+    );
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text(
+            'App Discount: ',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold
+              )
+          ),
+          Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                  text: '(-$discountPercentage%)',
+                    style: const TextStyle(
+                        color: Colors.red,
+                      fontWeight: FontWeight.bold
+                    )
+                ),
+                TextSpan(
+                    text: ' BDT ${priceAfterDiscount.toStringAsFixed(1)}',
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold
+                    )
+                )
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -8,7 +8,7 @@ import 'package:stormymart_v2/Screens%20&%20Features/Product/Bloc/product_states
 import 'package:stormymart_v2/Screens%20&%20Features/Product/Widgets/View%20Product/view_product_widget_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../Core/theme/color.dart';
-import '../../../../Core/Utils/open_photo.dart';
+import '../../../../Core/Image/open_photo.dart';
 import '../../Bloc/product_bloc.dart';
 import '../../Bloc/product_events.dart';
 import '../../Data/onpress_functions.dart';

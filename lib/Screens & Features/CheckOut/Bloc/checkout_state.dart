@@ -1,9 +1,9 @@
 class CheckOutState {
   List<String> idList;
-  List<double> priceList;
+  List<num> priceList;
   List<String> sizeList;
   List<String> variantList;
-  List<int> quantityList;
+  List<num> quantityList;
 
   String userName;
   String phoneNumber;
@@ -11,13 +11,13 @@ class CheckOutState {
   String selectedDivision;
 
   bool isPromoCodeFound;
-  double promoDiscountAmount;
+  num promoDiscountAmount;
 
   bool isUsingCoin;
-  double coinAmount;
+  num coinAmount;
 
-  double itemTotal;
-  double total;
+  num itemTotal;
+  num total;
 
   bool isLoading;
 
@@ -47,10 +47,10 @@ class CheckOutState {
 
   CheckOutState copyWith({
     List<String>? idList,
-    List<double>? priceList,
+    List<num>? priceList,
     List<String>? sizeList,
     List<String>? variantList,
-    List<int>? quantityList,
+    List<num>? quantityList,
 
     String? userName,
     String? phoneNumber,
@@ -58,13 +58,13 @@ class CheckOutState {
     String? selectedDivision,
 
     bool? isPromoCodeFound,
-    double? promoDiscountAmount,
+    num? promoDiscountAmount,
 
     bool? isUsingCoin,
-    double? coinAmount,
+    num? coinAmount,
 
-    double? itemTotal,
-    double? total,
+    num? itemTotal,
+    num? total,
 
     bool? isLoading
   }) {

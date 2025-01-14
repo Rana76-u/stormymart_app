@@ -5,11 +5,12 @@ import 'package:go_router/go_router.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Cart/Data/cart_queries.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Cart/Data/cart_services.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Cart/Widgets/cart_item_widgets.dart';
-import '../../../Blocks/CheckOut Bloc/checkout_bloc.dart';
-import '../../../Blocks/CheckOut Bloc/checkout_events.dart';
+import '../../CheckOut/Bloc/checkout_bloc.dart';
+import '../../CheckOut/Bloc/checkout_events.dart';
 import '../Bloc/cart_bloc.dart';
 import '../Bloc/cart_events.dart';
 import '../Bloc/cart_states.dart';
+import '../Data/on_press_functions.dart';
 import '../Util/item_util.dart';
 
 class CartWidgets {
@@ -169,7 +170,11 @@ class CartWidgets {
           return Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              CartItemWidgets().checkBox(context, state, index),
+              CartItemWidgets().checkBox(
+                  state,
+                  index,
+                  CartServices().getCheckBoxValueForIndividual(state, index),
+                  () => CartOnPressFunctions().onIndividualItemCheckBoxClicked(context, index, !state.checkList[index])),
 
               CartItemWidgets().image(productId, variant),
 
@@ -195,17 +200,46 @@ class CartWidgets {
   }
 
 
+  Widget cartTitle() {
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 5),
+      child: Center(
+        child: Text(
+          'My Cart',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 40
+          ),
+        ),
+      ),
+    );
+  }
 
   Widget numberOfItemsWidget(int number) {
     return Padding(
       padding: const EdgeInsets.only(left: 15),
       child: Text(
-        '$number items',
+        'Total : $number items',
         style: TextStyle(
             fontSize: 12,
             color: Colors.grey.shade700,
             fontWeight: FontWeight.w400),
       ),
+    );
+  }
+
+  Widget selectAllWidget(BuildContext context, CartState state) {
+    return Row(
+      children: [
+        CartItemWidgets().checkBox(
+            state,
+            1,
+            state.checkList.every((element) => element == true),
+                () => CartOnPressFunctions().onSelectAllItemCheckBoxClicked(context, state, !state.checkList.every((element) => element == true))
+        ),
+
+        const Text('Select All')
+      ],
     );
   }
 
@@ -248,6 +282,37 @@ class CartWidgets {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget checkOutButton(BuildContext context, CartState cartState) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      child: Container(
+        height: 55,
+        width: double.infinity,
+        margin: const EdgeInsets.only(top: 20),
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.deepOrangeAccent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(3),
+            ),
+          ),
+          child: const Text(
+            "Checkout",
+            style: TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.bold,
+                color: Colors.white
+            ),
+          ),
+          onPressed: () {
+            BlocProvider.of<CheckoutBloc>(context).add(ResetCheckoutEvent());
+            BlocProvider.of<CheckoutBloc>(context).add(TransferDataEvent(cartState));
+            GoRouter.of(context).go('/checkout');
+          },),
       ),
     );
   }

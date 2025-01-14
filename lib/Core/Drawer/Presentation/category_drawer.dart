@@ -173,7 +173,7 @@ Widget drawerItems(BuildContext context) {
         );
       }
       else if(snapshot.connectionState == ConnectionState.waiting){
-        return centeredLinearProgress();
+        return centeredLinearProgress(context);
       }
       else{
         return ErrorsAndEmptyMessages.emptyMessage();

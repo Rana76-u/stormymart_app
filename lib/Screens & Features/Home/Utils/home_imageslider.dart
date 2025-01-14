@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 
-import '../../../Components/custom_image.dart';
+import '../../../Core/Image/custom_image.dart';
 
 class ImageSlider extends StatelessWidget {
   const ImageSlider({super.key});

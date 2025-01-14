@@ -1,28 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Cart/Bloc/cart_states.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Cart/Widgets/cart_widgets.dart';
 import 'package:transparent_image/transparent_image.dart';
-
-import '../Bloc/cart_bloc.dart';
-import '../Bloc/cart_events.dart';
 import '../Util/item_util.dart';
 
 class CartItemWidgets {
 
-  Widget checkBox(BuildContext context, CartState state, int index) {
-
-    final provider = BlocProvider.of<CartBloc>(context);
+  Widget checkBox(CartState state, int? index, bool value, VoidCallback onPressCallBack) {
 
     return Checkbox(
-      value: state.checkList.isNotEmpty
-          ? state.checkList[index]
-          : false,
+      value: value,
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      /*shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15)),*/
       checkColor: Colors.white,
       activeColor: Colors.deepOrange,
       side: WidgetStateBorderSide.resolveWith(
@@ -34,7 +24,7 @@ class CartItemWidgets {
         },
       ),
       onChanged: (value) {
-        provider.add(UpdateCheckList(index: index, isChecked: !state.checkList[index]));
+        onPressCallBack();
       },
     );
   }
