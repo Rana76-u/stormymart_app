@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:stormymart_v2/Core/Utils/core_progress_bars.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/CheckOut/Widgets/billing_card.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/CheckOut/Widgets/order_summary_card.dart';
-import 'package:stormymart_v2/Screens%20&%20Features/CheckOut/Widgets/payment_card.dart';
 import '../../../Core/Utils/padding_provider.dart';
 import '../Bloc/checkout_bloc.dart';
 import '../Bloc/checkout_events.dart';
@@ -44,8 +43,6 @@ Widget checkoutBuildBody(BuildContext context) {
                   billingInfoCard(context),
 
                   checkoutOrderSummaryCard(context, state),
-
-                  paymentCard(),
                 ],
               ),
             );

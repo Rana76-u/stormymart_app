@@ -3,110 +3,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_sslcommerz/model/SSLCAdditionalInitializer.dart';
-import 'package:flutter_sslcommerz/model/SSLCCustomerInfoInitializer.dart';
-import 'package:flutter_sslcommerz/model/SSLCEMITransactionInitializer.dart';
-import 'package:flutter_sslcommerz/model/SSLCSdkType.dart';
-import 'package:flutter_sslcommerz/model/SSLCShipmentInfoInitializer.dart';
-import 'package:flutter_sslcommerz/model/SSLCTransactionInfoModel.dart';
-import 'package:flutter_sslcommerz/model/SSLCommerzInitialization.dart';
-import 'package:flutter_sslcommerz/model/SSLCurrencyType.dart';
-import 'package:flutter_sslcommerz/sslcommerz.dart';
-import 'package:go_router/go_router.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/CheckOut/Bloc/checkout_bloc.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/CheckOut/Bloc/checkout_state.dart';
-import 'package:stormymart_v2/Screens%20&%20Features/CheckOut/Data/checkout_onpress_functions.dart';
-
+import 'package:stormymart_v2/Screens%20&%20Features/Payment/Presentation/payment.dart';
 import '../../../Core/Notification/notification_sender.dart';
 import '../Bloc/checkout_events.dart';
 
-
 class CheckOutServices {
-
-  Future<void> startSSLCommerzTransaction(BuildContext context, double transAmount ) async {
-    Sslcommerz sslcommerz = Sslcommerz(
-      initializer: SSLCommerzInitialization(
-        ipn_url: "stormymart-43ea8.firebaseapp.com//ipn_listener/",
-        multi_card_name: "visa,master,bkash",
-        currency: SSLCurrencyType.BDT,
-        product_category: "Food",
-        sdkType: SSLCSdkType.TESTBOX,
-        store_id: 'storm6731b4684e6c3',
-        store_passwd: 'rana7262.',
-        total_amount: transAmount,
-        tran_id: "1231123131212",
-      ),
-    );
-
-    sslcommerz
-        .addShipmentInfoInitializer(
-      sslcShipmentInfoInitializer: SSLCShipmentInfoInitializer(
-        shipmentMethod: "yes",
-        numOfItems: 5,
-        shipmentDetails: ShipmentDetails(
-            shipAddress1: "Ship address 1",
-            shipCity: "Faridpur",
-            shipCountry: "Bangladesh",
-            shipName: "Ship name 1",
-            shipPostCode: "7860"),
-      ),
-    )
-        .addCustomerInfoInitializer(
-      customerInfoInitializer: SSLCCustomerInfoInitializer(
-        customerState: "Chattogram",
-        customerName: "Abu Sayed Chowdhury",
-        customerEmail: "abc@gmail.com",
-        customerAddress1: "Anderkilla",
-        customerCity: "Chattogram",
-        customerPostCode: "200",
-        customerCountry: "Bangladesh",
-        customerPhone: "01521762061",
-      ),
-    )
-        .addEMITransactionInitializer(
-        sslcemiTransactionInitializer: SSLCEMITransactionInitializer(
-            emi_options: 1, emi_max_list_options: 9, emi_selected_inst: 0))
-        .addAdditionalInitializer(
-      sslcAdditionalInitializer: SSLCAdditionalInitializer(
-        valueA: "value a",
-        valueB: "value b",
-        valueC: "value c",
-        valueD: "value d",
-        extras: {"key": "key", "key2": "key2"},
-      ),
-    );
-
-    SSLCTransactionInfoModel result = await sslcommerz.payNow();
-    _displayPaymentStatus(result, context);
-  }
-
-  void _displayPaymentStatus(SSLCTransactionInfoModel result, BuildContext context) {
-    String message;
-    Color bgColor;
-
-    switch (result.status?.toLowerCase()) {
-      case "failed":
-        message = "Transaction Failed";
-        bgColor = Colors.red;
-        break;
-      case "closed":
-        message = "SDK Closed by User";
-        bgColor = Colors.orange;
-        break;
-      default:
-        message =
-        "Transaction ${result.status} - Amount: ${result.amount ?? 0}";
-        bgColor = Colors.green;
-    }
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message))
-    );
-  }
-
-  Future<String> generateRandomID()  async {
+  Future<String> generateRandomID() async {
     Random random = Random();
-    String randomID  = '';
+    String randomID = '';
     const String chars = "0123456789abcdefghijklmnopqrstuvwxyz";
 
     for (int i = 0; i < 20; i++) {
@@ -119,16 +25,17 @@ class CheckOutServices {
   void getPromoDiscountMoney(BuildContext context, String promoCode) async {
     final provider = BlocProvider.of<CheckoutBloc>(context);
     final checkoutState = provider.state;
-    final promoSnapshot = await FirebaseFirestore
-        .instance
+    final promoSnapshot = await FirebaseFirestore.instance
         .collection('Promo Codes')
-        .doc(promoCode).get();
+        .doc(promoCode)
+        .get();
 
     double promoDiscount = promoSnapshot['discount'].toDouble();
-    double promoDiscountAmount = ( checkoutState.total / 100) * promoDiscount;
+    double promoDiscountAmount = (checkoutState.total / 100) * promoDiscount;
 
     double total = checkoutState.total - promoDiscountAmount;
-    provider.add(IsPromoCodeFound(isPromoCodeFound: true, promoDiscountAmount: promoDiscountAmount));
+    provider.add(IsPromoCodeFound(
+        isPromoCodeFound: true, promoDiscountAmount: promoDiscountAmount));
     provider.add(UpdateTotal(total: total));
   }
 
@@ -144,46 +51,40 @@ class CheckOutServices {
       if (querySnapshot.size > 0) {
         promoMoney;
       } else {
-        provider.add(IsPromoCodeFound(isPromoCodeFound: false, promoDiscountAmount: 0));
+        provider.add(
+            IsPromoCodeFound(isPromoCodeFound: false, promoDiscountAmount: 0));
       }
     });
   }
 
   Future<void> sendNotification() async {
-
     //Get all the admins Id's
-    CollectionReference reference = FirebaseFirestore.instance.collection('/Admin Panel');
+    CollectionReference reference =
+        FirebaseFirestore.instance.collection('/Admin Panel');
 
     QuerySnapshot querySnapshot = await reference.get();
 
     for (var doc in querySnapshot.docs) {
-      if(doc.id != 'Sell Data'){
-
-        final tokenSnapshot = await FirebaseFirestore.instance.collection('userTokens')
-            .doc(doc.id).get();
+      if (doc.id != 'Sell Data') {
+        final tokenSnapshot = await FirebaseFirestore.instance
+            .collection('userTokens')
+            .doc(doc.id)
+            .get();
 
         String token = tokenSnapshot.get('token');
 
         await SendNotification.toSpecific(
-            "Order Update",
-            'New Order Placed',
-            token,
-            'BottomBar()'
-        );
+            "Order Update", 'New Order Placed', token, 'BottomBar()');
       }
     }
   }
 
   Future<void> placeOrder(BuildContext context, String usedPromoCode) async {
-    CheckoutOnPressFunctions().onPayNowPressed(context, 100);
-    ///todo: uncomment here for order placement
-    /*final messenger = ScaffoldMessenger.of(context);
-    final router = GoRouter.of(context);
+    final messenger = ScaffoldMessenger.of(context);
     final provider = BlocProvider.of<CheckoutBloc>(context);
+    String randomID = await generateRandomID();
 
     provider.add(UpdateIsLoading(isLoading: true));
-
-    String randomID = await generateRandomID();
 
     await enableOrderCollection();
 
@@ -193,19 +94,21 @@ class CheckOutServices {
 
     await resetCoins(provider.state);
 
-    //await sendNotification();
+    await sendNotification();
 
     provider.add(UpdateIsLoading(isLoading: false));
 
     showOrderConfirmationMessage(messenger);
 
-    navigateToHomePage(router);*/
+    provider.add(UpdateIsLoading(isLoading: false));
+
+    navigateToPaymentPage(context, provider.state.total.toDouble(), randomID);
   }
 
   Future<void> enableOrderCollection() async {
     await FirebaseFirestore.instance
         .collection('Orders')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .doc(FirebaseAuth.instance.currentUser?.uid ?? '')
         .set({'enable': true});
   }
 
@@ -214,7 +117,7 @@ class CheckOutServices {
     var state = provider.state;
     await FirebaseFirestore.instance
         .collection('Orders')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .doc(FirebaseAuth.instance.currentUser?.uid)
         .collection('Pending Orders')
         .doc(randomID)
         .set({
@@ -223,6 +126,7 @@ class CheckOutServices {
       'total': state.total,
       'deliveryLocation': '${state.selectedAddress}, ${state.selectedDivision}',
       'time': FieldValue.serverTimestamp(),
+      'paid': false
     });
   }
 
@@ -231,7 +135,7 @@ class CheckOutServices {
       String randomOrderListDocID = await generateRandomID();
       await FirebaseFirestore.instance
           .collection('Orders')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .doc(FirebaseAuth.instance.currentUser?.uid)
           .collection('Pending Orders')
           .doc(randomID)
           .collection('orderLists')
@@ -253,7 +157,7 @@ class CheckOutServices {
 
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection('userData')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .doc(FirebaseAuth.instance.currentUser?.uid)
           .collection('Cart')
           .where('id', isEqualTo: state.idList[index])
           .where('quantity', isEqualTo: state.quantityList[index])
@@ -270,8 +174,10 @@ class CheckOutServices {
     if (state.isUsingCoin) {
       await FirebaseFirestore.instance
           .collection('userData')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .update({'coins': 0,});
+          .doc(FirebaseAuth.instance.currentUser?.uid)
+          .update({
+        'coins': 0,
+      });
     }
   }
 
@@ -281,12 +187,13 @@ class CheckOutServices {
     ));
   }
 
-  void navigateToHomePage(GoRouter router) {
-    router.go('/');
+  void navigateToPaymentPage(BuildContext context, double transAmount, String transId) {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => PaymentPage(transAmount: transAmount, transId: transId,),
+    ));
   }
 
   num discountAmount(num percentage, num amount) {
-    return amount * (percentage/100);
+    return amount * (percentage / 100);
   }
-
 }

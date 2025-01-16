@@ -26,7 +26,7 @@ class CheckoutBloc extends Bloc<CheckOutEvents, CheckOutState> {
     itemTotal: 0,
     total: 0,
 
-    isLoading: true
+    isLoading: false
   )) {
     on<CheckOutEvents>((event, emit) async {
       CheckOutState newState = state;
@@ -76,7 +76,7 @@ class CheckoutBloc extends Bloc<CheckOutEvents, CheckOutState> {
           coinAmount: 0,
           itemTotal: 0,
           total: 0,
-          isLoading: true
+          isLoading: false
         );
       }
 

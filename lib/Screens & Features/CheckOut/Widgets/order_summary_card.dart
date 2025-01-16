@@ -50,17 +50,23 @@ Widget checkoutOrderSummaryCard(BuildContext context, CheckOutState state) {
 
           CheckoutWidgets().titlesWidget('Total : ৳ ${state.total}'),
 
-          const SizedBox(height: 10,),
+          const SizedBox(height: 35,),
 
           CheckoutWidgets().buttonWidget(
               48, double.infinity, Colors.green, 'Place Order', () {
-            provider.add(ChangeUserInfoEvent(
+
+                provider.add(UpdateIsLoading(isLoading: true));
+
+                provider.add(ChangeUserInfoEvent(
                 name: checkoutNameController.text,
                 phoneNumber: checkoutPhnNumberController.text,
                 address: checkoutAddressController.text));
-            CheckOutServices()
+
+                CheckOutServices()
                 .placeOrder(context, checkoutPromoCodeController.text);
           }),
+
+          const SizedBox(height: 10,),
         ],
       ),
     ),
