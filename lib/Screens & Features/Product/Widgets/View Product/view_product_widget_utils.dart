@@ -1,7 +1,12 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
+
+// Project imports:
 import 'package:stormymart_v2/Screens%20&%20Features/Product/Bloc/product_states.dart';
 import '../../../../Core/Utils/global_variables.dart';
 import '../../Bloc/product_bloc.dart';

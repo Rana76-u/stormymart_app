@@ -1,3 +1,4 @@
+// Flutter imports:
 import 'package:flutter/material.dart';
 
 Widget coreFooter() {
@@ -57,7 +58,7 @@ Widget footerTitle(String text) {
 Widget footerSubTitle(String text, String route) {
   return GestureDetector(
     onTap: () {
-      //GoRouter.of(context).go('/$route');
+      //GoRouter.of(context).push('/$route');
     },
     child: Padding(
       padding: const EdgeInsets.only(bottom: 15),

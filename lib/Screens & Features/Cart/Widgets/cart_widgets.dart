@@ -1,7 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
+// Project imports:
 import 'package:stormymart_v2/Screens%20&%20Features/Cart/Data/cart_queries.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Cart/Data/cart_services.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Cart/Widgets/cart_item_widgets.dart';
@@ -46,7 +51,7 @@ class CartWidgets {
                 onPressed: () {
                   BlocProvider.of<CheckoutBloc>(context).add(ResetCheckoutEvent());
                   BlocProvider.of<CheckoutBloc>(context).add(TransferDataEvent(state));
-                  GoRouter.of(context).go('/checkout');
+                  GoRouter.of(context).push('/checkout');
                 },
                 heroTag: "checkoutBtn",
                 shape: RoundedRectangleBorder(
@@ -311,7 +316,7 @@ class CartWidgets {
           onPressed: () {
             BlocProvider.of<CheckoutBloc>(context).add(ResetCheckoutEvent());
             BlocProvider.of<CheckoutBloc>(context).add(TransferDataEvent(cartState));
-            GoRouter.of(context).go('/checkout');
+            GoRouter.of(context).push('/checkout');
           },),
       ),
     );

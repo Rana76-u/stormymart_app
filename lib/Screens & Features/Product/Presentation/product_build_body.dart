@@ -1,8 +1,13 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+// Project imports:
 import 'package:stormymart_v2/Screens%20&%20Features/Product/Presentation/show_product_by_query.dart';
-import 'package:stormymart_v2/Screens%20&%20Features/User/user_services.dart';
+import 'package:stormymart_v2/Screens%20&%20Features/User/Data/user_services.dart';
 import '../Bloc/product_bloc.dart';
 import '../Bloc/product_events.dart';
 import '../Bloc/product_states.dart';

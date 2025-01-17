@@ -1,9 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
+
+// Project imports:
 import 'package:stormymart_v2/Screens & Features/Profile/Wishlists/wishlist.dart';
+import '../../User/Data/user_hive.dart';
 
 class WishListBody extends StatefulWidget {
   const WishListBody({super.key});
@@ -46,7 +51,7 @@ class _WishListBodyState extends State<WishListBody> {
   void fetchWishListItems() async {
     final wishlistSnapshot = await FirebaseFirestore.instance
         .collection('userData')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .doc(UserHive().getUserUid())
         .get();
 
     wishListItemIds = wishlistSnapshot.get('wishlist');
@@ -72,7 +77,7 @@ class _WishListBodyState extends State<WishListBody> {
         await FirebaseFirestore
             .instance
             .collection('/userData')
-            .doc(FirebaseAuth.instance.currentUser!.uid).update({
+            .doc(UserHive().getUserUid()).update({
           'wishlist': FieldValue.arrayRemove([wishListItemIds[i]])
         });
 
@@ -192,7 +197,7 @@ class _WishListBodyState extends State<WishListBody> {
                             await FirebaseFirestore
                                 .instance
                                 .collection('/userData')
-                                .doc(FirebaseAuth.instance.currentUser!.uid).update({
+                                .doc(UserHive().getUserUid()).update({
                               'wishlist': FieldValue.arrayRemove([wishListItemIds[index]])
                             });
 
@@ -206,7 +211,7 @@ class _WishListBodyState extends State<WishListBody> {
                     ),
                     child: GestureDetector(
                       onTap: () {
-                        GoRouter.of(context).go('/product/${wishListItemIds[index]}');
+                        GoRouter.of(context).push('/product/${wishListItemIds[index]}');
                       },
                       child: SizedBox(
                         height: 170,

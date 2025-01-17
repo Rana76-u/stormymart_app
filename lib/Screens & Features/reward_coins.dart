@@ -1,4 +1,7 @@
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:go_router/go_router.dart';
 
 class ShowRewardCoinScreen extends StatefulWidget {
@@ -21,7 +24,7 @@ class _ShowRewardCoinScreenState extends State<ShowRewardCoinScreen> {
     return PopScope(
       onPopInvoked: (didPop) {
         /*Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const HomePage()), (route) => false);*/
-        GoRouter.of(context).go('/');
+        GoRouter.of(context).push('/');
       },
       child: Scaffold(
         backgroundColor: Colors.white,

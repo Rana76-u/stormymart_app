@@ -1,5 +1,10 @@
+// Dart imports:
 import 'dart:developer';
+
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:go_router/go_router.dart';
 
 class SearchField extends StatelessWidget {
@@ -19,7 +24,7 @@ class SearchField extends StatelessWidget {
         child: Center(
           child: GestureDetector(
             onTap: () {
-              GoRouter.of(context).go('/search');
+              GoRouter.of(context).push('/search');
             },
             child: TextField(
               onChanged: (value) => log(value),

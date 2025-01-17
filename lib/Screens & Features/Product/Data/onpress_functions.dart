@@ -1,18 +1,24 @@
+// Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+
+// Package imports:
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+
+// Project imports:
 import 'package:stormymart_v2/Screens%20&%20Features/Product/Bloc/product_events.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Product/Bloc/product_states.dart';
 import '../../Cart/Bloc/cart_bloc.dart';
 import '../../Cart/Bloc/cart_events.dart';
+import '../../User/Data/user_hive.dart';
 import '../Bloc/product_bloc.dart';
 
 class OnPressFunctions {
 
   void viewProduct(BuildContext context, String productId) {
-    GoRouter.of(context).go('/product/$productId');
+    GoRouter.of(context).push('/product/$productId');
   }
 
   void addToCartFunction(num quantityAvailable, String shopID, String id, BuildContext context, ProductState state) async {
@@ -48,7 +54,7 @@ class OnPressFunctions {
       } else {
         //user logged in
         if (FirebaseAuth.instance.currentUser != null) {
-          String uid = FirebaseAuth.instance.currentUser!.uid;
+          String uid = UserHive().getUserUid();
 
           await FirebaseFirestore.instance
               .collection('userData/$uid/Cart/')
@@ -105,7 +111,7 @@ class OnPressFunctions {
                         Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => const Cart(),
                         ));
-                        GoRouter.of(context).go('/cart');
+                        GoRouter.of(context).push('/cart');
                       },
                       child: const Text(
                         'Open Cart',

@@ -1,7 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
+
+// Project imports:
 import '../Bloc/cart_bloc.dart';
 import '../Bloc/cart_events.dart';
 import '../Data/cart_services.dart';

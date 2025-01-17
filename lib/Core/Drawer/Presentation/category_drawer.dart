@@ -1,13 +1,18 @@
-import 'package:firebase_auth/firebase_auth.dart';
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
+import 'package:transparent_image/transparent_image.dart';
+
+// Project imports:
 import 'package:stormymart_v2/Core/Utils/core_progress_bars.dart';
 import 'package:stormymart_v2/Core/Utils/errors_n_empty_messages.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Home/Data/load_category_services.dart';
-import 'package:transparent_image/transparent_image.dart';
-
-import '../../Utils/global_variables.dart';
 import '../../../Screens & Features/Profile/profile.dart';
+import '../../../Screens & Features/User/Data/user_hive.dart';
+import '../../Utils/global_variables.dart';
 
 Widget coreDrawer(BuildContext context){
   return Drawer(
@@ -50,7 +55,7 @@ Widget drawerHeader(BuildContext context) {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(50),
                     child: FadeInImage.memoryNetwork(
-                      image: FirebaseAuth.instance.currentUser!.photoURL ??
+                      image: UserHive().getUserPhotoURL() ??
                           'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgBhcplevwUKGRs1P-Ps8Mwf2wOwnW_R_JIA&usqp=CAU',
                       placeholder: kTransparentImage,
                     ),
@@ -60,7 +65,7 @@ Widget drawerHeader(BuildContext context) {
                 SizedBox(
                   width: 170,
                   child: Text(
-                    FirebaseAuth.instance.currentUser!.displayName ?? "",
+                    UserHive().getUserName(),
                     style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 17,
@@ -163,7 +168,7 @@ Widget drawerItems(BuildContext context) {
                     title: Text(subCategoryNames[index]),
                     onTap: () {
                       keyword = subCategoryNames[index];
-                      GoRouter.of(context).go('/search/item/$keyword');
+                      GoRouter.of(context).push('/search/item/$keyword');
                     },
                   );
                 },

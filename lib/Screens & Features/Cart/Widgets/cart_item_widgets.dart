@@ -1,9 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:go_router/go_router.dart';
+import 'package:transparent_image/transparent_image.dart';
+
+// Project imports:
 import 'package:stormymart_v2/Screens%20&%20Features/Cart/Bloc/cart_states.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Cart/Widgets/cart_widgets.dart';
-import 'package:transparent_image/transparent_image.dart';
 import '../Util/item_util.dart';
 
 class CartItemWidgets {
@@ -39,7 +44,7 @@ class CartItemWidgets {
         if (imageSnapshot.hasData) {
           return GestureDetector(
             onTap: () {
-              GoRouter.of(context).go('/product/$productId');
+              GoRouter.of(context).push('/product/$productId');
             },
             child: Padding(
               padding: const EdgeInsets.only(left: 0, right: 8),

@@ -1,8 +1,14 @@
+// Flutter imports:
+import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
+// Project imports:
 import 'package:stormymart_v2/Screens & Features/Profile/profile_accountinfo.dart';
+import '../User/Data/user_hive.dart';
 
 class ProfileTop extends StatefulWidget {
   const ProfileTop({super.key});
@@ -39,7 +45,7 @@ class _ProfileTopState extends State<ProfileTop> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(100),
                 child: Image.network(
-                  FirebaseAuth.instance.currentUser!.photoURL.toString(),
+                  UserHive().getUserPhotoURL().toString(),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -50,7 +56,7 @@ class _ProfileTopState extends State<ProfileTop> {
                 children: [
                   const Expanded(child: SizedBox()),
                   Text(
-                    FirebaseAuth.instance.currentUser!.displayName.toString(),
+                    UserHive().getUserName().toString(),
                     style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
@@ -60,7 +66,7 @@ class _ProfileTopState extends State<ProfileTop> {
                     ),
                   ),
                   Text(
-                    FirebaseAuth.instance.currentUser!.email.toString(),
+                    UserHive().getUserEmail().toString(),
                     style: const TextStyle(
                         fontWeight: FontWeight.w500,
                         color: Colors.white,
@@ -93,7 +99,7 @@ class _ProfileTopState extends State<ProfileTop> {
           future:  FirebaseFirestore
               .instance
               .collection('userData')
-              .doc(FirebaseAuth.instance.currentUser!.uid)
+              .doc(UserHive().getUserUid())
               .get(),
           builder: (context, snapshot) {
             if(snapshot.hasData){
@@ -110,7 +116,7 @@ class _ProfileTopState extends State<ProfileTop> {
                     //wishlist
                     GestureDetector(
                       onTap: () {
-                        GoRouter.of(context).go('/wishlists');
+                        GoRouter.of(context).push('/wishlists');
                       },
                       child: Column(
                         children: [
@@ -137,7 +143,7 @@ class _ProfileTopState extends State<ProfileTop> {
                     //Points
                     GestureDetector(
                       onTap: () {
-                        GoRouter.of(context).go('/coin');
+                        GoRouter.of(context).push('/coin');
                       },
                       child: Column(
                         children: [

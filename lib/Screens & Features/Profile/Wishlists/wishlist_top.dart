@@ -1,5 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Project imports:
+import '../../User/Data/user_hive.dart';
 
 class WishListTop extends StatelessWidget {
   const WishListTop({super.key});
@@ -36,7 +39,7 @@ class WishListTop extends StatelessWidget {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
-                    child: Image.network(FirebaseAuth.instance.currentUser!.photoURL.toString()),
+                    child: Image.network(UserHive().getUserPhotoURL().toString()),
                   ),
                 ),
               ),

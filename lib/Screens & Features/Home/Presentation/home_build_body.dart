@@ -1,5 +1,10 @@
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:go_router/go_router.dart';
+
+// Project imports:
 import '../../Product/Presentation/show_product_by_query.dart';
 import '../Bloc/home_state.dart';
 import '../Utils/category_slider.dart';
@@ -32,7 +37,7 @@ Widget homeBuildBody(BuildContext context, HomeState state) {
                   return ListTile(
                     title: GestureDetector(
                       onTap: () {
-                        GoRouter.of(context).go('/product/${state.searchResults[index].id}');
+                        GoRouter.of(context).push('/product/${state.searchResults[index].id}');
                         /*setState(() {
                                 searchedText = searchResults[index].get('title');
                                 isTyping = false;

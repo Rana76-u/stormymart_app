@@ -1,6 +1,12 @@
+// Flutter imports:
+import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+
+// Project imports:
+import '../User/Data/user_hive.dart';
 
 class AccountInfo extends StatefulWidget {
   const AccountInfo({super.key});
@@ -71,7 +77,7 @@ class _AccountInfoState extends State<AccountInfo> {
   }
 
   _readData() async{
-    final String uid = FirebaseAuth.instance.currentUser!.uid;
+    final String uid = UserHive().getUserUid();
 
     final DocumentReference documentReference =
     FirebaseFirestore.instance.collection('userData').doc(uid);

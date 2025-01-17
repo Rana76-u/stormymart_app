@@ -1,7 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+// Project imports:
 import '../Home/Bloc/home_bloc.dart';
 import '../Home/Bloc/home_event.dart';
 

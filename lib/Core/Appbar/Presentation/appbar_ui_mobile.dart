@@ -1,17 +1,23 @@
-import 'package:firebase_auth/firebase_auth.dart';
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
+// Project imports:
 import '../../../Screens & Features/Cart/Bloc/cart_bloc.dart';
 import '../../../Screens & Features/Cart/Bloc/cart_states.dart';
 import '../../../Screens & Features/Home/Bloc/home_state.dart';
+import '../../../Screens & Features/User/Data/user_hive.dart';
 
 Widget coreAppBar(BuildContext context, HomeState state) {
   return AppBar(
     leading: Builder(
       builder: (context) => IconButton(
         icon: const Icon(Icons.menu, color: Colors.white,),
-        onPressed: () => Scaffold.of(context).openDrawer(),
+        onPressed: () => Scaffold.of(context).openDrawer()
       ),
     ),
     backgroundColor: Colors.black,
@@ -50,7 +56,7 @@ Widget mainAppBarPart(BuildContext context, HomeState state) {
 Widget logo(BuildContext context) {
   return GestureDetector(
     onTap: () {
-      GoRouter.of(context).go('/');
+      GoRouter.of(context).push('/');
     },
     child: Image.asset(
       'assets/images/logo/wide-logo.png',
@@ -62,7 +68,7 @@ Widget logo(BuildContext context) {
 Widget searchIcon(BuildContext context){
   return GestureDetector(
     onTap: () {
-      GoRouter.of(context).go('/search');
+      GoRouter.of(context).push('/search');
     },
     child: const Icon(Icons.search, color: Colors.white,),
   );
@@ -70,7 +76,7 @@ Widget searchIcon(BuildContext context){
 Widget cartIcon(BuildContext context){
   return GestureDetector(
     onTap: () {
-      GoRouter.of(context).go('/cart');
+      GoRouter.of(context).push('/cart');
     },
     child: Stack(
       children: [
@@ -109,13 +115,13 @@ Widget cartIcon(BuildContext context){
 Widget userIcon(BuildContext context){
   return GestureDetector(
     onTap: () {
-      GoRouter.of(context).go('/profile');
+      GoRouter.of(context).push('/profile');
     },
     child: FirebaseAuth.instance.currentUser != null ?
     ClipRRect(
       borderRadius: BorderRadius.circular(50),
       child: Image.network(
-        FirebaseAuth.instance.currentUser!.photoURL!,
+        UserHive().getUserPhotoURL(),
         height: 25,
         width: 25,
       ),

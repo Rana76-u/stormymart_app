@@ -1,5 +1,10 @@
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:go_router/go_router.dart';
+
+// Project imports:
 import 'package:stormymart_v2/Core/Utils/global_variables.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Home/Data/load_category_services.dart';
 
@@ -49,7 +54,7 @@ class CategorySlider extends StatelessWidget {
   Widget cards(String categoryName, BuildContext context) {
     return GestureDetector(
       onTap: (){
-        GoRouter.of(context).go('/search/item/$categoryName');
+        GoRouter.of(context).push('/search/item/$categoryName');
       },
       child: Container(
         constraints: const BoxConstraints(

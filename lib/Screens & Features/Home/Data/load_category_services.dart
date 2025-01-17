@@ -1,4 +1,7 @@
+// Package imports:
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+// Project imports:
 import '../../../Core/Utils/global_variables.dart';
 
 Future<Map<dynamic, List<dynamic>>> loadCategory() async {

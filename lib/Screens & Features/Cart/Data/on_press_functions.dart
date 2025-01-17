@@ -1,7 +1,11 @@
+// Flutter imports:
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:stormymart_v2/Screens%20&%20Features/Cart/Bloc/cart_states.dart';
 
+// Package imports:
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+// Project imports:
+import 'package:stormymart_v2/Screens%20&%20Features/Cart/Bloc/cart_states.dart';
 import '../Bloc/cart_bloc.dart';
 import '../Bloc/cart_events.dart';
 

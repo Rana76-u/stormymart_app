@@ -1,14 +1,20 @@
-import 'package:firebase_auth/firebase_auth.dart';
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
+// Project imports:
+import '../../../Screens & Features/Auth/Data/auth_service.dart';
 import '../../../Screens & Features/Cart/Bloc/cart_bloc.dart';
 import '../../../Screens & Features/Cart/Bloc/cart_states.dart';
-import '../../../Screens & Features/Auth/Data/auth_service.dart';
 import '../../../Screens & Features/Home/Bloc/home_bloc.dart';
 import '../../../Screens & Features/Home/Bloc/home_event.dart';
 import '../../../Screens & Features/Home/Bloc/home_state.dart';
 import '../../../Screens & Features/Search/searchbar_widget.dart';
+import '../../../Screens & Features/User/Data/user_hive.dart';
 
 Widget coreAppbarDesktop(BuildContext context, HomeState state) {
   return SliverAppBar(
@@ -59,7 +65,7 @@ Widget coreAppbarDesktop(BuildContext context, HomeState state) {
         //StormyMart
         GestureDetector(
           onTap: () {
-            GoRouter.of(context).go('/');
+            GoRouter.of(context).push('/');
           },
           child: Image.asset(
             'assets/images/logo/wide-logo.png',
@@ -74,7 +80,7 @@ Widget coreAppbarDesktop(BuildContext context, HomeState state) {
           flex: 1,
           child: GestureDetector(
             onTap: () {
-              GoRouter.of(context).go('/search');
+              GoRouter.of(context).push('/search');
             },
             child: const SearchbarWidget(),//searchBar(context),
           ),
@@ -169,7 +175,7 @@ Widget topLeftItem(IconData icon, String text1, String text2, BuildContext conte
 
       }
       else if(text2 == 'Cart') {
-        GoRouter.of(context).go('/cart');
+        GoRouter.of(context).push('/cart');
       }
     },
     child: Padding(
@@ -180,7 +186,7 @@ Widget topLeftItem(IconData icon, String text1, String text2, BuildContext conte
           ClipRRect(
             borderRadius: BorderRadius.circular(50),
             child: Image.network(
-              FirebaseAuth.instance.currentUser!.photoURL!,
+              UserHive().getUserPhotoURL(),
               height: 25,
               width: 25,
             ),

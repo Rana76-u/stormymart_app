@@ -1,6 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:go_router/go_router.dart';
+
+// Project imports:
 import 'package:stormymart_v2/Screens%20&%20Features/Product/Data/onpress_functions.dart';
 import '../../../Core/Image/custom_image.dart';
 
@@ -9,7 +14,7 @@ Widget productCard(BuildContext context, String productId, num discount, num dis
 
   return GestureDetector(
     onTap: () {
-      GoRouter.of(context).go('/product/$productId');
+      GoRouter.of(context).push('/product/$productId');
     },
     child: SizedBox(
       width: 300,

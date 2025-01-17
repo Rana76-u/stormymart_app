@@ -1,4 +1,7 @@
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:photo_view/photo_view.dart';
 
 // ignore: must_be_immutable

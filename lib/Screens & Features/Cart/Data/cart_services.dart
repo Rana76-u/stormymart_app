@@ -1,8 +1,13 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// Flutter imports:
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+// Package imports:
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+// Project imports:
+import '../../User/Data/user_hive.dart';
 import '../Bloc/cart_states.dart';
 
 class CartServices {
@@ -34,7 +39,7 @@ class CartServices {
       double? price,
       int index
       ) async {
-    final uid = FirebaseAuth.instance.currentUser!.uid;
+    final uid = UserHive().getUserUid();
 
     try {
       await FirebaseFirestore.instance

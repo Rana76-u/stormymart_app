@@ -1,6 +1,12 @@
+// Flutter imports:
+import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+
+// Project imports:
+import '../../User/Data/user_hive.dart';
 
 class CoinsBody extends StatefulWidget {
   const CoinsBody({super.key});
@@ -33,7 +39,7 @@ class _CoinsBodyState extends State<CoinsBody> {
               future:  FirebaseFirestore
                   .instance
                   .collection('userData')
-                  .doc(FirebaseAuth.instance.currentUser!.uid)
+                  .doc(UserHive().getUserUid())
                   .get(),
               builder: (context, snapshot) {
                 if(snapshot.hasData){

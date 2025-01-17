@@ -1,20 +1,19 @@
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+
+// Project imports:
 import 'package:stormymart_v2/Screens%20&%20Features/Cart/Bloc/cart_bloc.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/CheckOut/Bloc/checkout_bloc.dart';
-import 'package:stormymart_v2/Screens%20&%20Features/Cart/Presentation/cart.dart';
-import 'package:stormymart_v2/Screens%20&%20Features/CheckOut/Presentation/checkout.dart';
-import 'package:stormymart_v2/Screens%20&%20Features/Home/Presentation/home.dart';
-import 'package:stormymart_v2/Screens%20&%20Features/Product/Presentation/product_screen.dart';
-import 'package:stormymart_v2/Screens & Features/Profile/Coins/coins.dart';
-import 'package:stormymart_v2/Screens & Features/Profile/profile.dart';
-import 'package:stormymart_v2/Screens & Features/Search/search.dart';
+import 'package:stormymart_v2/Screens%20&%20Features/User/Data/user_hive.dart';
 import 'package:stormymart_v2/firebase_options.dart';
+import 'Core/Routing/routing_config.dart';
 import 'Screens & Features/Home/Bloc/home_bloc.dart';
 import 'Screens & Features/Product/Bloc/product_bloc.dart';
-import 'Screens & Features/Profile/Wishlists/wishlist.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,115 +21,22 @@ void main() async{
     options: DefaultFirebaseOptions.currentPlatform
   );
 
+  await Hive.initFlutter();
+  // Check if the box is already open before opening it
+  if (!Hive.isBoxOpen('userInfo')) {
+    await Hive.openBox('userInfo');
+  }//if open then
+  else{
+    //check if userUID field is there or not, representing user's login state
+    if(Hive.box('userInfo').containsKey('userUid')){
+      UserHive().updateUserData();
+    }
+  }
+
   runApp(const MyApp());
 }
 
-Widget _customTransitionBuilder(BuildContext context, Animation<double> animation,
-    Animation<double> secondaryAnimation, Widget child) {
-  return FadeTransition(
-    opacity: CurveTween(curve: Curves.easeInOut).animate(animation),
-    child: child,
-  );
-}
 
-/// The route configuration.
-final GoRouter _router = GoRouter(
-  routes: <RouteBase>[
-    //home
-    GoRoute(
-      path: '/',
-      pageBuilder: (context, state) {
-        return CustomTransitionPage(
-          key: state.pageKey,
-          child: const HomePage(),
-          transitionsBuilder: _customTransitionBuilder,
-        );
-      },
-      routes: <RouteBase>[
-        GoRoute(
-          path: 'product/:productId', //
-          builder: (BuildContext context, GoRouterState state) {
-            return BlocProvider(
-              create: (context) => ProductBloc(),
-                child: ProductScreen(productId: state.pathParameters['productId'] ?? ""));
-          },
-        ),
-      ],
-    ),
-    //search
-    GoRoute(
-      path: '/search',
-      pageBuilder: (context, state) {
-        return CustomTransitionPage(
-          key: state.pageKey,
-          child: SearchPage(),
-          transitionsBuilder: _customTransitionBuilder,
-        );
-      },
-      routes: <RouteBase>[
-        GoRoute(
-          path: 'item/:searchItem',
-          builder: (BuildContext context, GoRouterState state) {
-            return SearchPage(keyword: state.pathParameters['searchItem'] ?? "");
-          },
-        ),
-      ],
-    ),
-    //cart
-    GoRoute(
-      path: '/cart',
-      pageBuilder: (context, state) {
-        return CustomTransitionPage(
-          key: state.pageKey,
-          child: const Cart(),//FirebaseAuth.instance.currentUser != null ? Cart() : const CartLoginPage(),
-          transitionsBuilder: _customTransitionBuilder,
-        );
-      },
-    ),
-    //checkout
-    GoRoute(
-      path: '/checkout',
-      pageBuilder: (context, state) {
-        return CustomTransitionPage(
-          key: state.pageKey,
-          child: const CheckOut(),
-          transitionsBuilder: _customTransitionBuilder,
-        );
-      },
-    ),
-    //profile
-    GoRoute(
-      path: '/profile',
-      pageBuilder: (context, state) {
-        return CustomTransitionPage(
-          key: state.pageKey,
-          child: const Profile(),
-          transitionsBuilder: _customTransitionBuilder,
-        );
-      },
-    ),
-    GoRoute(
-      path: '/wishlists',
-      pageBuilder: (context, state) {
-        return CustomTransitionPage(
-          key: state.pageKey,
-          child: const WishList(),
-          transitionsBuilder: _customTransitionBuilder,
-        );
-      },
-    ),
-    GoRoute(
-      path: '/coin',
-      pageBuilder: (context, state) {
-        return CustomTransitionPage(
-          key: state.pageKey,
-          child: const Coins(),
-          transitionsBuilder: _customTransitionBuilder,
-        );
-      },
-    ),
-  ],
-);
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -149,7 +55,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primaryColor: WidgetStateColor.resolveWith((states) => const Color(0xFFFAB416))
         ),
-        routerConfig: _router,
+        routerConfig: router,
         debugShowCheckedModeBanner: false,
       ),
     );

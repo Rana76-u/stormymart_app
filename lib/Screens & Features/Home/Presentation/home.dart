@@ -1,11 +1,16 @@
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+// Project imports:
 import 'package:stormymart_v2/Core/Appbar/Presentation/appbar_ui_mobile.dart';
-import 'package:stormymart_v2/Screens%20&%20Features/Home/Presentation/home_build_body.dart';
 import 'package:stormymart_v2/Core/Footer/footer.dart';
+import 'package:stormymart_v2/Screens%20&%20Features/Home/Presentation/home_build_body.dart';
+import '../../../Core/Drawer/Presentation/category_drawer.dart';
 import '../Bloc/home_bloc.dart';
 import '../Bloc/home_state.dart';
-import '../../../Core/Drawer/Presentation/category_drawer.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});

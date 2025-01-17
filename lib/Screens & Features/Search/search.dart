@@ -1,9 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:go_router/go_router.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
-import 'package:stormymart_v2/Core/theme/color.dart';
+
+// Project imports:
 import 'package:stormymart_v2/Core/Utils/global_variables.dart';
+import 'package:stormymart_v2/Core/theme/color.dart';
 import '../../Core/Image/custom_image.dart';
 
 // ignore: must_be_immutable
@@ -125,7 +130,7 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return PopScope(
       onPopInvoked: (didPop) {
-        //GoRouter.of(context).go('/');
+        //GoRouter.of(context).push('/');
         Navigator.of(context).pop();
       },
       canPop: false,
@@ -136,7 +141,7 @@ class _SearchPageState extends State<SearchPage> {
             padding: const EdgeInsets.only(bottom: 20, right: 10),
             child: FloatingActionButton.extended(
               onPressed: () {
-                GoRouter.of(context).go('/');
+                GoRouter.of(context).push('/');
               },
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(100.0),
@@ -201,7 +206,7 @@ class _SearchPageState extends State<SearchPage> {
                                   _searchController.clear();
                                   isTyping = false;
                                   isFilterOpen = false;
-                                  GoRouter.of(context).go('/');
+                                  GoRouter.of(context).push('/');
 
                                 });
                               },
@@ -433,7 +438,7 @@ class _SearchPageState extends State<SearchPage> {
                                   padding: const EdgeInsets.only(right: 10),
                                   child: GestureDetector(
                                     onTap: () {
-                                      GoRouter.of(context).go('/product/${result.id}');
+                                      GoRouter.of(context).push('/product/${result.id}');
                                     },
                                     child: SizedBox(
                                       //width: 200,

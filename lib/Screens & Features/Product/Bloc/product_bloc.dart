@@ -1,9 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// Flutter imports:
 import 'package:flutter/cupertino.dart';
+
+// Package imports:
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+// Project imports:
 import 'package:stormymart_v2/Screens%20&%20Features/Product/Bloc/product_events.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Product/Bloc/product_states.dart';
+import '../../User/Data/user_hive.dart';
 
 class ProductBloc extends Bloc<ProductEvents, ProductState>{
   ProductBloc() : super(ProductState(
@@ -102,7 +107,7 @@ class ProductBloc extends Bloc<ProductEvents, ProductState>{
       // Fetch the user's FavCats map
       DocumentReference userDoc = FirebaseFirestore.instance
           .collection('userData')
-          .doc(FirebaseAuth.instance.currentUser!.uid);
+          .doc(UserHive().getUserUid());
 
       DocumentSnapshot userSnapshot = await userDoc.get();
       Map<String, dynamic> favCats = userSnapshot.get('FavCats') ?? {};

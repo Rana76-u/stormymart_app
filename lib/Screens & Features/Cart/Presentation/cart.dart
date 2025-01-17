@@ -1,13 +1,18 @@
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+// Project imports:
 import '../../../Core/Appbar/Presentation/appbar_ui_mobile.dart';
 import '../../../Core/Drawer/Presentation/category_drawer.dart';
+import '../../../Core/Footer/footer.dart';
 import '../../../Core/theme/color.dart';
-import '../Bloc/cart_bloc.dart';
-import '../Bloc/cart_states.dart';
 import '../../Home/Bloc/home_bloc.dart';
 import '../../Home/Bloc/home_state.dart';
-import '../../../Core/Footer/footer.dart';
+import '../Bloc/cart_bloc.dart';
+import '../Bloc/cart_states.dart';
 import 'cart_build_body.dart';
 
 class Cart extends StatelessWidget {

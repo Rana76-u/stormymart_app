@@ -1,10 +1,17 @@
+// Dart imports:
 import 'dart:math';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import '../profile.dart';
 
+// Flutter imports:
+import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
+
+// Project imports:
+import '../../User/Data/user_hive.dart';
+import '../profile.dart';
 
 class FeedBackScreen extends StatefulWidget {
   const FeedBackScreen({super.key});
@@ -134,7 +141,7 @@ class _FeedBackScreenState extends State<FeedBackScreen> {
                       //Set of values to be uploaded
                       final postValues = <String, String>{
                         "feedback": feedbackController.text,
-                        "posterUID": FirebaseAuth.instance.currentUser!.uid,
+                        "posterUID": UserHive().getUserUid(),
                         "postTime": DateFormat('EE, dd/MM/yyyy H:mm:s').format(DateTime.now()),
                       };
 

@@ -1,8 +1,12 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:responsive_grid_list/responsive_grid_list.dart';
-import 'package:stormymart_v2/Screens%20&%20Features/Product/Widgets/product_card.dart';
 
+// Package imports:
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:responsive_grid_list/responsive_grid_list.dart';
+
+// Project imports:
+import 'package:stormymart_v2/Screens%20&%20Features/Product/Widgets/product_card.dart';
 import '../../../Core/Utils/core_progress_bars.dart';
 
 Widget showProductsAsGridList(AsyncSnapshot<QuerySnapshot> snapshot, BuildContext context) {

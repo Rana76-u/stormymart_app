@@ -1,5 +1,8 @@
+// Package imports:
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
+// Project imports:
+import 'package:stormymart_v2/Screens%20&%20Features/User/Data/user_hive.dart';
 
 class ProductQueries {
   Future<QuerySnapshot<Map<String, dynamic>>> getPopularProducts() {
@@ -21,7 +24,7 @@ class ProductQueries {
       // Fetch FavCats
       DocumentSnapshot<Map<String, dynamic>> userSnapshot = await FirebaseFirestore.instance
           .collection('userData')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .doc(UserHive().getUserUid())
           .get();
 
       Map<String, dynamic> favCats = userSnapshot.data()?['FavCats'] ?? {};

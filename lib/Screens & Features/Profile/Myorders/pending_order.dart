@@ -1,9 +1,16 @@
+// Dart imports:
 import 'dart:math';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+
+// Project imports:
 import 'package:stormymart_v2/Core/Notification/notification_sender.dart';
+import '../../User/Data/user_hive.dart';
 
 class PendingOrders extends StatefulWidget {
   const PendingOrders({super.key});
@@ -93,7 +100,7 @@ class _PendingOrdersState extends State<PendingOrders> {
     FutureBuilder(
       future: FirebaseFirestore
           .instance
-          .collection('/Orders/${FirebaseAuth.instance.currentUser!.uid}/Pending Orders')
+          .collection('/Orders/${UserHive().getUserUid()}/Pending Orders')
           .get(),
       builder: (context, pendingOrderSnapshot) {
         if(pendingOrderSnapshot.hasData){
@@ -122,7 +129,7 @@ class _PendingOrdersState extends State<PendingOrders> {
                   child: FutureBuilder(
                     future: FirebaseFirestore
                         .instance
-                        .collection('/Orders/${FirebaseAuth.instance.currentUser!.uid}/Pending Orders')
+                        .collection('/Orders/${UserHive().getUserUid()}/Pending Orders')
                         .doc(pendingOrderSnapshot.data!.docs[index].id)
                         .collection('orderLists')
                         .get(),
@@ -204,7 +211,7 @@ class _PendingOrdersState extends State<PendingOrders> {
                                         await FirebaseFirestore
                                             .instance
                                             .collection('Orders')
-                                            .doc(FirebaseAuth.instance.currentUser!.uid)
+                                            .doc(UserHive().getUserUid())
                                             .collection('Canceled Orders').doc(randomID).set({
                                           'usedPromoCode': pendingOrderSnapshot.data!.docs[index].get('usedPromoCode'),
                                           'usedCoin': pendingOrderSnapshot.data!.docs[index].get('usedCoin'),
@@ -233,7 +240,7 @@ class _PendingOrdersState extends State<PendingOrders> {
                                           await FirebaseFirestore
                                               .instance
                                               .collection('Orders')
-                                              .doc(FirebaseAuth.instance.currentUser!.uid) //FirebaseAuth.instance.currentUser!.uid
+                                              .doc(UserHive().getUserUid()) //UserHive().getUserUid()
                                               .collection('Canceled Orders')
                                               .doc(randomID)
                                               .collection('orderLists')
@@ -250,7 +257,7 @@ class _PendingOrdersState extends State<PendingOrders> {
                                         DocumentSnapshot existingCoinSnapshot  = await FirebaseFirestore
                                             .instance
                                             .collection('userData')
-                                            .doc(FirebaseAuth.instance.currentUser!.uid)
+                                            .doc(UserHive().getUserUid())
                                             .get();
 
                                         double existingCoins = existingCoinSnapshot.get('coins');
@@ -260,7 +267,7 @@ class _PendingOrdersState extends State<PendingOrders> {
                                         await FirebaseFirestore
                                             .instance
                                             .collection('/userData')
-                                            .doc(FirebaseAuth.instance.currentUser!.uid).update({
+                                            .doc(UserHive().getUserUid()).update({
                                           'coins': totalCoins,
                                         });
 
@@ -268,14 +275,14 @@ class _PendingOrdersState extends State<PendingOrders> {
                                         await FirebaseFirestore
                                             .instance
                                             .collection('Orders')
-                                            .doc(FirebaseAuth.instance.currentUser!.uid)
+                                            .doc(UserHive().getUserUid())
                                             .collection('Pending Orders')
                                             .doc(pendingOrderSnapshot.data!.docs[index].id).delete();
 
                                         // Delete the subCollection 'orderLists'
                                         await FirebaseFirestore.instance
                                             .collection('Orders')
-                                            .doc(FirebaseAuth.instance.currentUser!.uid)
+                                            .doc(UserHive().getUserUid())
                                             .collection('Pending Orders')
                                             .doc(pendingOrderSnapshot.data!.docs[index].id)
                                             .collection('orderLists')

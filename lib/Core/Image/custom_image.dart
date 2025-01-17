@@ -1,5 +1,10 @@
-import 'package:cached_network_image/cached_network_image.dart';
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:cached_network_image/cached_network_image.dart';
+
+// Project imports:
 import 'package:stormymart_v2/Core/theme/color.dart';
 
 class CustomImage extends StatelessWidget {

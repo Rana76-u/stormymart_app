@@ -1,8 +1,13 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
+
+// Project imports:
+import '../../User/Data/user_hive.dart';
 
 class CompletedOrders extends StatefulWidget {
   const CompletedOrders({super.key});
@@ -46,7 +51,7 @@ class _CompletedOrdersState extends State<CompletedOrders> {
     FutureBuilder(
       future: FirebaseFirestore
           .instance
-          .collection('/Orders/${FirebaseAuth.instance.currentUser!.uid}/Completed Orders')
+          .collection('/Orders/${UserHive().getUserUid()}/Completed Orders')
           .get(),
       builder: (context, pendingOrderSnapshot) {
         if(pendingOrderSnapshot.hasData){
@@ -75,7 +80,7 @@ class _CompletedOrdersState extends State<CompletedOrders> {
                   child: FutureBuilder(
                     future: FirebaseFirestore
                         .instance
-                        .collection('/Orders/${FirebaseAuth.instance.currentUser!.uid}/Completed Orders')
+                        .collection('/Orders/${UserHive().getUserUid()}/Completed Orders')
                         .doc(pendingOrderSnapshot.data!.docs[index].id)
                         .collection('orderLists')
                         .get(),

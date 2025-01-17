@@ -1,14 +1,20 @@
-import 'package:firebase_auth/firebase_auth.dart';
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+// Project imports:
 import 'package:stormymart_v2/Core/Utils/core_progress_bars.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Product/Bloc/product_states.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Product/Widgets/View%20Product/view_product_widget_utils.dart';
-import 'package:url_launcher/url_launcher.dart';
-import '../../../../Core/theme/color.dart';
 import '../../../../Core/Image/open_photo.dart';
+import '../../../../Core/theme/color.dart';
+import '../../../User/Data/user_hive.dart';
 import '../../Bloc/product_bloc.dart';
 import '../../Bloc/product_events.dart';
 import '../../Data/onpress_functions.dart';
@@ -138,7 +144,7 @@ class ViewProductWidgets {
         final messenger = ScaffoldMessenger.of(context);
         await FirebaseFirestore.instance
             .collection('/userData')
-            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .doc(UserHive().getUserUid())
             .update({
           'wishlist': FieldValue.arrayUnion([id])
         });

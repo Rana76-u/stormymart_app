@@ -1,7 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 
+// Project imports:
 import '../../../Core/Image/custom_image.dart';
 
 class ImageSlider extends StatelessWidget {

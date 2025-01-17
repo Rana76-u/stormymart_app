@@ -1,12 +1,16 @@
+// Package imports:
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+// Project imports:
+import '../../User/Data/user_hive.dart';
 
 class CartQueries {
 
   Future<QuerySnapshot<Map<String, dynamic>>> getCartItems() {
     return FirebaseFirestore.instance
         .collection('userData')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .doc(UserHive().getUserUid())
         .collection('Cart')
         .orderBy('id')
         .get();

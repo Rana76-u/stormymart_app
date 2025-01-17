@@ -1,13 +1,18 @@
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+// Project imports:
+import 'package:stormymart_v2/Core/Appbar/Presentation/appbar_ui_mobile.dart';
 import 'package:stormymart_v2/Core/Utils/loading_screen.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/CheckOut/Bloc/checkout_bloc.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/CheckOut/Bloc/checkout_state.dart';
-import 'package:stormymart_v2/Core/Appbar/Presentation/appbar_ui_mobile.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/CheckOut/Presentation/checkout_build_body.dart';
+import '../../../Core/Footer/footer.dart';
 import '../../Home/Bloc/home_bloc.dart';
 import '../../Home/Bloc/home_state.dart';
-import '../../../Core/Footer/footer.dart';
 
 class CheckOut extends StatelessWidget {
   const CheckOut({super.key});

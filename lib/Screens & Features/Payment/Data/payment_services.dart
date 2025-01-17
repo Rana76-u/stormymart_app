@@ -1,6 +1,9 @@
+// Flutter imports:
+import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_sslcommerz/model/SSLCAdditionalInitializer.dart';
 import 'package:flutter_sslcommerz/model/SSLCCustomerInfoInitializer.dart';
 import 'package:flutter_sslcommerz/model/SSLCEMITransactionInitializer.dart';
@@ -11,6 +14,9 @@ import 'package:flutter_sslcommerz/model/SSLCommerzInitialization.dart';
 import 'package:flutter_sslcommerz/model/SSLCurrencyType.dart';
 import 'package:flutter_sslcommerz/sslcommerz.dart';
 import 'package:go_router/go_router.dart';
+
+// Project imports:
+import '../../User/Data/user_hive.dart';
 
 class PaymentServices {
 
@@ -98,13 +104,13 @@ class PaymentServices {
   }
 
   void navigateToHome(BuildContext context) {
-    GoRouter.of(context).go('/');
+    GoRouter.of(context).push('/');
   }
 
   Future<void> updatePaymentStatusInOrderDetails(String orderId) async {
     await FirebaseFirestore.instance
         .collection('Orders')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .doc(UserHive().getUserUid())
         .collection('Pending Orders')
         .doc(orderId)
         .update({
