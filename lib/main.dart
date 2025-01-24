@@ -14,6 +14,7 @@ import 'package:stormymart_v2/firebase_options.dart';
 import 'Core/Routing/routing_config.dart';
 import 'Screens & Features/Home/Bloc/home_bloc.dart';
 import 'Screens & Features/Product/Bloc/product_bloc.dart';
+import 'Screens & Features/Search/Bloc/search_bloc.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -45,15 +46,20 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => HomeBloc()),
-        BlocProvider(create: (context) => CartBloc()),
-        BlocProvider(create: (context) => CheckoutBloc()),
-        BlocProvider(create: (context) => ProductBloc()),
+        BlocProvider(create: (_) => HomeBloc()),
+        BlocProvider(create: (_) => CartBloc()),
+        BlocProvider(create: (_) => CheckoutBloc()),
+        BlocProvider(create: (_) => ProductBloc()),
+        BlocProvider(create: (_) => SearchBloc()),
       ],
       child: MaterialApp.router(
         title: 'StormyMart',
         theme: ThemeData(
-          primaryColor: WidgetStateColor.resolveWith((states) => const Color(0xFFFAB416))
+          primaryColor: Colors.amber,
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Colors.amber,
+            foregroundColor: Colors.white,
+          ),
         ),
         routerConfig: router,
         debugShowCheckedModeBanner: false,

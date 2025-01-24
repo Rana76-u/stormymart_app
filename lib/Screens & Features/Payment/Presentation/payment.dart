@@ -21,7 +21,7 @@ class PaymentPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(65),
+          preferredSize: const Size.fromHeight(80),
           child: BlocBuilder<HomeBloc, HomeState>(
             builder: (context, homeState) {
               return coreAppBar(context, homeState);

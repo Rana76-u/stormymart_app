@@ -38,8 +38,7 @@ Widget checkoutBuildBody(BuildContext context) {
       return state.isLoading
           ? centeredLinearProgress(context)
           : Padding(
-              padding:
-                  EdgeInsets.symmetric(horizontal: paddingProvider(context), vertical: 20),
+              padding: paddingProvider(context),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

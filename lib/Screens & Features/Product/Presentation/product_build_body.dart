@@ -11,6 +11,7 @@ import 'package:stormymart_v2/Screens%20&%20Features/User/Data/user_services.dar
 import '../Bloc/product_bloc.dart';
 import '../Bloc/product_events.dart';
 import '../Bloc/product_states.dart';
+import '../Data/product_queries.dart';
 import '../Widgets/View Product/view_product_widgets.dart';
 
 Widget productBuildBody(BuildContext context, ProductState state, String id) {
@@ -98,13 +99,13 @@ Widget productBuildBody(BuildContext context, ProductState state, String id) {
 
                     //Suggested Products
                     UserServices().isUserLoggedIn() ?
-                    const ShowProductByQueryType(
-                        query: 'suggestedProducts',
+                    ShowProductByQueryType(
+                        query: ProductQueries().getSuggestedProducts(),
                         title: 'You may also like',
                         listType: 'list'
                     ) :
-                    const ShowProductByQueryType(
-                        query: 'popular',
+                    ShowProductByQueryType(
+                        query: ProductQueries().getPopularProducts(),
                         title: 'You may also like',
                         listType: 'list'
                     )

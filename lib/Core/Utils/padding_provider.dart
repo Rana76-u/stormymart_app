@@ -1,14 +1,19 @@
 // Flutter imports:
 import 'package:flutter/material.dart';
 
-double paddingProvider(BuildContext context) {
+EdgeInsets paddingProvider(BuildContext context) {
+
+  double padding = 0;
+
   if(MediaQuery.of(context).size.width <= 600) {
-    return 5;
+    padding =  5;
   }
   else if(MediaQuery.of(context).size.width <= 1565) {
-    return MediaQuery.of(context).size.width*0.065;
+    padding = MediaQuery.of(context).size.width*0.065;
   }
   else {
-    return MediaQuery.of(context).size.width*0.15;
+    padding = MediaQuery.of(context).size.width*0.15;
   }
+
+  return EdgeInsets.symmetric(horizontal: padding);
 }

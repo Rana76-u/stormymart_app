@@ -28,7 +28,7 @@ class Cart extends StatelessWidget {
               builder: (context, homeState) {
                 return Scaffold(
                   appBar: PreferredSize(
-                    preferredSize: const Size.fromHeight(65),
+                    preferredSize: const Size.fromHeight(80),
                     child: coreAppBar(context, homeState),
                   ),
                   backgroundColor: appBgColor,

@@ -25,7 +25,7 @@ class HomePage extends StatelessWidget {
           return Scaffold(
             drawer: coreDrawer(context),
             appBar: PreferredSize(
-                preferredSize: const Size.fromHeight(65),
+                preferredSize: const Size.fromHeight(80),
                 child: coreAppBar(context, state)
             ),
             body: SingleChildScrollView(

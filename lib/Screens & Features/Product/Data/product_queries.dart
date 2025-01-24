@@ -1,5 +1,6 @@
 // Package imports:
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:stormymart_v2/Screens%20&%20Features/Search/Bloc/search_states.dart';
 
 // Project imports:
 import 'package:stormymart_v2/Screens%20&%20Features/User/Data/user_hive.dart';
@@ -51,5 +52,36 @@ class ProductQueries {
       throw Exception('Error fetching relevant products: $e');
     }
   }
+
+  Future<QuerySnapshot<Map<String, dynamic>>> searchProductByTitle(SearchStates searchState) async {
+    if(searchState.isFilterOpen){
+      return FirebaseFirestore.instance
+          .collection('/Products')
+          .where(
+          Filter.or(
+              Filter('title', isGreaterThanOrEqualTo: searchState.searchedText),
+              Filter('keywords', arrayContains: searchState.searchedText)
+              /*Filter('price', isGreaterThanOrEqualTo: searchState.minPrice),
+              Filter('price', isLessThanOrEqualTo: searchState.maxPrice)*/
+          )
+      )
+      .where('price', isGreaterThanOrEqualTo: searchState.minPrice)
+      .where('price', isLessThanOrEqualTo: searchState.maxPrice)
+          .get();
+    }
+    else{
+      return FirebaseFirestore.instance
+          .collection('/Products')
+          .where(
+          Filter.or(
+              Filter('title', isGreaterThanOrEqualTo: searchState.searchedText),
+              Filter('keywords', arrayContains: searchState.searchedText)
+          )
+      ).get();
+
+    }
+
+  }
+
 
 }

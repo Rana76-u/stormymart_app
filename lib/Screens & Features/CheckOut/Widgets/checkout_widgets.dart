@@ -9,7 +9,6 @@ import 'package:transparent_image/transparent_image.dart';
 
 // Project imports:
 import 'package:stormymart_v2/Screens%20&%20Features/CheckOut/Data/checkout_services.dart';
-import '../../../Core/Utils/padding_provider.dart';
 import '../../Cart/Data/cart_services.dart';
 import '../../Cart/Util/item_util.dart';
 import '../Bloc/checkout_bloc.dart';
@@ -329,7 +328,7 @@ class CheckoutWidgets{
                 child: textBox(
                     55,
                     MediaQuery.of(context).size.width * 0.45 -
-                        paddingProvider(context),
+                        5,
                     //MediaQuery.of(context).size.width*0.7
                     promoCodeController,
                     'Enter Promo Code',

@@ -167,8 +167,7 @@ Widget drawerItems(BuildContext context) {
                   return ListTile(
                     title: Text(subCategoryNames[index]),
                     onTap: () {
-                      keyword = subCategoryNames[index];
-                      GoRouter.of(context).push('/search/item/$keyword');
+                      GoRouter.of(context).push('/search/item/${subCategoryNames[index]}');
                     },
                   );
                 },

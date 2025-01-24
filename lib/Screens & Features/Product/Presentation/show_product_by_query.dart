@@ -1,24 +1,25 @@
 // Flutter imports:
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:stormymart_v2/Core/Utils/core_progress_bars.dart';
 
 // Project imports:
 import 'package:stormymart_v2/Core/Utils/errors_n_empty_messages.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Product/Widgets/show_products_as_grid_list_.dart';
-import '../Data/product_queries.dart';
 import '../Widgets/show_product_as_horizontal_list.dart';
 
 class ShowProductByQueryType extends StatelessWidget {
-  final String query;
-  final String title;
+  final Future<QuerySnapshot<Map<String, dynamic>>> query;
+  final String? title;
   final String listType;
   final String? thisProductID;
   const ShowProductByQueryType({super.key, required this.query,
-    required this.title, required this.listType, this.thisProductID});
+    this.title, required this.listType, this.thisProductID});
 
   @override
   Widget build(BuildContext context) {
 
-    var productType = ProductQueries().getPopularProducts();
+    /*var productType = ProductQueries().getPopularProducts();
 
     switch(query){
       case 'popular':
@@ -30,8 +31,11 @@ class ShowProductByQueryType extends StatelessWidget {
       case 'suggestedProducts':
         productType = ProductQueries().getSuggestedProducts();
         break;
+      case 'searchProductByTitle':
+        productType = ProductQueries().searchProductByTitle();
         //todo: more queries
-      /*case 'newArrivals':
+      */
+    /*case 'newArrivals':
         productType = Product().getNewArrivals();
         break;
       case 'bestSellers':
@@ -42,17 +46,19 @@ class ShowProductByQueryType extends StatelessWidget {
         break;
       case 'recentlySold':
         productType = Product().getRecentlySold();
-        break;*/
-    }
+        break;*//*
+    }*/
 
 
-    return FutureBuilder(
-      future: productType,//Product().getPopularProducts(),
+    return FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+      future: query,//Product().getPopularProducts(), productType
       builder: (BuildContext context, snapshot) {
         if(snapshot.hasData){
           return Column(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              showProductByQueryTypeTitle(context, title),
+              title != null ?
+              showProductByQueryTypeTitle(context, title!) : const SizedBox(),
 
               listType == 'grid' ?
               Padding(
@@ -64,7 +70,11 @@ class ShowProductByQueryType extends StatelessWidget {
               showProductAsHorizontalList(snapshot, thisProductID ?? ''),
             ],
           );
-        }else{
+        }
+        else if(snapshot.connectionState == ConnectionState.waiting){
+          return centeredCircularProgress();
+        }
+        else{
           return ErrorsAndEmptyMessages.nothingToShowMessage();
         }
       },

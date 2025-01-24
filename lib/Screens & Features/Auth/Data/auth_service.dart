@@ -7,7 +7,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hive/hive.dart';
 
 // Project imports:
-import 'package:stormymart_v2/Screens & Features/Search/search.dart';
+import 'package:stormymart_v2/Screens%20&%20Features/Search/Presentation/search.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Cart/Presentation/cart_loginpage.dart';
 
 class AuthService {

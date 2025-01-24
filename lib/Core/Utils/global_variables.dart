@@ -1,5 +1,3 @@
-String? keyword;
-
 Map<dynamic, List<dynamic>> categories = {};
 
 String altImage =

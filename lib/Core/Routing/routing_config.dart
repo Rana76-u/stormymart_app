@@ -8,45 +8,80 @@ import 'package:go_router/go_router.dart';
 // Project imports:
 import 'package:stormymart_v2/Screens & Features/Profile/Coins/coins.dart';
 import 'package:stormymart_v2/Screens & Features/Profile/profile.dart';
-import 'package:stormymart_v2/Screens & Features/Search/search.dart';
+import 'package:stormymart_v2/Screens%20&%20Features/Search/Bloc/search_bloc.dart';
+import 'package:stormymart_v2/Screens%20&%20Features/Search/Bloc/search_events.dart';
+import 'package:stormymart_v2/Screens%20&%20Features/Search/Presentation/search.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Cart/Presentation/cart.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/CheckOut/Presentation/checkout.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Home/Presentation/home.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Product/Presentation/product_screen.dart';
 import '../../Screens & Features/Product/Bloc/product_bloc.dart';
 import '../../Screens & Features/Profile/Wishlists/wishlist.dart';
+import '../Bottom Navigation/Presentation/bottom_nav_bar.dart';
 import 'transition_animation.dart';
 
 final GoRouter router = GoRouter(
   routes: <RouteBase>[
-    //home
-    GoRoute(
-      path: '/',
-      pageBuilder: (context, state) {
-        return CustomTransitionPage(
-          key: state.pageKey,
-          child: const HomePage(),
-          transitionsBuilder: customTransitionBuilder,
+    ShellRoute(
+      builder: (BuildContext context, GoRouterState state, Widget child) {
+        return Scaffold(
+          body: child,
+          bottomNavigationBar: BottomBar(),
         );
       },
-      routes: <RouteBase>[
+      routes: [
+        //home
         GoRoute(
-          path: 'product/:productId', //
-          builder: (BuildContext context, GoRouterState state) {
-            return BlocProvider(
-                create: (context) => ProductBloc(),
-                child: ProductScreen(productId: state.pathParameters['productId'] ?? ""));
+          path: '/',
+          pageBuilder: (context, state) {
+            return CustomTransitionPage(
+              key: state.pageKey,
+              child: const HomePage(),
+              transitionsBuilder: customTransitionBuilder,
+            );
+          },
+          routes: <RouteBase>[
+            GoRoute(
+              path: 'product/:productId', //
+              builder: (BuildContext context, GoRouterState state) {
+                return BlocProvider(
+                    create: (context) => ProductBloc(),
+                    child: ProductScreen(productId: state.pathParameters['productId'] ?? ""));
+              },
+            ),
+          ],
+        ),
+        //cart
+        GoRoute(
+          path: '/cart',
+          pageBuilder: (context, state) {
+            return CustomTransitionPage(
+              key: state.pageKey,
+              child: const Cart(),
+              transitionsBuilder: customTransitionBuilder,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/profile',
+          pageBuilder: (context, state) {
+            return CustomTransitionPage(
+              key: state.pageKey,
+              child: const Profile(),
+              transitionsBuilder: customTransitionBuilder,
+            );
           },
         ),
       ],
     ),
+
     //search
     GoRoute(
       path: '/search',
       pageBuilder: (context, state) {
         return CustomTransitionPage(
           key: state.pageKey,
-          child: SearchPage(),
+          child: const SearchPage(),
           transitionsBuilder: customTransitionBuilder,
         );
       },
@@ -54,21 +89,11 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: 'item/:searchItem',
           builder: (BuildContext context, GoRouterState state) {
-            return SearchPage(keyword: state.pathParameters['searchItem'] ?? "");
+            BlocProvider.of<SearchBloc>(context).add(UpdateSearchedText(state.pathParameters['searchItem'] ?? ""));
+            return const SearchPage();
           },
         ),
       ],
-    ),
-    //cart
-    GoRoute(
-      path: '/cart',
-      pageBuilder: (context, state) {
-        return CustomTransitionPage(
-          key: state.pageKey,
-          child: const Cart(),//FirebaseAuth.instance.currentUser != null ? Cart() : const CartLoginPage(),
-          transitionsBuilder: customTransitionBuilder,
-        );
-      },
     ),
     //checkout
     GoRoute(
@@ -81,17 +106,7 @@ final GoRouter router = GoRouter(
         );
       },
     ),
-    //profile
-    GoRoute(
-      path: '/profile',
-      pageBuilder: (context, state) {
-        return CustomTransitionPage(
-          key: state.pageKey,
-          child: const Profile(),
-          transitionsBuilder: customTransitionBuilder,
-        );
-      },
-    ),
+    //wishlist
     GoRoute(
       path: '/wishlists',
       pageBuilder: (context, state) {
@@ -102,6 +117,7 @@ final GoRouter router = GoRouter(
         );
       },
     ),
+    //coin
     GoRoute(
       path: '/coin',
       pageBuilder: (context, state) {

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 // Project imports:
+import '../../Product/Data/product_queries.dart';
 import '../../Product/Presentation/show_product_by_query.dart';
 import '../Bloc/home_state.dart';
 import '../Utils/category_slider.dart';
@@ -65,9 +66,9 @@ Widget homeBuildBody(BuildContext context, HomeState state) {
           ),
         ),
 
-      const ShowProductByQueryType(query: 'popular', title: 'Popular Items', listType: 'grid'),
+      ShowProductByQueryType(query: ProductQueries().getPopularProducts(), title: 'Popular Items', listType: 'grid'),
 
-      const ShowProductByQueryType(query: 'hotDeals', title: 'Hot Deals', listType: 'grid'),
+      ShowProductByQueryType(query: ProductQueries().getHotDeals(), title: 'Hot Deals', listType: 'grid'),
 
       const SizedBox(height: 100,),
     ],
