@@ -55,8 +55,8 @@ Widget drawerHeader(BuildContext context) {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(50),
                     child: FadeInImage.memoryNetwork(
-                      image: UserHive().getUserPhotoURL() ??
-                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgBhcplevwUKGRs1P-Ps8Mwf2wOwnW_R_JIA&usqp=CAU',
+                      image: UserHive().getUserPhotoURL(),
+                          //?? 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgBhcplevwUKGRs1P-Ps8Mwf2wOwnW_R_JIA&usqp=CAU',
                       placeholder: kTransparentImage,
                     ),
                   ),

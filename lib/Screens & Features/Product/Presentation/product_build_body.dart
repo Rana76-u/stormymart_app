@@ -98,12 +98,13 @@ Widget productBuildBody(BuildContext context, ProductState state, String id) {
                     ViewProductWidgets().productDescription(snapshot.data!.get('description')),
 
                     //Suggested Products
-                    UserServices().isUserLoggedIn() ?
+                    //todo: fix this
+                    /*UserServices().isUserLoggedIn() ?
                     ShowProductByQueryType(
                         query: ProductQueries().getSuggestedProducts(),
                         title: 'You may also like',
                         listType: 'list'
-                    ) :
+                    ) :*/
                     ShowProductByQueryType(
                         query: ProductQueries().getPopularProducts(),
                         title: 'You may also like',

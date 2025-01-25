@@ -107,6 +107,7 @@ List homeAppBarItems = ['HotDeals', 'Clothing', 'Accessories', 'Home Appliances'
 Widget topLeftItem(IconData icon, String text1, String text2, BuildContext context) {
   return GestureDetector(
     onTap: () async {
+      final messenger = ScaffoldMessenger.of(context);
       final provider = BlocProvider.of<HomeBloc>(context);
 
       if(text2 == 'Login / Sign up') {
@@ -163,7 +164,7 @@ Widget topLeftItem(IconData icon, String text1, String text2, BuildContext conte
             );
           })
               .catchError((error) {
-            ScaffoldMessenger.of(context).showSnackBar(
+            messenger.showSnackBar(
                 SnackBar(
                     content: Text('Error: $error')
                 )
@@ -238,7 +239,6 @@ Widget topLeftItem(IconData icon, String text1, String text2, BuildContext conte
 }
 
 Widget appBarCategories(String text) {
-  ///todo: on hover transparent white container bg
   return Padding(
     padding: EdgeInsets.only(left: text == 'HotDeals' ? 15 : 40),
     child: Text(

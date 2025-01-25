@@ -9,7 +9,7 @@ class DeliveryContainer extends StatelessWidget {
     return Container(
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
-          color: Colors.blue.withOpacity(0.2),
+          color: Colors.blue.withValues(alpha: 0.2),
         ),
         height: 100 ,
         child: Row(

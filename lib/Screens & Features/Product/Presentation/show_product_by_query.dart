@@ -19,37 +19,6 @@ class ShowProductByQueryType extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    /*var productType = ProductQueries().getPopularProducts();
-
-    switch(query){
-      case 'popular':
-        productType = ProductQueries().getPopularProducts();
-        break;
-      case 'hotDeals':
-        productType = ProductQueries().getHotDeals();
-        break;
-      case 'suggestedProducts':
-        productType = ProductQueries().getSuggestedProducts();
-        break;
-      case 'searchProductByTitle':
-        productType = ProductQueries().searchProductByTitle();
-        //todo: more queries
-      */
-    /*case 'newArrivals':
-        productType = Product().getNewArrivals();
-        break;
-      case 'bestSellers':
-        productType = Product().getBestSellers();
-        break;
-      case 'allProducts':
-        productType = Product().getAllProducts();
-        break;
-      case 'recentlySold':
-        productType = Product().getRecentlySold();
-        break;*//*
-    }*/
-
-
     return FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
       future: query,//Product().getPopularProducts(), productType
       builder: (BuildContext context, snapshot) {
@@ -63,7 +32,6 @@ class ShowProductByQueryType extends StatelessWidget {
               listType == 'grid' ?
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 2.5),
-                //todo: switch between grid and horizontal list view
                 child: showProductsAsGridList(snapshot, context),
               )
               :

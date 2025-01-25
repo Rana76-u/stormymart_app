@@ -16,6 +16,7 @@ import 'package:stormymart_v2/Screens%20&%20Features/CheckOut/Presentation/check
 import 'package:stormymart_v2/Screens%20&%20Features/Home/Presentation/home.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Product/Presentation/product_screen.dart';
 import '../../Screens & Features/Product/Bloc/product_bloc.dart';
+import '../../Screens & Features/Product/Bloc/product_events.dart';
 import '../../Screens & Features/Profile/Wishlists/wishlist.dart';
 import '../Bottom Navigation/Presentation/bottom_nav_bar.dart';
 import 'transition_animation.dart';
@@ -44,6 +45,9 @@ final GoRouter router = GoRouter(
             GoRoute(
               path: 'product/:productId', //
               builder: (BuildContext context, GoRouterState state) {
+                final blocProvider = BlocProvider.of<ProductBloc>(context);
+                blocProvider.add(UpdateProductID(state.pathParameters['productId'] ?? ""));
+
                 return BlocProvider(
                     create: (context) => ProductBloc(),
                     child: ProductScreen(productId: state.pathParameters['productId'] ?? ""));
@@ -62,6 +66,7 @@ final GoRouter router = GoRouter(
             );
           },
         ),
+
         GoRoute(
           path: '/profile',
           pageBuilder: (context, state) {

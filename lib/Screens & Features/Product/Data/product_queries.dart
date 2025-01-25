@@ -1,11 +1,19 @@
 // Package imports:
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Search/Bloc/search_states.dart';
 
 // Project imports:
 import 'package:stormymart_v2/Screens%20&%20Features/User/Data/user_hive.dart';
 
 class ProductQueries {
+
+  Future<QuerySnapshot<Map<String, dynamic>>> getAllProducts() {
+    return FirebaseFirestore.instance
+        .collection('/Products')
+        .get();
+  }
+
   Future<QuerySnapshot<Map<String, dynamic>>> getPopularProducts() {
     return FirebaseFirestore.instance
         .collection('/Products')
@@ -31,7 +39,9 @@ class ProductQueries {
       Map<String, dynamic> favCats = userSnapshot.data()?['FavCats'] ?? {};
 
       if (favCats.isEmpty) {
-        print('FavCats is empty.');
+        if (kDebugMode) {
+          print('FavCats is empty.');
+        }
         return FirebaseFirestore.instance.collection('Products').limit(10).get();
       }
 
@@ -41,17 +51,21 @@ class ProductQueries {
 
       // Create a combined query
       Query<Map<String, dynamic>> query = FirebaseFirestore.instance.collection('Products');
-      for (String category in sortedCategories) {
+      /*for (String category in sortedCategories) {
         query = query.where('keywords', arrayContains: category);
-      }
+      }*/
+      query = query.where('keywords', arrayContains: sortedCategories);
 
       query = query.orderBy('sold', descending: true).limit(10);
       return query.get();
     } catch (e) {
-      print('Error fetching relevant products: $e');
+      if (kDebugMode) {
+        print('Error fetching relevant products: $e');
+      }
       throw Exception('Error fetching relevant products: $e');
     }
   }
+
 
   Future<QuerySnapshot<Map<String, dynamic>>> searchProductByTitle(SearchStates searchState) async {
     if(searchState.isFilterOpen){

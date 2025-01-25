@@ -43,7 +43,7 @@ class AuthService {
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (BuildContext context, snapShot) {
         if (snapShot.hasData) {
-          return SearchPage(); // Modify  1 to 0 (Do it later)
+          return const SearchPage(); // Modify  1 to 0 (Do it later)
         } else {
           return const CartLoginPage();
         }

@@ -62,10 +62,12 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      onPopInvoked: (didPop) {
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => const Profile(),
-        ));
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) {
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => const Profile(),
+          ));
+        }
       },
       child: Scaffold(
         body: FirebaseAuth.instance.currentUser == null ?

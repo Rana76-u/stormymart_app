@@ -23,7 +23,6 @@ class _SearchbarWidgetState extends State<SearchbarWidget> {
   String searchedText = '';
 
   // A flag to determine if the search has completed
-  bool _isSearching = false;
   bool isTyping = false;
   bool isFilterOpen = false;
 
@@ -52,7 +51,6 @@ class _SearchbarWidgetState extends State<SearchbarWidget> {
     setState(() {
       final provider = BlocProvider.of<HomeBloc>(context);
       provider.add(UpdateSearchResults(searchResults: filteredDocs));
-      _isSearching = false;
     });
   }
 
@@ -77,7 +75,6 @@ class _SearchbarWidgetState extends State<SearchbarWidget> {
         },
         onSubmitted: (value) {
           setState(() {
-            _isSearching = true;
             isTyping = false;
           });
           performSearch(value);

@@ -194,18 +194,8 @@ class SearchWidgets {
                     searchState.selectedMaxPrice.toString(),
                   ),
                   onChanged: (RangeValues values) {
-
                     blocProvider.add(UpdateSelectedMinPrice(values.start));
                     blocProvider.add(UpdateSelectedMaxPrice(values.end));
-
-                    //todo: may not need
-                    /*SearchServices().performSearch(
-                        searchState.searchedText,
-                        //minRating: _selectedMaxRating,
-                        minPrice: searchState.selectedMinPrice,
-                        maxPrice: searchState.selectedMaxPrice
-                    );*/
-
                   },
                 ),
               )
@@ -245,6 +235,57 @@ class SearchWidgets {
       );
     }
     else {
+      return const SizedBox();
+    }
+  }
+
+  Widget searchSuggestions(SearchStates searchState, BuildContext context) {
+    if(searchState.searchResults.isNotEmpty){
+      return SizedBox(
+        width: 700,
+        child: Material(
+          elevation: 5,
+          child: Container(
+            color: Colors.white,
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.4,
+            ),
+            child: ListView.builder(
+              itemCount: searchState.searchResults.length,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: GestureDetector(
+                    onTap: () {
+                      GoRouter.of(context).push('/product/${searchState.searchResults[index].id}');
+                      /*setState(() {
+                                searchedText = searchResults[index].get('title');
+                                isTyping = false;
+                                _searchController.clear();
+                              });
+                              performSearch(_searchResults[index].get('title'));*/
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: Text(
+                        searchState.searchResults[index].get('title'),
+                        maxLines: 1,
+                        style: const TextStyle(
+                          overflow: TextOverflow.ellipsis,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      );
+    }
+    else{
       return const SizedBox();
     }
   }

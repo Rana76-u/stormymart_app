@@ -34,7 +34,7 @@ class CustomImage extends StatelessWidget {
             borderRadius: borderRadius ?? BorderRadius.circular(radius),
             boxShadow: [
               if(isShadow) BoxShadow(
-                color: shadowColor.withOpacity(0.1),
+                color: shadowColor.withValues(alpha: 0.1),
                 spreadRadius: 0,
                 blurRadius: 0,
                 offset: const Offset(0, 0), // changes position of shadow

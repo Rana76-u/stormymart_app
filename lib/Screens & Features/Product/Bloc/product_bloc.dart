@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 
 // Package imports:
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 // Project imports:
@@ -89,7 +90,9 @@ class ProductBloc extends Bloc<ProductEvents, ProductState>{
         imageSliderDocID: imageSliderDocID,
       ));
     } catch (e) {
-      print('Error in InitializeProductPage: $e');
+      if (kDebugMode) {
+        print('Error in InitializeProductPage: $e');
+      }
     }
   }
 
@@ -110,7 +113,26 @@ class ProductBloc extends Bloc<ProductEvents, ProductState>{
           .doc(UserHive().getUserUid());
 
       DocumentSnapshot userSnapshot = await userDoc.get();
-      Map<String, dynamic> favCats = userSnapshot.get('FavCats') ?? {};
+      Map<String, dynamic> userData = userSnapshot.data() as Map<String, dynamic>;
+
+      Map<String, dynamic> favCats;
+
+      if (userData.containsKey('FavCats')) {
+        // 'FavCats' field exists
+        print("FavCats exists: ${userData['FavCats']}");
+        favCats = userSnapshot.get('FavCats');
+      } else {
+        // 'FavCats' field does not exist
+        print("FavCats does not exist.");
+        // Add the 'FavCats' field to the document
+        await userDoc.set({
+          'FavCats': {} // Initialize with an empty map
+        }, SetOptions(merge: true));
+
+        favCats = {};
+      }
+
+      //Map<String, dynamic> favCats = userSnapshot.get('FavCats') ?? {};
 
       // Update the FavCats map
       for (String keyword in category) {
@@ -122,9 +144,12 @@ class ProductBloc extends Bloc<ProductEvents, ProductState>{
       }
 
       // Save the updated map back to Firestore
-      await userDoc.update({'FavCats': favCats});
+      //await userDoc.update({'FavCats': favCats});
+      await userDoc.set({'FavCats': favCats}, SetOptions(merge: true));
     } catch (e) {
-      print('Error updating FavCats: $e');
+      if (kDebugMode) {
+        print('Error updating FavCats: $e');
+      }
     }
   }
 

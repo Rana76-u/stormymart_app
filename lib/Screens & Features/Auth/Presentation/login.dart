@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 // Package imports:
 import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
+import 'package:stormymart_v2/Core/Bottom%20Navigation/Presentation/bottom_nav_bar.dart';
 
 // Project imports:
 import 'package:stormymart_v2/Core/theme/color.dart';
-import 'package:stormymart_v2/Screens & Features/Profile/profile.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Auth/Presentation/login_widgeds.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/User/Data/user_hive.dart';
 import '../Data/auth_service.dart';
@@ -24,6 +24,9 @@ class _LoginPageState extends State<LoginPage> {
 
   void loginOnPressFunctions() {
     final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+    GoRouter.of(context);
+
     setState(() {
       isLoading = true;
     });
@@ -41,9 +44,9 @@ class _LoginPageState extends State<LoginPage> {
         isLoading = false;
       });
 
-      GoRouter.of(context).push('/profile');
-      Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => const Profile(),
+      //router.push('/profile');
+      navigator.push(MaterialPageRoute(
+        builder: (context) => BottomBar(),
       ));
     })
         .catchError((error) {

@@ -22,9 +22,10 @@ class _ShowRewardCoinScreenState extends State<ShowRewardCoinScreen> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      onPopInvoked: (didPop) {
-        /*Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const HomePage()), (route) => false);*/
-        GoRouter.of(context).push('/');
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) {
+          GoRouter.of(context).push('/');
+        }
       },
       child: Scaffold(
         backgroundColor: Colors.white,

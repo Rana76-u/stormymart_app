@@ -37,7 +37,7 @@ class _MyOrdersState extends State<MyOrders> {
               Tab(text: 'Canceled'),
             ],
           ),
-          backgroundColor: MaterialStateColor.resolveWith((states) => Colors.blueGrey),
+          backgroundColor: WidgetStateColor.resolveWith((states) => Colors.blueGrey),
         ),
         body: TabBarView(
           children: [

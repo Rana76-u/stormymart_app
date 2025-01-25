@@ -3,18 +3,26 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 // Project imports:
 import 'package:stormymart_v2/Screens%20&%20Features/Product/Data/onpress_functions.dart';
+import 'package:stormymart_v2/Screens%20&%20Features/Product/Presentation/product_screen.dart';
 import '../../../Core/Image/custom_image.dart';
+import '../Bloc/product_bloc.dart';
+import '../Bloc/product_events.dart';
 
 Widget productCard(BuildContext context, String productId, num discount, num discountCal,
     String title, num sold) {
 
   return GestureDetector(
     onTap: () {
-      GoRouter.of(context).push('/product/$productId');
+      //GoRouter.of(context).push('/product/$productId');
+      final blocProvider = BlocProvider.of<ProductBloc>(context);
+      blocProvider.add(UpdateProductID(productId));
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => ProductScreen(productId: productId),)
+      );
     },
     child: SizedBox(
       width: 300,
