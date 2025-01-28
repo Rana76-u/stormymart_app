@@ -1,9 +1,11 @@
+// Flutter imports:
+import 'package:flutter/foundation.dart';
+
 // Package imports:
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
-import 'package:stormymart_v2/Screens%20&%20Features/Search/Bloc/search_states.dart';
 
 // Project imports:
+import 'package:stormymart_v2/Screens%20&%20Features/Search/Bloc/search_states.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/User/Data/user_hive.dart';
 
 class ProductQueries {

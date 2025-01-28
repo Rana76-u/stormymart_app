@@ -1,10 +1,8 @@
 // Flutter imports:
 import 'package:flutter/material.dart';
 
-// Package imports:
-import 'package:stormymart_v2/Core/Appbar/Widgets/appbar_widget.dart';
-
 // Project imports:
+import 'package:stormymart_v2/Core/Appbar/Widgets/appbar_widget.dart';
 import '../../../Screens & Features/Home/Bloc/home_state.dart';
 
 Widget coreAppBarBuildBody(BuildContext context, HomeState state) {

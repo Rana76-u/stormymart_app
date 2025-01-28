@@ -8,13 +8,13 @@ import 'package:go_router/go_router.dart';
 // Project imports:
 import 'package:stormymart_v2/Screens & Features/Profile/Coins/coins.dart';
 import 'package:stormymart_v2/Screens & Features/Profile/profile.dart';
-import 'package:stormymart_v2/Screens%20&%20Features/Search/Bloc/search_bloc.dart';
-import 'package:stormymart_v2/Screens%20&%20Features/Search/Bloc/search_events.dart';
-import 'package:stormymart_v2/Screens%20&%20Features/Search/Presentation/search.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Cart/Presentation/cart.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/CheckOut/Presentation/checkout.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Home/Presentation/home.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Product/Presentation/product_screen.dart';
+import 'package:stormymart_v2/Screens%20&%20Features/Search/Bloc/search_bloc.dart';
+import 'package:stormymart_v2/Screens%20&%20Features/Search/Bloc/search_events.dart';
+import 'package:stormymart_v2/Screens%20&%20Features/Search/Presentation/search.dart';
 import '../../Screens & Features/Product/Bloc/product_bloc.dart';
 import '../../Screens & Features/Product/Bloc/product_events.dart';
 import '../../Screens & Features/Profile/Wishlists/wishlist.dart';

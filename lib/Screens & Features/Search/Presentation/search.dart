@@ -1,14 +1,15 @@
 // Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 // Project imports:
-import 'package:stormymart_v2/Core/Utils/padding_provider.dart';
 import 'package:stormymart_v2/Core/Utils/core_progress_bars.dart';
+import 'package:stormymart_v2/Core/Utils/padding_provider.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Search/Bloc/search_bloc.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Search/Bloc/search_states.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Search/Presentation/search_widgets.dart';
-
 import '../../Product/Data/product_queries.dart';
 import '../../Product/Presentation/show_product_by_query.dart';
 

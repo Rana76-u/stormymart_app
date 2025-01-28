@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:stormymart_v2/Screens%20&%20Features/Profile/profile.dart';
 
 // Project imports:
+import 'package:stormymart_v2/Screens%20&%20Features/Profile/profile.dart';
 import '../../../Screens & Features/Cart/Bloc/cart_bloc.dart';
 import '../../../Screens & Features/Cart/Bloc/cart_states.dart';
 import '../../../Screens & Features/User/Data/user_hive.dart';

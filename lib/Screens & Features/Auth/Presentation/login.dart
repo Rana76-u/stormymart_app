@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 // Package imports:
 import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
-import 'package:stormymart_v2/Core/Bottom%20Navigation/Presentation/bottom_nav_bar.dart';
 
 // Project imports:
+import 'package:stormymart_v2/Core/Bottom%20Navigation/Presentation/bottom_nav_bar.dart';
 import 'package:stormymart_v2/Core/theme/color.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Auth/Presentation/login_widgeds.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/User/Data/user_hive.dart';

@@ -1,5 +1,7 @@
 // Flutter imports:
 import 'package:flutter/material.dart';
+
+// Project imports:
 import 'footer_widgets.dart' ;
 
 Widget coreFooter() {

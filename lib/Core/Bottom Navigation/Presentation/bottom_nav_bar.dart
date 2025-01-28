@@ -1,7 +1,12 @@
-import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
+// Project imports:
 import 'package:stormymart_v2/Core/Bottom%20Navigation/Presentation/bottom_bar_buildbody.dart';
 import '../Bloc/bottom_bar_bloc.dart';
 import '../Bloc/bottom_bar_events.dart';
