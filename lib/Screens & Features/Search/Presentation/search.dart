@@ -2,9 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-// Package imports:
-import 'package:go_router/go_router.dart';
-
 // Project imports:
 import 'package:stormymart_v2/Core/Utils/padding_provider.dart';
 import 'package:stormymart_v2/Core/Utils/core_progress_bars.dart';
@@ -20,52 +17,44 @@ class SearchPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      onPopInvokedWithResult: (didPop, result) {
-        if(didPop){
-          GoRouter.of(context).pop();
-        }
-      },
-      canPop: false,
-      child: BlocBuilder<SearchBloc, SearchStates>(
-        builder: (context, state) {
-          return Scaffold(
-            floatingActionButton: SearchWidgets().floatingActionButtonWidget(context, state),
-            body: Padding(
-              padding: paddingProvider(context),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  //Space From Top
-                  const SizedBox(height: 20,),
+    return BlocBuilder<SearchBloc, SearchStates>(
+      builder: (context, state) {
+        return Scaffold(
+          floatingActionButton: SearchWidgets().floatingActionButtonWidget(context, state),
+          body: Padding(
+            padding: paddingProvider(context),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                //Space From Top
+                const SizedBox(height: 20,),
 
-                  SearchWidgets().title(),
+                SearchWidgets().title(),
 
-                  SearchWidgets().searchField(context, state),
+                SearchWidgets().searchField(context, state),
 
-                  // A loading indicator while the search is in progress
-                  state.isSearching ? centeredLinearProgress(context) : const SizedBox(),
+                // A loading indicator while the search is in progress
+                state.isSearching ? centeredLinearProgress(context) : const SizedBox(),
 
-                  //SearchWidgets().filteringWidget(context, state),
+                //SearchWidgets().filteringWidget(context, state),
 
-                  SearchWidgets().showSearchedText(context, state),
+                SearchWidgets().showSearchedText(context, state),
 
-                  //Show Found Items
-                  Expanded(
-                      child: SingleChildScrollView(
-                        child: ShowProductByQueryType(
-                            query: ProductQueries().searchProductByTitle(state),
-                            listType: 'grid'
-                        ),
+                //Show Found Items
+                Expanded(
+                    child: SingleChildScrollView(
+                      child: ShowProductByQueryType(
+                          query: ProductQueries().searchProductByTitle(state),
+                          listType: 'grid'
                       ),
                     ),
+                  ),
 
-                ],
-              ),
+              ],
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

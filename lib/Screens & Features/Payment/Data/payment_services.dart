@@ -103,7 +103,7 @@ class PaymentServices {
   }
 
   void navigateToHome(BuildContext context) {
-    GoRouter.of(context).push('/');
+    GoRouter.of(context).go('/');
   }
 
   Future<void> updatePaymentStatusInOrderDetails(String orderId) async {

@@ -21,6 +21,22 @@ import '../../Utils/size_card_color.dart';
 import '../product_card.dart';
 
 class ViewProductWidgets {
+  Widget blurEffect() {
+    return Container(
+      height: 80,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Colors.black.withValues(alpha: 0.35),
+            Colors.transparent,
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget getImageSliderWidget(String id, String imageSliderDocID) {
     return FutureBuilder(
       future: FirebaseFirestore.instance
@@ -35,7 +51,7 @@ class ViewProductWidgets {
               ? ImageSlideshow(
                   width: double
                       .infinity, //MediaQuery.of(context).size.height * 0.55,
-                  height: MediaQuery.of(context).size.height * 0.5,
+                  height: MediaQuery.of(context).size.height * 0.55,
                   initialPage: 0,
                   indicatorColor: Colors.amber,
                   indicatorBackgroundColor: Colors.grey,
@@ -398,7 +414,7 @@ class ViewProductWidgets {
                 'Add To Cart',
                 Colors.orange.withValues(alpha: 0.1),
                 Colors.deepOrangeAccent,
-                () => OnPressFunctions().addToCartFunction(quantityAvailable, shopID, id, context, state))
+                () => OnPressFunctions().addToCartFunction('Add To Cart',quantityAvailable, shopID, id, context, state))
         ),
         SizedBox(
             width: MediaQuery.of(context).size.width * 0.45,
@@ -406,8 +422,10 @@ class ViewProductWidgets {
                 'Buy Now',
                 Colors.grey.withValues(alpha: 0.1),
                 Colors.grey.shade900,
-                //todo: add buy now functions here
-                () => {})
+                () {
+                  OnPressFunctions().addToCartFunction('Buy Now', quantityAvailable, shopID, id, context, state);
+                },
+            )
         ),
       ],
     );
@@ -449,7 +467,7 @@ class ViewProductWidgets {
   }
 
   Widget floatingButtonWidget(
-    String id,
+    String id, BuildContext context
   ) {
     return Padding(
       padding: const EdgeInsets.only(right: 5),
@@ -459,17 +477,27 @@ class ViewProductWidgets {
         child: FittedBox(
           child: FloatingActionButton.extended(
             onPressed: () async {
-              var baseUrl = 'https://www.stormymart.com/#/product/';
+              final messenger = ScaffoldMessenger.of(context);
+              var baseUrl = 'https://stormymart-43ea8.firebaseapp.com/#/product/';
               var messengerLink =
                   'https://m.me/stormymart?text=${Uri.encodeComponent(baseUrl + id)}';
 
-              ///todo: productId
-              if (await canLaunchUrl(Uri.parse(messengerLink))) {
-                await launchUrl(Uri.parse(messengerLink));
-              } else {
-                throw 'Could not launch $messengerLink';
+              try {
+                if (await canLaunchUrl(Uri.parse(messengerLink))) {
+                  await launchUrl(Uri.parse(messengerLink), mode: LaunchMode.externalApplication);
+                } else {
+                  messenger.showSnackBar(
+                    const SnackBar(content: Text('Could not launch Messenger. Please check your app.')),
+                  );
+                }
+              } catch (e) {
+                debugPrint('Error launching URL: $e');
+                messenger.showSnackBar(
+                  const SnackBar(content: Text('An unexpected error occurred.')),
+                );
               }
             },
+
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(100.0),
             ),

@@ -87,6 +87,7 @@ class CheckOutServices {
   }
 
   Future<void> placeOrder(BuildContext context, String usedPromoCode) async {
+    final navigator = Navigator.of(context);
     final messenger = ScaffoldMessenger.of(context);
     final provider = BlocProvider.of<CheckoutBloc>(context);
     String randomID = await generateRandomID();
@@ -109,7 +110,10 @@ class CheckOutServices {
 
     provider.add(UpdateIsLoading(isLoading: false));
 
-    navigateToPaymentPage(context, provider.state.total.toDouble(), randomID);
+    //navigateToPaymentPage(context, provider.state.total.toDouble(), await generateRandomID());
+    navigator.push(MaterialPageRoute(
+      builder: (context) => PaymentPage(transAmount: provider.state.total.toDouble(), transId: randomID,),
+    ));
   }
 
   Future<void> enableOrderCollection() async {

@@ -5,32 +5,37 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 // Project imports:
 import 'package:stormymart_v2/Screens%20&%20Features/Product/Bloc/product_events.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Product/Bloc/product_states.dart';
 import '../../Cart/Bloc/cart_bloc.dart';
 import '../../Cart/Bloc/cart_events.dart';
+import '../../Cart/Presentation/cart.dart';
 import '../../User/Data/user_hive.dart';
 import '../Bloc/product_bloc.dart';
+import '../Presentation/product_screen.dart';
 
 class OnPressFunctions {
 
   void viewProduct(BuildContext context, String productId) {
-    GoRouter.of(context).push('/product/$productId');
+    //GoRouter.of(context).push('/product/$productId');
+    final blocProvider = BlocProvider.of<ProductBloc>(context);
+    blocProvider.add(UpdateProductID(productId));
+    Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => ProductScreen(productId: productId),)
+    );
   }
 
-  void addToCartFunction(num quantityAvailable, String shopID, String id, BuildContext context, ProductState state) async {
+  void addToCartFunction(String text, num quantityAvailable, String shopID, String id, BuildContext context, ProductState state) async {
     final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
     final mediaQuery = MediaQuery.of(context);
     final productBloc = BlocProvider.of<ProductBloc>(context);
     final cartBloc = BlocProvider.of<CartBloc>(context);
 
     productBloc.add(UpdateSizeWarning(false));
     productBloc.add(UpdateVariationWarning(false));
-
-
 
     if (quantityAvailable == 0) {
       messenger
@@ -45,13 +50,15 @@ class OnPressFunctions {
 
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text('Select Size')));
-      } else if (state.variationSelected == -1) {
+      }
+      else if (state.variationSelected == -1) {
 
         productBloc.add(UpdateVariationWarning(true));
 
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text('Select Variant')));
-      } else {
+      }
+      else {
         //user logged in
         if (FirebaseAuth.instance.currentUser != null) {
           String uid = UserHive().getUserUid();
@@ -71,15 +78,16 @@ class OnPressFunctions {
           });
         }
         //user Not logged in
-        cartBloc.add(AddItemEvent(
-            id: id,
-            price: state.discountCal,
-            size: state.sizeSelected == -1
-                ? 'not applicable'
-                : state.sizes[state.sizeSelected].toString(),
-            variant: state.imageSliderDocID,
-            quantity: state.quantity)
-        );
+        else{
+          cartBloc.add(AddItemEvent(
+              id: id,
+              price: state.discountCal,
+              size: state.sizeSelected == -1
+                  ? 'not applicable'
+                  : state.sizes[state.sizeSelected].toString(),
+              variant: state.imageSliderDocID,
+              quantity: state.quantity));
+        }
 
         //notify
         messenger.showSnackBar(SnackBar(
@@ -128,8 +136,17 @@ class OnPressFunctions {
           ),
           duration: const Duration(seconds: 3),
         ));
+
+        if (text == 'Buy Now') {
+          navigator.push(MaterialPageRoute(
+            builder: (context) {
+              return const Cart();
+            },
+          ));
+        }
+
       }
+
     }
   }
-
 }

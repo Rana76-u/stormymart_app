@@ -12,27 +12,24 @@ import '../Util/item_util.dart';
 class OrderSummaryWidgets {
 
   Widget title() {
-    return const Text(
-      "Order Summary",
-      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+    return const Padding(
+      padding: EdgeInsets.only(top: 10),
+      child: Text(
+        "Order Summary",
+        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+      ),
     );
   }
 
   Widget listOfItemCalculations(BuildContext context, CartState cartState) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
-      child: ListView.separated(
-        separatorBuilder: (context, index) {
-          return const Divider(
-            height: 25,
-            thickness: 0.2,
-          );
-        },
+      child: ListView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        itemCount: cartState.idList.length,
+        itemCount: cartState.checkList.where((element) => true,).length,//cartState.idList.length,
         itemBuilder: (context, index) {
-          String productId =cartState.idList[index].trim();
+          String productId = cartState.idList[index].trim();
           cartState.variantList[index].trim();
           int quantity = cartState.quantityList[index];
 
@@ -53,8 +50,12 @@ class OrderSummaryWidgets {
                       CartServices().getCartSelectedItemTotal(cartState) + (priceAfterDiscount * quantity));
 
                   return Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
+                      if(index != 0)
+                        const Divider(
+                          thickness: 0.2,
+                          height: 25,
+                        ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -91,8 +92,7 @@ class OrderSummaryWidgets {
                                 fontWeight: FontWeight.bold),
                           ),
                         ],
-                      ),
-
+                      )
                     ],
                   );
                 }

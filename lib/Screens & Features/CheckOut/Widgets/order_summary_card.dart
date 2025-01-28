@@ -57,7 +57,7 @@ Widget checkoutOrderSummaryCard(BuildContext context, CheckOutState state) {
           const SizedBox(height: 35,),
 
           CheckoutWidgets().buttonWidget(
-              48, double.infinity, Colors.green, 'Place Order', () {
+              48, double.infinity, Colors.green, 'Place Order', () async {
 
                 provider.add(UpdateIsLoading(isLoading: true));
 
@@ -66,8 +66,9 @@ Widget checkoutOrderSummaryCard(BuildContext context, CheckOutState state) {
                 phoneNumber: checkoutPhnNumberController.text,
                 address: checkoutAddressController.text));
 
-                CheckOutServices()
+                await CheckOutServices()
                 .placeOrder(context, checkoutPromoCodeController.text);
+
           }),
 
           const SizedBox(height: 10,),

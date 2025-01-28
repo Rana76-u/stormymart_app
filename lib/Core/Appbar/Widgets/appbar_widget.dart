@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:stormymart_v2/Screens%20&%20Features/Profile/profile.dart';
 
 // Project imports:
 import '../../../Screens & Features/Cart/Bloc/cart_bloc.dart';
@@ -16,7 +17,7 @@ class AppBarWidgets {
   Widget logo(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        GoRouter.of(context).push('/');
+        GoRouter.of(context).go('/');
       },
       child: Image.asset(
         'assets/images/logo/wide-logo.png',
@@ -75,7 +76,8 @@ class AppBarWidgets {
   Widget userIcon(BuildContext context){
     return GestureDetector(
       onTap: () {
-        GoRouter.of(context).push('/profile');
+        //GoRouter.of(context).push('/profile');
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Profile()));
       },
       child: FirebaseAuth.instance.currentUser != null ?
       ClipRRect(

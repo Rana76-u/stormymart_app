@@ -20,33 +20,30 @@ class Cart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      child: BlocBuilder<CartBloc, CartState>(
-          builder: (context, state) {
-            return BlocBuilder<HomeBloc, HomeState>(
-              builder: (context, homeState) {
-                return Scaffold(
-                  appBar: PreferredSize(
-                    preferredSize: const Size.fromHeight(80),
-                    child: coreAppBar(context, homeState),
-                  ),
-                  backgroundColor: appBgColor,
-                  drawer: coreDrawer(context),
-                  body: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        cartBuildBody(context, state),
+    return BlocBuilder<CartBloc, CartState>(
+        builder: (context, state) {
+          return BlocBuilder<HomeBloc, HomeState>(
+            builder: (context, homeState) {
+              return Scaffold(
+                appBar: PreferredSize(
+                  preferredSize: const Size.fromHeight(80),
+                  child: coreAppBar(context, homeState),
+                ),
+                backgroundColor: appBgColor,
+                drawer: coreDrawer(context),
+                body: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      cartBuildBody(context, state),
 
-                        coreFooter(),
-                      ],
-                    ),
+                      coreFooter(),
+                    ],
                   ),
-                );
-              },
-            );
-          }
-      ),
+                ),
+              );
+            },
+          );
+        }
     );
   }
 }

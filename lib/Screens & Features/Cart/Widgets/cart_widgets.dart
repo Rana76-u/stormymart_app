@@ -172,25 +172,28 @@ class CartWidgets {
             }
           }
 
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              CartItemWidgets().checkBox(
-                  state,
-                  index,
-                  CartServices().getCheckBoxValueForIndividual(state, index),
-                  () => CartOnPressFunctions().onIndividualItemCheckBoxClicked(context, index, !state.checkList[index])),
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                CartItemWidgets().checkBox(
+                    state,
+                    index,
+                    CartServices().getCheckBoxValueForIndividual(state, index),
+                    () => CartOnPressFunctions().onIndividualItemCheckBoxClicked(context, index, !state.checkList[index])),
 
-              CartItemWidgets().image(productId, variant),
+                CartItemWidgets().image(productId, variant),
 
-              //Text Items
-              CartItemWidgets().texts(
-                  context, state, index, productSnapshot.data!.get('title'),
-                  priceAfterDiscount, size, variant),
+                //Text Items
+                CartItemWidgets().texts(
+                    context, state, index, productSnapshot.data!.get('title'),
+                    priceAfterDiscount, size, variant),
 
-              //Delete
-              ItemUtil().deleteItemButton(context, user, cartItemDocID, priceAfterDiscount, index)
-            ],
+                //Delete
+                ItemUtil().deleteItemButton(context, user, cartItemDocID, priceAfterDiscount, index)
+              ],
+            ),
           );
         }
         else if (productSnapshot.connectionState == ConnectionState.waiting) {
