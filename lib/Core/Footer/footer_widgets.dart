@@ -48,16 +48,19 @@ class FooterWidgets{
   }
 
   Widget customIcon(IconData iconData) {
-    return Container(
-      height: 50,
-      width: 50,
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(50)
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Icon(iconData, color: Colors.white,),
+    return Padding(
+      padding: const EdgeInsets.all(5),
+      child: Container(
+        height: 50,
+        width: 50,
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.2),
+          borderRadius: BorderRadius.circular(50)
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Icon(iconData, color: Colors.white,),
+        ),
       ),
     );
   }

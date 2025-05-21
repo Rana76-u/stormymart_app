@@ -9,6 +9,7 @@ import 'package:stormymart_v2/Core/theme/color.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Product/Bloc/product_states.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Product/Widgets/View%20Product/view_product_widgets.dart';
 import '../../../Core/Footer/footer.dart';
+import '../../../Core/Utils/platform_detector.dart';
 import '../Bloc/product_bloc.dart';
 import '../Bloc/product_events.dart';
 import 'product_build_body.dart';
@@ -41,7 +42,7 @@ class ProductScreen extends StatelessWidget {
                   children: [
                     productBuildBody(context, state, state.productID),
 
-                    coreFooter(),
+                    PlatformDetector().isMobile(context) ? coreFooterMobile() : coreFooterDesktop(),
                   ],
                 ),
               ),

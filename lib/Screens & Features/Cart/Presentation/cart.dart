@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:stormymart_v2/Core/Appbar/Presentation/appbar_desktop_new.dart';
+import 'package:stormymart_v2/Core/Utils/platform_detector.dart';
 
 // Project imports:
 import '../../../Core/Appbar/Presentation/appbar_ui_mobile.dart';
@@ -27,7 +29,7 @@ class Cart extends StatelessWidget {
               return Scaffold(
                 appBar: PreferredSize(
                   preferredSize: const Size.fromHeight(80),
-                  child: coreAppBar(context, homeState),
+                  child: PlatformDetector().isMobile(context)? coreAppBarMobile(context, homeState) : coreAppBarDesktopNewUI(context, homeState),
                 ),
                 backgroundColor: appBgColor,
                 drawer: coreDrawer(context),
@@ -36,7 +38,7 @@ class Cart extends StatelessWidget {
                     children: [
                       cartBuildBody(context, state),
 
-                      coreFooter(),
+                      PlatformDetector().isMobile(context) ? coreFooterMobile() : coreFooterDesktop(),
                     ],
                   ),
                 ),

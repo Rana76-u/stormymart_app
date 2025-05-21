@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:stormymart_v2/Core/Appbar/Presentation/appbar_desktop_new.dart';
 
 // Project imports:
 import 'package:stormymart_v2/Screens%20&%20Features/CheckOut/Widgets/checkout_widgets.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Payment/Widgets/payment_card.dart';
 import '../../../Core/Appbar/Presentation/appbar_ui_mobile.dart';
+import '../../../Core/Utils/platform_detector.dart';
 import '../../Home/Bloc/home_bloc.dart';
 import '../../Home/Bloc/home_state.dart';
 import '../Data/payment_services.dart';
@@ -24,7 +26,7 @@ class PaymentPage extends StatelessWidget {
           preferredSize: const Size.fromHeight(80),
           child: BlocBuilder<HomeBloc, HomeState>(
             builder: (context, homeState) {
-              return coreAppBar(context, homeState);
+              return PlatformDetector().isMobile(context)? coreAppBarMobile(context, homeState) : coreAppBarDesktopNewUI(context, homeState);
             },
           )
       ),

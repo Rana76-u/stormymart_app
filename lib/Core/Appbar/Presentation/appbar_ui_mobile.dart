@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:stormymart_v2/Core/Appbar/Presentation/appbar_mobile_buildbody.dart';
 import '../../../Screens & Features/Home/Bloc/home_state.dart';
 
-Widget coreAppBar(BuildContext context, HomeState state) {
+Widget coreAppBarMobile(BuildContext context, HomeState state) {
   return AppBar(
     leading: Padding(
       padding: const EdgeInsets.only(top: 25),
