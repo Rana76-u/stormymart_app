@@ -107,7 +107,7 @@ class CartItemWidgets {
               Padding(
                 padding: const EdgeInsets.only(right: 20),
                 child: Text(
-                  '৳ $priceAfterDiscount',
+                  '৳ ${priceAfterDiscount.toStringAsFixed(2)}',
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                       fontSize: 19,

@@ -39,7 +39,7 @@ class CheckOut extends StatelessWidget {
               SingleChildScrollView(
                 child: Column(
                   children: [
-                    checkoutBuildBody(context),
+                    PlatformDetector().isMobile(context) ? checkoutBuildBodyMobile(context) : checkoutBuildBodyDesktop(context),
 
                     PlatformDetector().isMobile(context) ? coreFooterMobile() : coreFooterDesktop(),
                   ],

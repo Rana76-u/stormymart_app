@@ -36,7 +36,7 @@ class Cart extends StatelessWidget {
                 body: SingleChildScrollView(
                   child: Column(
                     children: [
-                      cartBuildBody(context, state),
+                      PlatformDetector().isMobile(context) ? cartBuildBodyMobile(context, state) : cartBuildBodyDesktop(context, state),
 
                       PlatformDetector().isMobile(context) ? coreFooterMobile() : coreFooterDesktop(),
                     ],

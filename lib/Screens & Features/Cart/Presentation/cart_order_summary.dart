@@ -28,13 +28,13 @@ class OrderSummary extends StatelessWidget {
 
           OrderSummaryWidgets().summaryTexts('Sub Total:', "BDT ${CartServices().getCartSelectedItemTotal(cartState).toStringAsFixed(1)}"),
 
-          OrderSummaryWidgets().appDiscount(cartState, 5),
+          //OrderSummaryWidgets().appDiscount(cartState, 5),
 
-          OrderSummaryWidgets().summaryTexts('Delivery Charge:', 'BDT 120'),
+          //OrderSummaryWidgets().summaryTexts('Delivery Charge:', 'BDT 120'),
 
-          const Divider(),
+          //const Divider(),
 
-          OrderSummaryWidgets().summaryTexts('Total:', CartServices().getTotal(cartState).toStringAsFixed(1)),
+          //OrderSummaryWidgets().summaryTexts('Total:', CartServices().getCartSelectedItemTotal(cartState).toStringAsFixed(1)),
         ],
       ),
     );

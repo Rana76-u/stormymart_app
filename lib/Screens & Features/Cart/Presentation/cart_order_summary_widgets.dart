@@ -84,7 +84,7 @@ class OrderSummaryWidgets {
 
                           //Price
                           Text(
-                            'BDT ${priceAfterDiscount * quantity}',
+                            'BDT ${(priceAfterDiscount * quantity).toStringAsFixed(2)}',
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                                 fontSize: 14,

@@ -16,8 +16,12 @@ Widget billingInfoCard(BuildContext context) {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           CheckoutWidgets().titlesWidget('Contact Info'),
+
+          //Textbox for Full Name
           CheckoutWidgets().textBox(37, double.infinity, checkoutNameController,
               "Full Name", const Icon(Icons.abc), TextInputType.text),
+          const SizedBox(height: 5,),
+          //Textbox for Number
           CheckoutWidgets().textBox(
               37,
               double.infinity,
@@ -25,10 +29,13 @@ Widget billingInfoCard(BuildContext context) {
               "Phone Number",
               const Icon(Icons.onetwothree),
               TextInputType.phone),
+          // --------------------------------
           const Divider(
             height: 20,
             color: Colors.white,
           ),
+          // --------------------------------
+          //Textbox for Address
           CheckoutWidgets().titlesWidget('Shipping Info'),
           CheckoutWidgets().textBox(
               37,
@@ -37,8 +44,10 @@ Widget billingInfoCard(BuildContext context) {
               "Address",
               const Icon(Icons.location_on_rounded),
               TextInputType.streetAddress),
+          // --------------------------------
+
           CheckoutWidgets().divisionPicker(context, checkoutDivisionController),
-          CheckoutWidgets().estimatedDelivery(),
+          //CheckoutWidgets().estimatedDelivery(),
         ],
       ),
     ),

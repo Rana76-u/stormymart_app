@@ -1,0 +1,2 @@
+C:/Users/rafiq/StudioProjects/stormymart_app/android/app/.cxx/Debug/6t4p6lip/x86/CMakeFiles/edit_cache.dir
+C:/Users/rafiq/StudioProjects/stormymart_app/android/app/.cxx/Debug/6t4p6lip/x86/CMakeFiles/rebuild_cache.dir

@@ -188,7 +188,7 @@ class CartWidgets {
                 //Text Items
                 CartItemWidgets().texts(
                     context, state, index, productSnapshot.data!.get('title'),
-                    priceAfterDiscount, size, variant),
+                    priceAfterDiscount*quantity, size, variant),
 
                 //Delete
                 ItemUtil().deleteItemButton(context, user, cartItemDocID, priceAfterDiscount, index)

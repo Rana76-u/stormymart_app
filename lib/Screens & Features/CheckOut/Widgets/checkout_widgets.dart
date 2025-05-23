@@ -52,6 +52,10 @@ class CheckoutWidgets{
         cursorColor: Colors.green,
         decoration: InputDecoration(
           isDense: true,
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(5),
+            borderSide: const BorderSide(color: Colors.red),
+          ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(5),
             borderSide: const BorderSide(color: Colors.grey),
@@ -96,45 +100,51 @@ class CheckoutWidgets{
       BuildContext context, TextEditingController divisionController) {
     final provider = BlocProvider.of<CheckoutBloc>(context);
 
-    return Padding(
-      padding: const EdgeInsets.only(top: 15),
-      child: Container(
-        decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey, width: 1),
-            borderRadius: BorderRadius.circular(5)),
-        child: Padding(
-          padding: const EdgeInsets.all(5),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: divisionController.text != ""
-                  ? divisionController.text
-                  : "Dhaka",
-              hint: const Text('Select City'),
-              isDense: true,
-              iconSize: 0,
-              focusColor: Colors.white,
-              onChanged: (String? newValue) {
-                provider.add(ChangeDivisionEvent(selectedDivision: newValue!));
-              },
-              items: <String>[
-                'Dhaka',
-                'Barisal',
-                'Chittagong',
-                'Khulna',
-                'Mymensingh',
-                'Rajshahi',
-                'Rangpur',
-                'Sylhet'
-              ].map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
+    return BlocBuilder<CheckoutBloc, CheckOutState>(
+      builder: (context, state) {
+        return Padding(
+          padding: const EdgeInsets.only(top: 15),
+          child: Container(
+            decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey, width: 1),
+                borderRadius: BorderRadius.circular(5)),
+            child: Padding(
+              padding: const EdgeInsets.all(5),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: state.selectedDivision.isNotEmpty ? state.selectedDivision : "Select City", /*
+                      divisionController.text != ""
+                      ? divisionController.text
+                      : "Dhaka"*/
+                  hint: const Text('Select City'),
+                  isDense: true,
+                  iconSize: 0,
+                  focusColor: Colors.white,
+                  onChanged: (String? newValue) {
+                    provider.add(ChangeDivisionEvent(selectedDivision: newValue!));
+                  },
+                  items: <String>[
+                    'Select City',
+                    'Dhaka',
+                    'Barisal',
+                    'Chittagong',
+                    'Khulna',
+                    'Mymensingh',
+                    'Rajshahi',
+                    'Rangpur',
+                    'Sylhet'
+                  ].map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 

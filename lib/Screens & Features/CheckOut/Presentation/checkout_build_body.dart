@@ -16,7 +16,7 @@ import '../Bloc/checkout_state.dart';
 import '../Utils/checkout_variables.dart';
 import '../Widgets/checkout_widgets.dart';
 
-Widget checkoutBuildBody(BuildContext context) {
+Widget checkoutBuildBodyMobile(BuildContext context) {
   final provider = BlocProvider.of<CheckoutBloc>(context);
   final user = FirebaseAuth.instance.currentUser;
 
@@ -42,6 +42,8 @@ Widget checkoutBuildBody(BuildContext context) {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const SizedBox(height: 20,),
+
                   CheckoutWidgets().checkOutTitle(),
 
                   billingInfoCard(context),
@@ -50,6 +52,65 @@ Widget checkoutBuildBody(BuildContext context) {
                 ],
               ),
             );
+    },
+  );
+}
+
+Widget checkoutBuildBodyDesktop(BuildContext context) {
+  final provider = BlocProvider.of<CheckoutBloc>(context);
+  final user = FirebaseAuth.instance.currentUser;
+
+  if (user != null) {
+    provider.add(LoadUserDataEvent(uid: user.uid));
+  } else {
+    provider.add(UpdateIsLoading(isLoading: false));
+  }
+
+  return BlocBuilder<CheckoutBloc, CheckOutState>(
+    builder: (context, state) {
+      if (state.userName.isNotEmpty) {
+        checkoutNameController.text = state.userName;
+        checkoutPhnNumberController.text = state.phoneNumber;
+        checkoutAddressController.text = state.selectedAddress;
+        checkoutDivisionController.text = state.selectedDivision;
+      }
+
+      return state.isLoading
+          ? centeredLinearProgress(context)
+          : Padding(
+        padding: paddingProvider(context),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Left Side: Billing Info
+            Expanded(
+              flex: 2,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 30,),
+                  CheckoutWidgets().checkOutTitle(),
+                  const SizedBox(height: 20),
+                  billingInfoCard(context),
+                ],
+              ),
+            ),
+
+            const SizedBox(width: 30),
+
+            // Right Side: Order Summary
+            Expanded(
+              flex: 1,
+              child: Column(
+                children: [
+                  const SizedBox(height: 50,),
+                  checkoutOrderSummaryCard(context, state),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
     },
   );
 }

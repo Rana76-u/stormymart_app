@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 // Project imports:
 import 'package:stormymart_v2/Screens%20&%20Features/CheckOut/Bloc/checkout_bloc.dart';
@@ -87,7 +88,8 @@ class CheckOutServices {
   }
 
   Future<void> placeOrder(BuildContext context, String usedPromoCode) async {
-    final navigator = Navigator.of(context);
+    //final navigator = Navigator.of(context);
+    final goRouter = GoRouter.of(context);
     final messenger = ScaffoldMessenger.of(context);
     final provider = BlocProvider.of<CheckoutBloc>(context);
     String randomID = await generateRandomID();
@@ -100,9 +102,9 @@ class CheckOutServices {
 
     await orderItems(provider.state, randomID);
 
-    await resetCoins(provider.state);
+    //await resetCoins(provider.state);
 
-    await sendNotification();
+    //await sendNotification();
 
     provider.add(UpdateIsLoading(isLoading: false));
 
@@ -110,10 +112,11 @@ class CheckOutServices {
 
     provider.add(UpdateIsLoading(isLoading: false));
 
+    goRouter.go('/');
     //navigateToPaymentPage(context, provider.state.total.toDouble(), await generateRandomID());
-    navigator.push(MaterialPageRoute(
+    /*navigator.push(MaterialPageRoute(
       builder: (context) => PaymentPage(transAmount: provider.state.total.toDouble(), transId: randomID,),
-    ));
+    ));*/
   }
 
   Future<void> enableOrderCollection() async {
@@ -206,5 +209,23 @@ class CheckOutServices {
 
   num discountAmount(num percentage, num amount) {
     return amount * (percentage / 100);
+  }
+
+  num getDeliveryCharge(BuildContext context) {
+    final provider = BlocProvider.of<CheckoutBloc>(context);
+    switch(provider.state.selectedDivision){
+      case 'Dhaka':
+        return 70;
+      case '':
+        return 0;
+      case 'Select City':
+        return 0;
+      default:
+        return 120;
+    }
+  }
+
+  num getTotal(CheckOutState state, BuildContext context) {
+    return state.itemTotal + getDeliveryCharge(context);
   }
 }

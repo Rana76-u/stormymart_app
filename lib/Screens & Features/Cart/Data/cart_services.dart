@@ -66,6 +66,7 @@ class CartServices {
     this.total = total;
   }
 
+  //total with discount and delivery charge
   num getTotal(CartState cartState) {
     num priceAfterDiscount = CartServices().calculateDiscountedPrice(
         CartServices().getCartSelectedItemTotal(cartState), 5

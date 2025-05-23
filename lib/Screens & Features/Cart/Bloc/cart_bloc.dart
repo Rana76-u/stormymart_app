@@ -48,7 +48,7 @@ class CartBloc extends Bloc<CartEvents, CartState> {
     List<String> updatedSizeList = List.from(currentState.sizeList)..add(event.size);
     List<String> updatedVariantList = List.from(currentState.variantList)..add(event.variant);
     List<int> updatedQuantityList = List.from(currentState.quantityList)..add(event.quantity);
-    List<bool> updatedCheckList = List.from(currentState.checkList)..add(false);
+    List<bool> updatedCheckList = List.from(currentState.checkList)..add(true);
 
     // Return the updated state
     return currentState.copyWith(
