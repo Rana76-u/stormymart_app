@@ -23,61 +23,53 @@ import 'transition_animation.dart';
 
 final GoRouter router = GoRouter(
   routes: <RouteBase>[
-    ShellRoute(
-      builder: (BuildContext context, GoRouterState state, Widget child) {
-        return Scaffold(
-          body: child,
-          bottomNavigationBar: BottomBar(),
+    //ShellRoute was here
+    //home
+    GoRoute(
+      path: '/',
+      pageBuilder: (context, state) {
+        return CustomTransitionPage(
+          key: state.pageKey,
+          child: const HomePage(),
+          transitionsBuilder: customTransitionBuilder,
         );
       },
-      routes: [
-        //home
+      routes: <RouteBase>[
         GoRoute(
-          path: '/',
-          pageBuilder: (context, state) {
-            return CustomTransitionPage(
-              key: state.pageKey,
-              child: const HomePage(),
-              transitionsBuilder: customTransitionBuilder,
-            );
-          },
-          routes: <RouteBase>[
-            GoRoute(
-              path: 'product/:productId', //
-              builder: (BuildContext context, GoRouterState state) {
-                final blocProvider = BlocProvider.of<ProductBloc>(context);
-                blocProvider.add(UpdateProductID(state.pathParameters['productId'] ?? ""));
+          path: 'product/:productId',
+          builder: (BuildContext context, GoRouterState state) {
+            final blocProvider = BlocProvider.of<ProductBloc>(context);
+            final productId = state.pathParameters['productId'] ?? "";
+            blocProvider.add(UpdateProductID(state.pathParameters['productId'] ?? ""));
 
-                return BlocProvider(
-                    create: (context) => ProductBloc(),
-                    child: ProductScreen(productId: state.pathParameters['productId'] ?? ""));
-              },
-            ),
-          ],
-        ),
-        //cart
-        GoRoute(
-          path: '/cart',
-          pageBuilder: (context, state) {
-            return CustomTransitionPage(
-              key: state.pageKey,
-              child: const Cart(),
-              transitionsBuilder: customTransitionBuilder,
-            );
-          },
-        ),
-
-        GoRoute(
-          path: '/profile',
-          pageBuilder: (context, state) {
-            return CustomTransitionPage(
-              key: state.pageKey,
-              child: const Profile(),
-              transitionsBuilder: customTransitionBuilder,
-            );
+            return ProductScreen(productId: productId);
           },
         ),
       ],
+    ),
+
+    //cart
+    GoRoute(
+      path: '/cart',
+      pageBuilder: (context, state) {
+        return CustomTransitionPage(
+          key: state.pageKey,
+          child: const Cart(),
+          transitionsBuilder: customTransitionBuilder,
+        );
+      },
+    ),
+
+    //profile
+    GoRoute(
+      path: '/profile',
+      pageBuilder: (context, state) {
+        return CustomTransitionPage(
+          key: state.pageKey,
+          child: const Profile(),
+          transitionsBuilder: customTransitionBuilder,
+        );
+      },
     ),
 
     //search
@@ -135,3 +127,62 @@ final GoRouter router = GoRouter(
     ),
   ],
 );
+
+/*ShellRoute(
+      builder: (BuildContext context, GoRouterState state, Widget child) {
+        return Scaffold(
+          body: child,
+          bottomNavigationBar: BottomBar(),
+        );
+      },
+      routes: [
+        //home
+        GoRoute(
+          path: '/',
+          pageBuilder: (context, state) {
+            return CustomTransitionPage(
+              key: state.pageKey,
+              child: const HomePage(),
+              transitionsBuilder: customTransitionBuilder,
+            );
+          },
+          routes: <RouteBase>[
+            GoRoute(
+              path: 'product/:productId',
+              builder: (BuildContext context, GoRouterState state) {
+                final blocProvider = BlocProvider.of<ProductBloc>(context);
+                final productId = state.pathParameters['productId'] ?? "";
+                blocProvider.add(UpdateProductID(state.pathParameters['productId'] ?? ""));
+
+                return BlocProvider(
+                    create: (context) => ProductBloc()..add(UpdateProductID(productId)),
+                    child: ProductScreen(productId: productId));
+              },
+            ),
+          ],
+        ),
+
+        //cart
+        GoRoute(
+          path: '/cart',
+          pageBuilder: (context, state) {
+            return CustomTransitionPage(
+              key: state.pageKey,
+              child: const Cart(),
+              transitionsBuilder: customTransitionBuilder,
+            );
+          },
+        ),
+
+        GoRoute(
+          path: '/profile',
+          pageBuilder: (context, state) {
+            return CustomTransitionPage(
+              key: state.pageKey,
+              child: const Profile(),
+              transitionsBuilder: customTransitionBuilder,
+            );
+          },
+        ),
+      ],
+    )*/

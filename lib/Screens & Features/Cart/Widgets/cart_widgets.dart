@@ -51,7 +51,7 @@ class CartWidgets {
                 onPressed: () {
                   BlocProvider.of<CheckoutBloc>(context).add(ResetCheckoutEvent());
                   BlocProvider.of<CheckoutBloc>(context).add(TransferDataEvent(state));
-                  GoRouter.of(context).push('/checkout');
+                  GoRouter.of(context).go('/checkout');
                 },
                 heroTag: "checkoutBtn",
                 shape: RoundedRectangleBorder(
@@ -319,7 +319,7 @@ class CartWidgets {
           onPressed: () {
             BlocProvider.of<CheckoutBloc>(context).add(ResetCheckoutEvent());
             BlocProvider.of<CheckoutBloc>(context).add(TransferDataEvent(cartState));
-            GoRouter.of(context).push('/checkout');
+            GoRouter.of(context).go('/checkout');
           },),
       ),
     );

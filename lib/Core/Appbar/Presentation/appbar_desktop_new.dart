@@ -23,12 +23,12 @@ Widget coreAppBarDesktopNewUI(BuildContext context, HomeState state) {
             child: const Text('Home', style: TextStyle(color: Colors.white)),
           ),
           TextButton(
-            onPressed: () => GoRouter.of(context).go('/products'),
-            child: const Text('Products', style: TextStyle(color: Colors.white)),
-          ),
-          TextButton(
             onPressed: () => GoRouter.of(context).go('/about'),
             child: const Text('About Us', style: TextStyle(color: Colors.white)),
+          ),
+          TextButton(
+            onPressed: () => GoRouter.of(context).go('/contact'),
+            child: const Text('Contact Now', style: TextStyle(color: Colors.white)),
           ),
 
           const Expanded(child: SizedBox()),

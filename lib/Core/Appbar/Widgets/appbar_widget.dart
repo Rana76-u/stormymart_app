@@ -29,7 +29,7 @@ class AppBarWidgets {
   Widget searchIcon(BuildContext context){
     return GestureDetector(
       onTap: () {
-        GoRouter.of(context).push('/search');
+        GoRouter.of(context).go('/search');
       },
       child: const Icon(Icons.search, color: Colors.white,),
     );
@@ -37,7 +37,7 @@ class AppBarWidgets {
   Widget cartIcon(BuildContext context){
     return GestureDetector(
       onTap: () {
-        GoRouter.of(context).push('/cart');
+        GoRouter.of(context).go('/cart');
       },
       child: Stack(
         children: [
@@ -76,8 +76,8 @@ class AppBarWidgets {
   Widget userIcon(BuildContext context){
     return GestureDetector(
       onTap: () {
-        //GoRouter.of(context).push('/profile');
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Profile()));
+        GoRouter.of(context).go('/profile');
+        //Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Profile()));
       },
       child: FirebaseAuth.instance.currentUser != null ?
       ClipRRect(

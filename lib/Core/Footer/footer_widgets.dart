@@ -19,7 +19,7 @@ class FooterWidgets{
   Widget footerSubTitle(String text, String route) {
     return GestureDetector(
       onTap: () {
-        //GoRouter.of(context).push('/$route');
+        //GoRouter.of(context).go('/$route');
       },
       child: Text(
         text,

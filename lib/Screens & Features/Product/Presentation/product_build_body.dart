@@ -13,7 +13,7 @@ import '../Bloc/product_states.dart';
 import '../Data/product_queries.dart';
 import '../Widgets/View Product/view_product_widgets.dart';
 
-Widget productBuildBody(BuildContext context, ProductState state, String id) {
+Widget productBuildBodyMobile(BuildContext context, ProductState state, String id) {
   final productBloc = BlocProvider.of<ProductBloc>(context);
 
   if (id.isEmpty) {
@@ -123,3 +123,97 @@ Widget productBuildBody(BuildContext context, ProductState state, String id) {
   }
 
 }
+
+Widget productBuildBodyDesktop(BuildContext context, ProductState state, String id) {
+  final productBloc = BlocProvider.of<ProductBloc>(context);
+
+  if (id.isEmpty) {
+    return const Center(child: Text('Invalid product ID'));
+  } else {
+    return FutureBuilder(
+      future: FirebaseFirestore.instance
+          .collection('Products')
+          .doc(id)
+          .get(),
+      builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+        if (snapshot.hasData) {
+          num price = snapshot.data!.get('price');
+          num discount = snapshot.data!.get('discount');
+          num quantityAvailable = snapshot.data!.get('quantityAvailable');
+          List<String> sizes = List<String>.from(snapshot.data!.get('size'));
+
+          productBloc.add(UpdateDiscountCal((price / 100) * (100 - discount)));
+          productBloc.add(UpdateSizes(sizes));
+
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 30),
+            child: Column(
+              children: [
+                const SizedBox(height: 20,),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      flex: 4,
+                      child: ViewProductWidgets()
+                          .getImageSliderWidget(id, state.imageSliderDocID),
+                    ),
+                    const SizedBox(width: 40),
+                    Expanded(
+                      flex: 6,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ViewProductWidgets().variationWidget(state, context),
+                          ViewProductWidgets().productTitle(snapshot.data!.get('title')),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              ViewProductWidgets().productReview(),
+                              const Spacer(),
+                              ViewProductWidgets().addToWishListIcon(context, id),
+                              const SizedBox(width: 10),
+                              ViewProductWidgets().shareProductIcon()
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              ViewProductWidgets()
+                                  .productPrice(state.discountCal, discount, price),
+                              const SizedBox(width: 10),
+                              ViewProductWidgets().discountTag(discount)
+                            ],
+                          ),
+                          ViewProductWidgets().productSizes(
+                              sizes, context, state.sizeSelected, state.sizeWarning),
+                          ViewProductWidgets()
+                              .productQuantity(quantityAvailable, state, context),
+                          const SizedBox(height: 20),
+                          ViewProductWidgets().cartBuyButtons(
+                              context, quantityAvailable, '', id, state),
+                          const SizedBox(height: 30),
+                          ViewProductWidgets()
+                              .productDescription(snapshot.data!.get('description')),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 20),
+                ShowProductByQueryType(
+                    query: ProductQueries().getPopularProducts(),
+                    title: 'You may also like',
+                    listType: 'list')
+              ],
+            ),
+          );
+        } else {
+          return ViewProductWidgets().loadingWidget(context);
+        }
+      },
+    );
+  }
+}
+
+

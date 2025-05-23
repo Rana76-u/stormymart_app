@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 // Project imports:
 import 'package:stormymart_v2/Screens%20&%20Features/Product/Bloc/product_events.dart';
@@ -19,12 +20,12 @@ import '../Presentation/product_screen.dart';
 class OnPressFunctions {
 
   void viewProduct(BuildContext context, String productId) {
-    //GoRouter.of(context).push('/product/$productId');
     final blocProvider = BlocProvider.of<ProductBloc>(context);
     blocProvider.add(UpdateProductID(productId));
-    Navigator.of(context).push(
+    GoRouter.of(context).go('/product/$productId');
+    /*Navigator.of(context).push(
         MaterialPageRoute(builder: (context) => ProductScreen(productId: productId),)
-    );
+    );*/
   }
 
   void addToCartFunction(String text, num quantityAvailable, String shopID, String id, BuildContext context, ProductState state) async {
@@ -119,7 +120,7 @@ class OnPressFunctions {
                         Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => const Cart(),
                         ));
-                        GoRouter.of(context).push('/cart');
+                        GoRouter.of(context).go('/cart');
                       },
                       child: const Text(
                         'Open Cart',

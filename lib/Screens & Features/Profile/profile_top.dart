@@ -115,7 +115,7 @@ class _ProfileTopState extends State<ProfileTop> {
                     //wishlist
                     GestureDetector(
                       onTap: () {
-                        GoRouter.of(context).push('/wishlists');
+                        GoRouter.of(context).go('/wishlists');
                       },
                       child: Column(
                         children: [
@@ -142,7 +142,7 @@ class _ProfileTopState extends State<ProfileTop> {
                     //Points
                     GestureDetector(
                       onTap: () {
-                        GoRouter.of(context).push('/coin');
+                        GoRouter.of(context).go('/coin');
                       },
                       child: Column(
                         children: [

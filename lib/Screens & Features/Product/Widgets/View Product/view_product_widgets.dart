@@ -405,27 +405,27 @@ class ViewProductWidgets {
   Widget cartBuyButtons(BuildContext context,
       num quantityAvailable, String shopID, String id, ProductState state) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        SizedBox(
-            width: MediaQuery.of(context).size.width * 0.45,
-            child: productButtons(
-                context,
-                'Add To Cart',
-                Colors.orange.withValues(alpha: 0.1),
-                Colors.deepOrangeAccent,
-                () => OnPressFunctions().addToCartFunction('Add To Cart',quantityAvailable, shopID, id, context, state))
+        Expanded(
+          child: productButtons(
+            context,
+            'Add To Cart',
+            Colors.orange.withAlpha(25),
+            Colors.deepOrangeAccent,
+                () => OnPressFunctions().addToCartFunction(
+                'Add To Cart', quantityAvailable, shopID, id, context, state),
+          ),
         ),
-        SizedBox(
-            width: MediaQuery.of(context).size.width * 0.45,
-            child: productButtons(context,
-                'Buy Now',
-                Colors.grey.withValues(alpha: 0.1),
-                Colors.grey.shade900,
-                () {
-                  OnPressFunctions().addToCartFunction('Buy Now', quantityAvailable, shopID, id, context, state);
-                },
-            )
+        const SizedBox(width: 10),
+        Expanded(
+          child: productButtons(
+            context,
+            'Buy Now',
+            Colors.grey.withAlpha(25),
+            Colors.grey.shade900,
+                () => OnPressFunctions().addToCartFunction(
+                'Buy Now', quantityAvailable, shopID, id, context, state),
+          ),
         ),
       ],
     );

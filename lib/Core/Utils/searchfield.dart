@@ -24,7 +24,7 @@ class SearchField extends StatelessWidget {
         child: Center(
           child: GestureDetector(
             onTap: () {
-              GoRouter.of(context).push('/search');
+              GoRouter.of(context).go('/search');
             },
             child: TextField(
               onChanged: (value) => log(value),

@@ -54,7 +54,7 @@ class CategorySlider extends StatelessWidget {
   Widget cards(String categoryName, BuildContext context) {
     return GestureDetector(
       onTap: (){
-        GoRouter.of(context).push('/search/item/$categoryName');
+        GoRouter.of(context).go('/search/item/$categoryName');
       },
       child: Container(
         constraints: const BoxConstraints(

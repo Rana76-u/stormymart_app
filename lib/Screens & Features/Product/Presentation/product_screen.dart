@@ -6,8 +6,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 // Project imports:
 import 'package:stormymart_v2/Core/theme/color.dart';
+import 'package:stormymart_v2/Screens%20&%20Features/Home/Bloc/home_bloc.dart';
+import 'package:stormymart_v2/Screens%20&%20Features/Home/Bloc/home_state.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Product/Bloc/product_states.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Product/Widgets/View%20Product/view_product_widgets.dart';
+import '../../../Core/Appbar/Presentation/appbar_desktop_new.dart';
+import '../../../Core/Appbar/Presentation/appbar_ui_mobile.dart';
 import '../../../Core/Footer/footer.dart';
 import '../../../Core/Utils/platform_detector.dart';
 import '../Bloc/product_bloc.dart';
@@ -33,6 +37,14 @@ class ProductScreen extends StatelessWidget {
     return BlocBuilder<ProductBloc, ProductState>(
       builder: (context, state) {
         return Scaffold(
+          appBar: PreferredSize(
+              preferredSize: const Size.fromHeight(80),
+              child: BlocBuilder<HomeBloc, HomeState>(
+                builder: (context, homeState) {
+                  return PlatformDetector().isMobile(context) ? coreAppBarMobile(context, homeState) : coreAppBarDesktopNewUI(context, homeState);
+                },
+              )
+          ),
           backgroundColor: appBgColor,
           floatingActionButton: ViewProductWidgets().floatingButtonWidget(state.productID, context),
           body: Stack(
@@ -40,7 +52,9 @@ class ProductScreen extends StatelessWidget {
               SingleChildScrollView(
                 child: Column(
                   children: [
-                    productBuildBody(context, state, state.productID),
+                    PlatformDetector().isMobile(context) ?
+                    productBuildBodyMobile(context, state, state.productID) :
+                    productBuildBodyDesktop(context, state, state.productID),
 
                     PlatformDetector().isMobile(context) ? coreFooterMobile() : coreFooterDesktop(),
                   ],
@@ -54,6 +68,4 @@ class ProductScreen extends StatelessWidget {
       },
     );
   }
-
-
 }

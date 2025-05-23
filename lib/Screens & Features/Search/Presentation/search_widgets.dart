@@ -19,7 +19,7 @@ class SearchWidgets {
         padding: const EdgeInsets.only(bottom: 20, right: 10),
         child: FloatingActionButton.extended(
           onPressed: () {
-            GoRouter.of(context).push('/');
+            GoRouter.of(context).go('/');
           },
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(100.0),
@@ -262,7 +262,7 @@ class SearchWidgets {
                 return ListTile(
                   title: GestureDetector(
                     onTap: () {
-                      GoRouter.of(context).push('/product/${searchState.searchResults[index].id}');
+                      GoRouter.of(context).go('/product/${searchState.searchResults[index].id}');
                       /*setState(() {
                                 searchedText = searchResults[index].get('title');
                                 isTyping = false;

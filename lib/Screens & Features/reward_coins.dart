@@ -24,7 +24,7 @@ class _ShowRewardCoinScreenState extends State<ShowRewardCoinScreen> {
     return PopScope(
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) {
-          GoRouter.of(context).push('/');
+          GoRouter.of(context).go('/');
         }
       },
       child: Scaffold(

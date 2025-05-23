@@ -44,7 +44,7 @@ class CartItemWidgets {
         if (imageSnapshot.hasData) {
           return GestureDetector(
             onTap: () {
-              GoRouter.of(context).push('/product/$productId');
+              GoRouter.of(context).go('/product/$productId');
             },
             child: Padding(
               padding: const EdgeInsets.only(left: 0, right: 8),

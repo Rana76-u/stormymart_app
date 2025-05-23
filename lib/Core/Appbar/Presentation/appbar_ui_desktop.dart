@@ -65,7 +65,7 @@ Widget coreAppbarDesktop(BuildContext context, HomeState state) {
         //StormyMart
         GestureDetector(
           onTap: () {
-            GoRouter.of(context).push('/');
+            GoRouter.of(context).go('/');
           },
           child: Image.asset(
             'assets/images/logo/wide-logo.png',
@@ -80,7 +80,7 @@ Widget coreAppbarDesktop(BuildContext context, HomeState state) {
           flex: 1,
           child: GestureDetector(
             onTap: () {
-              GoRouter.of(context).push('/search');
+              GoRouter.of(context).go('/search');
             },
             child: const SearchbarWidget(),//searchBar(context),
           ),
@@ -176,7 +176,7 @@ Widget topLeftItem(IconData icon, String text1, String text2, BuildContext conte
 
       }
       else if(text2 == 'Cart') {
-        GoRouter.of(context).push('/cart');
+        GoRouter.of(context).go('/cart');
       }
     },
     child: Padding(
