@@ -2,17 +2,14 @@
 import 'package:flutter/material.dart';
 
 // Package imports:
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 // Project imports:
 import 'package:stormymart_v2/Screens%20&%20Features/CheckOut/Bloc/checkout_state.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/CheckOut/Data/checkout_services.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/CheckOut/Data/place_order_services.dart';
-import '../Bloc/checkout_bloc.dart';
 import 'checkout_widgets.dart';
 
 Widget checkoutOrderSummaryCard(BuildContext context, CheckOutState state) {
-  final provider = BlocProvider.of<CheckoutBloc>(context);
 
   return Card(
     elevation: 0,
@@ -54,7 +51,7 @@ Widget checkoutOrderSummaryCard(BuildContext context, CheckOutState state) {
           const SizedBox(height: 35,),
 
           CheckoutWidgets().buttonWidget(
-              48, double.infinity, Colors.green, 'Place Order', () => placeOrderFunctions(context)),
+              48, double.infinity, Colors.green, 'Place Order', () => placeOrderFunctions(context, state)),
 
           const SizedBox(height: 10,),
         ],

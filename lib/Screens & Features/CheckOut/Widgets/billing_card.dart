@@ -41,7 +41,7 @@ Widget billingInfoCard(BuildContext context) {
               37,
               double.infinity,
               checkoutAddressController,
-              "Address",
+              "House no, Street Address, Area, City",
               const Icon(Icons.location_on_rounded),
               TextInputType.streetAddress),
           // --------------------------------

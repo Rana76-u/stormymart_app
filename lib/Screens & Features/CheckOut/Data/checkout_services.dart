@@ -93,14 +93,15 @@ class CheckOutServices {
     final messenger = ScaffoldMessenger.of(context);
     final provider = BlocProvider.of<CheckoutBloc>(context);
     String randomID = await generateRandomID();
+    String randomUID = await generateRandomID();
 
     provider.add(UpdateIsLoading(isLoading: true));
 
-    await enableOrderCollection();
+    await enableOrderCollection(randomUID);
 
-    await orderDetails(usedPromoCode, randomID, provider);
+    await orderDetails(usedPromoCode, randomID, randomUID, provider);
 
-    await orderItems(provider.state, randomID);
+    await orderItems(provider.state, randomID, randomUID);
 
     //await resetCoins(provider.state);
 
@@ -110,7 +111,7 @@ class CheckOutServices {
 
     showOrderConfirmationMessage(messenger);
 
-    provider.add(UpdateIsLoading(isLoading: false));
+    //provider.add(UpdateIsLoading(isLoading: false));
 
     goRouter.go('/');
     //navigateToPaymentPage(context, provider.state.total.toDouble(), await generateRandomID());
@@ -119,19 +120,19 @@ class CheckOutServices {
     ));*/
   }
 
-  Future<void> enableOrderCollection() async {
+  Future<void> enableOrderCollection(String randomUID) async {
     await FirebaseFirestore.instance
         .collection('Orders')
-        .doc(FirebaseAuth.instance.currentUser?.uid ?? '')
+        .doc(FirebaseAuth.instance.currentUser?.uid ?? randomUID)
         .set({'enable': true});
   }
 
   Future<void> orderDetails(
-      String usedPromoCode, String randomID, CheckoutBloc provider) async {
+      String usedPromoCode, String randomID, String randomUID, CheckoutBloc provider) async {
     var state = provider.state;
     await FirebaseFirestore.instance
         .collection('Orders')
-        .doc(FirebaseAuth.instance.currentUser?.uid)
+        .doc(FirebaseAuth.instance.currentUser?.uid ?? randomUID)
         .collection('Pending Orders')
         .doc(randomID)
         .set({
@@ -144,12 +145,12 @@ class CheckOutServices {
     });
   }
 
-  Future<void> orderItems(CheckOutState state, String randomID) async {
+  Future<void> orderItems(CheckOutState state, String randomID, String randomUID) async {
     for (int index = 0; index < state.idList.length; index++) {
       String randomOrderListDocID = await generateRandomID();
       await FirebaseFirestore.instance
           .collection('Orders')
-          .doc(FirebaseAuth.instance.currentUser?.uid)
+          .doc(FirebaseAuth.instance.currentUser?.uid ?? randomUID)
           .collection('Pending Orders')
           .doc(randomID)
           .collection('orderLists')
@@ -171,7 +172,7 @@ class CheckOutServices {
 
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection('userData')
-          .doc(FirebaseAuth.instance.currentUser?.uid)
+          .doc(FirebaseAuth.instance.currentUser?.uid ?? randomUID)
           .collection('Cart')
           .where('id', isEqualTo: state.idList[index])
           .where('quantity', isEqualTo: state.quantityList[index])
@@ -197,7 +198,8 @@ class CheckOutServices {
 
   void showOrderConfirmationMessage(ScaffoldMessengerState messenger) {
     messenger.showSnackBar(const SnackBar(
-      content: Text('Congratulations 🎉, Your Order has been Placed.'),
+      duration: Duration(seconds: 10),
+      content: Text('Congratulations 🎉, Your Order has been Placed. Our Order Confirmation Team will contact you soon!'),
     ));
   }
 
