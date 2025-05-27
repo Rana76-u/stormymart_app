@@ -2,16 +2,12 @@
 import 'package:flutter/material.dart';
 
 // Package imports:
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 // Project imports:
 import 'package:stormymart_v2/Core/Utils/core_progress_bars.dart';
 import 'package:stormymart_v2/Core/Utils/errors_n_empty_messages.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Home/Data/load_category_services.dart';
-import '../../../Screens & Features/Profile/profile.dart';
-import '../../../Screens & Features/User/Data/user_hive.dart';
 import '../../Utils/global_variables.dart';
 
 Widget coreDrawer(BuildContext context){
@@ -32,15 +28,15 @@ Widget coreDrawer(BuildContext context){
 }
 
 Widget drawerHeader(BuildContext context) {
-  return DrawerHeader(
-    decoration: const BoxDecoration(
+  return const DrawerHeader(
+    decoration: BoxDecoration(
       //color: Color(0xFF0d1b2a)
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        if(FirebaseAuth.instance.currentUser != null)...[
+        /*if(FirebaseAuth.instance.currentUser != null)...[
           GestureDetector(
             onTap: () {
               Navigator.of(context).push(
@@ -103,9 +99,9 @@ Widget drawerHeader(BuildContext context) {
               ),
             ),
           ),
-        ],
+        ],*/
         //const Expanded(child: SizedBox()),
-        const Padding(
+        Padding(
           padding: EdgeInsets.only(left: 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

@@ -9,11 +9,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // Project imports:
 import 'package:stormymart_v2/Screens%20&%20Features/CheckOut/Bloc/checkout_bloc.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/CheckOut/Bloc/checkout_state.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Payment/Presentation/payment.dart';
+import 'package:uuid/uuid.dart';
 import '../../../Core/Notification/notification_sender.dart';
 import '../Bloc/checkout_events.dart';
 
@@ -87,37 +89,39 @@ class CheckOutServices {
     }
   }
 
+  Future<String> getDeviceId() async {
+    final prefs = await SharedPreferences.getInstance();
+    const deviceIdKey = 'device_id';
+
+    // Check if we already have a stored ID
+    String? existingId = prefs.getString(deviceIdKey);
+    if (existingId != null) return existingId;
+
+    // Generate a new one and save it
+    String newId = const Uuid().v4(); // UUID v4
+    await prefs.setString(deviceIdKey, newId);
+    return newId;
+  }
+
+
+
   Future<void> placeOrder(BuildContext context, String usedPromoCode) async {
-    //final navigator = Navigator.of(context);
     final goRouter = GoRouter.of(context);
     final messenger = ScaffoldMessenger.of(context);
     final provider = BlocProvider.of<CheckoutBloc>(context);
     String randomID = await generateRandomID();
-    String randomUID = await generateRandomID();
+    String deviceId = await getDeviceId();
 
     provider.add(UpdateIsLoading(isLoading: true));
 
-    await enableOrderCollection(randomUID);
-
-    await orderDetails(usedPromoCode, randomID, randomUID, provider);
-
-    await orderItems(provider.state, randomID, randomUID);
-
-    //await resetCoins(provider.state);
-
-    //await sendNotification();
+    // Use deviceId instead of randomUID
+    await enableOrderCollection(deviceId);
+    await orderDetails(usedPromoCode, randomID, deviceId, provider);
+    await orderItems(provider.state, randomID, deviceId);
 
     provider.add(UpdateIsLoading(isLoading: false));
-
     showOrderConfirmationMessage(messenger);
-
-    //provider.add(UpdateIsLoading(isLoading: false));
-
     goRouter.go('/');
-    //navigateToPaymentPage(context, provider.state.total.toDouble(), await generateRandomID());
-    /*navigator.push(MaterialPageRoute(
-      builder: (context) => PaymentPage(transAmount: provider.state.total.toDouble(), transId: randomID,),
-    ));*/
   }
 
   Future<void> enableOrderCollection(String randomUID) async {
@@ -141,7 +145,9 @@ class CheckOutServices {
       'total': state.total,
       'deliveryLocation': '${state.selectedAddress}, ${state.selectedDivision}',
       'time': FieldValue.serverTimestamp(),
-      'paid': false
+      'paid': false,
+      'name': state.userName,
+      'phoneNumber': state.phoneNumber
     });
   }
 

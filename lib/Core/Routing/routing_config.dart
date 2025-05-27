@@ -11,6 +11,7 @@ import 'package:stormymart_v2/Screens & Features/Profile/profile.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Cart/Presentation/cart.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/CheckOut/Presentation/checkout.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Home/Presentation/home.dart';
+import 'package:stormymart_v2/Screens%20&%20Features/Orders/orders.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Product/Presentation/product_screen.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Search/Bloc/search_bloc.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Search/Bloc/search_events.dart';
@@ -18,7 +19,6 @@ import 'package:stormymart_v2/Screens%20&%20Features/Search/Presentation/search.
 import '../../Screens & Features/Product/Bloc/product_bloc.dart';
 import '../../Screens & Features/Product/Bloc/product_events.dart';
 import '../../Screens & Features/Profile/Wishlists/wishlist.dart';
-import '../Bottom Navigation/Presentation/bottom_nav_bar.dart';
 import 'transition_animation.dart';
 
 final GoRouter router = GoRouter(
@@ -99,6 +99,17 @@ final GoRouter router = GoRouter(
         return CustomTransitionPage(
           key: state.pageKey,
           child: const CheckOut(),
+          transitionsBuilder: customTransitionBuilder,
+        );
+      },
+    ),
+    //cart
+    GoRoute(
+      path: '/orders',
+      pageBuilder: (context, state) {
+        return CustomTransitionPage(
+          key: state.pageKey,
+          child: const OrdersPage(),
           transitionsBuilder: customTransitionBuilder,
         );
       },

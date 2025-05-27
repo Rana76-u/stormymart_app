@@ -5,10 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:stormymart_v2/Screens%20&%20Features/Cart/Data/on_press_functions.dart';
+import 'package:stormymart_v2/Core/Utils/platform_detector.dart';
 
 // Project imports:
-import 'package:stormymart_v2/Screens%20&%20Features/Profile/profile.dart';
 import '../../../Screens & Features/Cart/Bloc/cart_bloc.dart';
 import '../../../Screens & Features/Cart/Bloc/cart_states.dart';
 import '../../../Screens & Features/User/Data/user_hive.dart';
@@ -89,7 +88,31 @@ class AppBarWidgets {
           width: 25,
         ),
       ) :
-      const Icon(Icons.person_outline, color: Colors.white,),
+      const Icon(Icons.person, color: Colors.white,),
+    );
+  }
+
+  Widget myOrderHistory(BuildContext context) {
+    return TextButton(
+      onPressed: () {
+        GoRouter.of(context).go('/orders');
+      },
+      child: Text(
+        PlatformDetector().isMobile(context) ?  'My Orders' : '🛒 My Orders',
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onPrimary,
+          fontSize: PlatformDetector().isMobile(context) ? 10 : 22, // Adjust font size
+          fontWeight: FontWeight.w900,
+          letterSpacing: 1.2,
+          shadows: [
+            Shadow(
+              offset: const Offset(1.5, 1.5),
+              blurRadius: 3.0,
+              color: Colors.black.withValues(alpha: 0.3),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

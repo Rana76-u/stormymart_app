@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 // Package imports:
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 // Project imports:
@@ -13,17 +12,9 @@ import 'package:stormymart_v2/Screens%20&%20Features/CheckOut/Bloc/checkout_bloc
 import 'package:stormymart_v2/Screens%20&%20Features/User/Data/user_hive.dart';
 import 'package:stormymart_v2/firebase_options.dart';
 import 'Core/Routing/routing_config.dart';
-import 'Screens & Features/Cart/Presentation/cart.dart';
-import 'Screens & Features/CheckOut/Presentation/checkout.dart';
 import 'Screens & Features/Home/Bloc/home_bloc.dart';
-import 'Screens & Features/Home/Presentation/home.dart';
 import 'Screens & Features/Product/Bloc/product_bloc.dart';
-import 'Screens & Features/Product/Presentation/product_screen.dart';
-import 'Screens & Features/Profile/Coins/coins.dart';
-import 'Screens & Features/Profile/Wishlists/wishlist.dart';
-import 'Screens & Features/Profile/profile.dart';
 import 'Screens & Features/Search/Bloc/search_bloc.dart';
-import 'Screens & Features/Search/Presentation/search.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();

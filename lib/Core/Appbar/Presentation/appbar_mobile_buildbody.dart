@@ -25,7 +25,7 @@ Widget coreAppBarBuildBody(BuildContext context, HomeState state) {
 
           const SizedBox(width: 30,),
 
-          AppBarWidgets().userIcon(context),
+          AppBarWidgets().myOrderHistory(context),
 
           const SizedBox(width: 20,),
         ],
