@@ -19,12 +19,6 @@ void placeOrderFunctions(BuildContext context, CheckOutState state) async {
 
     provider.add(UpdateIsLoading(isLoading: true));
 
-    provider.add(ChangeUserInfoEvent(
-        name: checkoutNameController.text,
-        phoneNumber: checkoutPhnNumberController.text,
-        address: checkoutAddressController.text)
-    );
-
     await CheckOutServices()
         .placeOrder(context, checkoutPromoCodeController.text);
 

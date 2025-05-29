@@ -14,6 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 // Project imports:
 import 'package:stormymart_v2/Screens%20&%20Features/CheckOut/Bloc/checkout_bloc.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/CheckOut/Bloc/checkout_state.dart';
+import 'package:stormymart_v2/Screens%20&%20Features/CheckOut/Utils/checkout_variables.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/Payment/Presentation/payment.dart';
 import 'package:uuid/uuid.dart';
 import '../../../Core/Notification/notification_sender.dart';
@@ -68,9 +69,8 @@ class CheckOutServices {
   }
 
   Future<void> sendNotification() async {
-    //Get all the admins Id's
     CollectionReference reference =
-        FirebaseFirestore.instance.collection('/Admin Panel');
+    FirebaseFirestore.instance.collection('/Admin Panel');
 
     QuerySnapshot querySnapshot = await reference.get();
 
@@ -93,102 +93,81 @@ class CheckOutServices {
     final prefs = await SharedPreferences.getInstance();
     const deviceIdKey = 'device_id';
 
-    // Check if we already have a stored ID
     String? existingId = prefs.getString(deviceIdKey);
     if (existingId != null) return existingId;
 
-    // Generate a new one and save it
-    String newId = const Uuid().v4(); // UUID v4
+    String newId = const Uuid().v4();
     await prefs.setString(deviceIdKey, newId);
     return newId;
   }
-
-
 
   Future<void> placeOrder(BuildContext context, String usedPromoCode) async {
     final goRouter = GoRouter.of(context);
     final messenger = ScaffoldMessenger.of(context);
     final provider = BlocProvider.of<CheckoutBloc>(context);
-    String randomID = await generateRandomID();
-    String deviceId = await getDeviceId();
+    final state = provider.state;
 
     provider.add(UpdateIsLoading(isLoading: true));
 
-    // Use deviceId instead of randomUID
-    await enableOrderCollection(deviceId);
-    await orderDetails(usedPromoCode, randomID, deviceId, provider);
-    await orderItems(provider.state, randomID, deviceId);
+    final firestore = FirebaseFirestore.instance;
+    final userId = FirebaseAuth.instance.currentUser?.uid ?? await getDeviceId();
+    final orderId = const Uuid().v4();
+
+    await firestore.collection('Orders').doc(userId).set({'enable': true});
+
+    final orderRef = firestore
+        .collection('Orders')
+        .doc(userId)
+        .collection('Pending Orders')
+        .doc(orderId);
+
+    final batch = firestore.batch();
+
+    batch.set(orderRef, {
+      'usedPromoCode': usedPromoCode,
+      'usedCoin': state.coinAmount,
+      'total': state.total,
+      'deliveryLocation': '${checkoutAddressController.text}, ${state.selectedDivision}',
+      'time': FieldValue.serverTimestamp(),
+      'paid': false,
+      'name': checkoutNameController.text,
+      'phoneNumber': checkoutPhnNumberController.text,
+    });
+
+    for (int i = 0; i < state.idList.length; i++) {
+      final itemRef = orderRef.collection('orderLists').doc(const Uuid().v4());
+      batch.set(itemRef, {
+        'productId': state.idList[i],
+        'quantity': state.quantityList[i],
+        'selectedSize': state.sizeList[i],
+        'variant': state.variantList[i],
+      });
+
+      final productRef = firestore.collection('Products').doc(state.idList[i]);
+      batch.update(productRef, {
+        'quantityAvailable': FieldValue.increment(-state.quantityList[i]),
+      });
+
+      final cartQuery = await firestore
+          .collection('userData')
+          .doc(userId)
+          .collection('Cart')
+          .where('id', isEqualTo: state.idList[i])
+          .where('quantity', isEqualTo: state.quantityList[i])
+          .where('variant', isEqualTo: state.variantList[i])
+          .get();
+
+      for (final cartDoc in cartQuery.docs) {
+        batch.delete(cartDoc.reference);
+      }
+    }
+
+    await batch.commit();
+    await resetCoins(state);
 
     provider.add(UpdateIsLoading(isLoading: false));
     showOrderConfirmationMessage(messenger);
     goRouter.go('/');
-  }
-
-  Future<void> enableOrderCollection(String randomUID) async {
-    await FirebaseFirestore.instance
-        .collection('Orders')
-        .doc(FirebaseAuth.instance.currentUser?.uid ?? randomUID)
-        .set({'enable': true});
-  }
-
-  Future<void> orderDetails(
-      String usedPromoCode, String randomID, String randomUID, CheckoutBloc provider) async {
-    var state = provider.state;
-    await FirebaseFirestore.instance
-        .collection('Orders')
-        .doc(FirebaseAuth.instance.currentUser?.uid ?? randomUID)
-        .collection('Pending Orders')
-        .doc(randomID)
-        .set({
-      'usedPromoCode': usedPromoCode,
-      'usedCoin': state.coinAmount,
-      'total': state.total,
-      'deliveryLocation': '${state.selectedAddress}, ${state.selectedDivision}',
-      'time': FieldValue.serverTimestamp(),
-      'paid': false,
-      'name': state.userName,
-      'phoneNumber': state.phoneNumber
-    });
-  }
-
-  Future<void> orderItems(CheckOutState state, String randomID, String randomUID) async {
-    for (int index = 0; index < state.idList.length; index++) {
-      String randomOrderListDocID = await generateRandomID();
-      await FirebaseFirestore.instance
-          .collection('Orders')
-          .doc(FirebaseAuth.instance.currentUser?.uid ?? randomUID)
-          .collection('Pending Orders')
-          .doc(randomID)
-          .collection('orderLists')
-          .doc(randomOrderListDocID)
-          .set({
-        'productId': state.idList[index],
-        'quantity': state.quantityList[index],
-        'selectedSize': state.sizeList[index],
-        'variant': state.variantList[index],
-      });
-
-      //update quantity available
-      await FirebaseFirestore.instance
-          .collection('Products')
-          .doc(state.idList[index])
-          .update({
-        'quantityAvailable': FieldValue.increment(-state.quantityList[index]),
-      });
-
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection('userData')
-          .doc(FirebaseAuth.instance.currentUser?.uid ?? randomUID)
-          .collection('Cart')
-          .where('id', isEqualTo: state.idList[index])
-          .where('quantity', isEqualTo: state.quantityList[index])
-          .where('variant', isEqualTo: state.variantList[index])
-          .get();
-
-      for (var doc in querySnapshot.docs) {
-        doc.reference.delete();
-      }
-    }
   }
 
   Future<void> resetCoins(CheckOutState state) async {
@@ -225,7 +204,6 @@ class CheckOutServices {
       case 'Dhaka':
         return 70;
       case '':
-        return 0;
       case 'Select City':
         return 0;
       default:

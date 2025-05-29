@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:stormymart_v2/Screens%20&%20Features/CheckOut/Data/checkout_services.dart';
 
 class OrdersPage extends StatefulWidget {
@@ -189,6 +190,12 @@ class _OrdersPageState extends State<OrdersPage>
 
     return Scaffold(
       appBar: AppBar(
+        leading: GestureDetector(
+          onTap: () {
+            GoRouter.of(context).go('/');
+          },
+          child: const Icon(Icons.arrow_back_rounded),
+        ),
         title: const Text('My Orders'),
         bottom: TabBar(
           controller: _tabController,

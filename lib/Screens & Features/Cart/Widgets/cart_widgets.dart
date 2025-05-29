@@ -317,9 +317,15 @@ class CartWidgets {
             ),
           ),
           onPressed: () {
-            BlocProvider.of<CheckoutBloc>(context).add(ResetCheckoutEvent());
-            BlocProvider.of<CheckoutBloc>(context).add(TransferDataEvent(cartState));
-            GoRouter.of(context).go('/checkout');
+            if (cartState.checkList.any((isSelected) => isSelected)) {
+              BlocProvider.of<CheckoutBloc>(context).add(ResetCheckoutEvent());
+              BlocProvider.of<CheckoutBloc>(context).add(TransferDataEvent(cartState));
+              GoRouter.of(context).go('/checkout');
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Please select at least one item to proceed.')),
+              );
+            }
           },),
       ),
     );
